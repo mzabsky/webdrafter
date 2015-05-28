@@ -1,0 +1,43 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('WebDrafter') ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath('css/style.css'))
+        				->prependStylesheet('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css') ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            //->prependFile($this->basePath('js/webdrafter.js'))
+            //->prependFile($this->basePath('js/jquery.min.js'))
+            ->prependFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
+            ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
+            ->prependFile($this->basePath('js/json2.js'))
+        ; ?>
+
+    </head>
+    <body>
+        <div class="container">
+        	<a href="<?php echo $this->url('home')?>"><h1>WebDrafter</h1></a>
+        	<?php if(isset($_SESSION["email"])){?>
+        		Logged in as <?=$_SESSION["email"] ?> <a href="<?php echo $this->url('member-area')?>">Member area</a> <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+        	<?php } ?>
+        	<hr />
+            <?php echo $this->content; ?>
+            <hr>
+            <footer>
+                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky.</p>
+            </footer>
+        </div> <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>

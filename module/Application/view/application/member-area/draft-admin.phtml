@@ -1,0 +1,90 @@
+<h2><?php echo $this->draft->name; ?></h2>
+<?php 
+if($this->draftOpened)
+{
+?>
+	<div class="success-message">Draft opened!</div>
+<?php 
+}
+?>
+
+<div id="draft_players">Loading...</div>
+
+<script>
+var draftStatuses = {"open":1, "running":2, "finished":3};
+
+$(document).ready(function(){
+	$("#draft_players").html("Loading...");
+	refreshPlayersList();
+});
+
+function addDraftPlayer()
+{
+	$("#draft_players").html("Loading...");
+	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'add-draft-player', 'draft_id' => $this->draft->draftId));?>", function( data ) {		
+		refreshPlayersList();
+	});
+}
+
+function refreshPlayersListExplicit()
+{
+	$("#draft_players").html("Loading...");
+	refreshPlayersList();
+}
+
+function refreshPlayersList()
+{
+	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'get-draft-players', 'draft_id' => $this->draft->draftId));?>", function( data ) {
+		$("#draft_players").empty();
+		if(data["draft"]["status"] == draftStatuses.open)
+		{
+			$("#draft_players").append("<p>The draft is now open for players to join. Link to open lobby for this draft:</p>");
+			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' size='65' style='font-family:monospace'/><br/>");
+			$("#draft_players").append("<p>Share this link with the players - each player will be able to join at their own leisure.</p>")
+			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name and click \"Join\". Feel free to use one of those links yourself (you still have to open it and join).</p>");
+			$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
+
+			var items = [];
+			$.each( data["draftPlayers"], function( key, val ) {
+				var url = "<input type='text' readonly value='/draft/" + val["inviteKey"] + "' size='65' style='font-family:monospace'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
+				$("#draft_players").append("<div>" + url + "</div>");
+			});
+			
+			$("#draft_players").append("<p>Once all the players have joined, you can start the draft by clicking \"Start draft\". Once the draft is started, players that haven't joined yet won't be able to join anymore. Places at the draft table will only be created for the players that have joined.");
+			$("#draft_players").append("<button onclick=\"startDraft()\">Start draft</button>");
+		}
+		else if(data["draft"]["status"] == draftStatuses.running || data["draft"]["status"] == draftStatuses.finished)
+		{
+			if(data["draft"]["status"] == draftStatuses.running)
+			{
+				$("#draft_players").append("<p>The draft is now running and players can make their picks. You can obtain their pick lists here. If you are playing in the draft, please don't use this to get an unfair advantage, please :)</p>");
+				$("#draft_players").append("<button onclick=\"refreshPlayersListExplicit()\">Refresh</button><br/>");
+				$("#draft_players").append("Pack: " + data["draft"]["packNumber"] + ", pick: " + data["draft"]["pickNumber"] + "<br/>");
+			}
+			else {
+				$("#draft_players").append("<p>The draft has concluded. You can obtain the pick lists here.</p>");
+			}
+			
+			var items = [];
+			$.each( data["draftPlayers"], function( key, val ) {
+				if(!val["hasJoined"])
+				{
+					return;
+				}
+				
+				var url = "<a href='/draft/" + val["inviteKey"] + "/pick-list'>" + val["name"] + "</a>";
+				$("#draft_players").append("<div>" + url + "</div>");
+			});
+		}
+	});
+}
+
+function startDraft()
+{
+	$("#draft_players").html("Loading...");
+	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'start-draft', 'draft_id' => $this->draft->draftId));?>", function( data ) {		
+		refreshPlayersList();
+	});
+}
+
+</script>

@@ -1,0 +1,61 @@
+<h2>Create a set</h2>
+<?php
+$form = $this->form;
+$formLabel = $this->plugin('formLabel');
+
+$form->setAttribute('action', $this->url('member-area', array('action' => 'create-set'))); 
+$form->prepare();
+ 
+echo $this->form()->openTag($form);
+?>
+<div class="form_element">
+<?php
+    $name = $form->get('name');
+    echo $formLabel->openTag() . $name->getOption('label');
+    echo $this->formInput($name);
+    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $code = $form->get('code');
+    echo $formLabel->openTag() . $code->getOption('label');
+    echo $this->formInput($code);
+    echo $this->formElementErrors($code) . "<small>" . $code->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $infoUrl = $form->get('info_url');
+    echo $formLabel->openTag() . $infoUrl->getOption('label');
+    echo $this->formInput($infoUrl);
+    echo $this->formElementErrors($infoUrl) . "<small>" . $infoUrl->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $artUrl = $form->get('art_url');
+    echo $formLabel->openTag() . $artUrl->getOption('label');
+    echo $this->formInput($artUrl);
+    echo $this->formElementErrors($artUrl) . "<small>" . $artUrl->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $file = $form->get('file');
+    echo $formLabel->openTag() . $file->getOption('label');
+    echo $this->formInput($file);
+    echo $this->formElementErrors($file) . "<small>" . $file->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+<div class="form_element">
+<?php
+echo $this->formSubmit($form->get('submit'));
+?>
+</div>
+<?php
+echo $this->form()->closeTag();

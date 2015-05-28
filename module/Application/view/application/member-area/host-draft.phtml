@@ -1,0 +1,54 @@
+<h2>Host a draft</h2>
+<?php
+$form = $this->form;
+$formLabel = $this->plugin('formLabel');
+
+$form->setAttribute('action', $this->url('member-area', array('action' => 'host-draft'))); 
+$form->prepare();
+ 
+echo $this->form()->openTag($form);
+?>
+<div class="form_element">
+<?php
+    $pack1 = $form->get('pack1');
+    echo $formLabel->openTag() . $pack1->getOption('label');
+    echo $this->formElement($pack1);
+    echo $this->formElementErrors($pack1) . "<small>" . $pack1->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $pack2 = $form->get('pack2');
+    echo $formLabel->openTag() . $pack2->getOption('label');
+    echo $this->formElement($pack2);
+    echo $this->formElementErrors($pack2) . "<small>" . $pack2->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $pack3 = $form->get('pack3');
+    echo $formLabel->openTag() . $pack3->getOption('label');
+    echo $this->formElement($pack3);
+    echo $this->formElementErrors($pack3) . "<small>" . $pack3->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+/*
+    $mode = $form->get('mode');
+    echo $formLabel->openTag() . $mode->getOption('label');
+    echo $this->formElement($mode);
+    echo $this->formElementErrors($mode) . "<small>" . $mode->getOption('description') . "</small>";
+    echo $formLabel->closeTag();*/
+?>
+</div>
+<div class="form_element">
+<?php
+echo $this->formSubmit($form->get('submit')) . '<small>' . $form->get('submit')->getOption('description') . '</small>';
+?>
+</div>
+<?php
+echo $this->form()->closeTag();

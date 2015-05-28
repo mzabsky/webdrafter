@@ -1,0 +1,257 @@
+<audio id="audio_notification" src="/audio/267337__gkillhour__ding-4.wav" preload="auto"></audio>
+<h2><?php echo $this->draft->name; ?></h2>
+<div id="draft">Loading...</div>
+<div style="display:none" id="cardpool">
+<?php
+foreach ($this->cards as $card)
+{
+	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' height='300' style='padding:6px;min-width:215px;vertical-align:middle' class='card'/>\n"; 	
+}
+?>
+</div>
+<script>
+var draftStatuses = {"open":1, "running":2, "finished":3};
+var pickZones = {"maindeck":0, "sideboard":1, "hidden":2};
+var timer = null;
+var xhr = null;
+var lastPackPick = null;
+var lastDraftInfo = null;
+/*var lastDraftInfos = {
+	all: null,
+	draftPlayers: null,
+	booster: null,
+	picks: null
+}*/
+
+$(document).ready(function(){
+	$("#draft").html("Loading...");
+	refreshDraft();
+});
+
+/*function (spoiler, a, b) {
+    var rate = function (x) {
+        if (x.rarity == 'C') return 4;
+        else if (x.rarity == 'U') return 3;
+        else if (x.rarity == 'R') return 2;
+        else if (x.rarity == 'M') return 1;
+        else throw "Not reached";
+    }
+
+    var ratingA = rate(a);
+    var ratingB = rate(b);
+
+    if (ratingA == ratingB) return spoiler.sortFunctions["color"](spoiler, a, b);
+    else return ratingA - ratingB;
+}*/
+
+function joinDraft()
+{
+	var playerName = $("#player_name").val();
+	if(playerName.length == 0)
+	{
+		alert("Please fill in player name before joining.");
+		return;
+	}
+	
+	$("#draft").html("Loading...");
+	$.getJSON( "<?php echo $this->url('draft', array('action' => 'join', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?name=" + playerName, function( data ) {		
+		refreshDraft();
+	});
+}
+
+function refreshDraftExplicit()
+{
+	$("#draft").html("Loading...");
+	refresh();
+}
+
+function refreshCardCounts()
+{
+	var total = 0;
+	$("#deckbuilder .cardcount" ).each(function(index) {
+		  var count = $("#deckbuilder tbody td:eq(" + index + ") img.card").filter(function(){
+	          return $(this).css("position") == "static"; // At the end of a drag-drop operation, the object is actually both in the original and the target columns (the original has position absolute and shouldn't be counted) 
+		  }).size();
+		  total += count;
+		  $(this).html(count);
+	});
+	$("#totalcount").html(total);
+}
+
+function refreshDraft()
+{
+	if(timer != null)
+	{
+		clearTimeout(timer);
+	}
+
+	if(xhr != null)
+	{
+		xhr.abort();
+		xhr = null;
+	}
+	
+	xhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'get-draft-info', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", function( data ) {		
+		xhr = null;
+
+		var str = JSON.stringify(data);
+		if(lastDraftInfo == str)
+		{
+			timer = setTimeout(function(){ refreshDraft(); }, 1000);
+			return;
+		}
+
+		lastDraftInfo = str;
+		
+		$("#draft").empty();
+		if(data["draftStatus"] == draftStatuses.open)
+		{
+			if(data["hasJoined"]){
+				$("#draft").html("You have joined this draft. Please wait until the host starts it.");
+				timer = setTimeout(function(){ refreshDraft(); }, 1000);
+			}
+			else {
+				$("#draft").html("You have not joined this draft yet. If the host starts it now, you will not be opart of the draft. Click the button below to join.<br /><br />");
+				$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' /> <button onclick='joinDraft()'>Join draft</button>");
+			}
+		}
+		else if(data["draftStatus"] == draftStatuses.running)
+		{
+			var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";	
+			$("#draft").append(directionArrow);
+			$.each( data["pickIndicators"], function( key, val ) {
+				if(val)
+				{
+					$("#draft").append("<b>" + key + "</b>" + directionArrow);
+				}
+				else 
+				{
+					$("#draft").append(key + directionArrow);
+				}
+			});
+			
+			$("#draft").append("<p><b>Pack: " + data["packNumber"] + ", pick: " + data["pickNumber"] + "</b></p>");
+			if(data['hasPicked']){
+				$("#draft").append("<p>You have already picked a card. Please wait until other players make a pick as well.</p>");
+			}
+			else {
+				var packPick = "P" + data["packNumber"] + "P" + data["pickNumber"];
+				if(lastPackPick != packPick)
+				{
+					document.getElementById('audio_notification').play();
+					lastPackPick = packPick;
+				}
+				
+				$("#draft").append("Double click a card to make a pick.<div id='booster'></div>");
+				$.each( data["booster"], function( key, val ) {
+					$("#booster").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone().attr("pickId", val["pickId"]));
+				});
+				$("#draft").append("<hr />");
+				$("#booster img").dblclick(function() {
+					if(xhr != null)
+					{
+						xhr.abort();
+						xhr = null;
+					}
+					if(timer != null)
+					{
+						clearTimeout(timer);
+					}
+					$("#draft").html("Loading...");
+					$.getJSON( "<?php echo $this->url('draft', array('action' => 'pick', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pickId=" + $(this).attr("pickId"), function( data ) {
+						refreshDraft();
+					});
+				});
+			}
+							
+			$("#draft").append("Picked cards: <div id='picks'></div>");
+
+			
+			$.each( data["picks"], function( key, val ) {
+				$("#picks").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone());
+			});
+
+			timer = setTimeout(function(){ refreshDraft(); }, 1000);
+		}
+		else if(data["draftStatus"] == draftStatuses.finished)
+		{
+			$("#draft").append("<p>The draft has concluded.</p>");
+			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=text'>Export deck as text</a>.</p>");
+			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=cockatrice'>Export deck for Cockatrice</a>.</p>");
+			$("#draft").append("<p>Picked cards:</p><p>Cards in deck: <span id='totalcount'></span></p> <table id='deckbuilder' border style='table-layout: fixed; width: 0px;'><thead><tr></tr></thead><tbody><tr></tr></tbody></table>");
+
+			var maxColumns = 7;
+			for(var i = 0; i < maxColumns; i++)
+			{
+				$("#deckbuilder thead tr").append("<td>" + (i + 1) + " - <span class='cardcount'></span></td>");	
+			}
+
+			$("#deckbuilder thead tr").append("<td>Sideboard</td>");
+			
+			for(var i = 0; i < maxColumns; i++)
+			{
+				$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_MAINDECK?>' zoneColumn='" + i + "'></td>");
+			}
+
+			$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_SIDEBOARD?>' zoneColumn='0'></td>");
+			
+			$.each( data["picks"], function( key, val ) {
+				var card = $("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone();
+				//card.css("vertical-align", "top");
+				card.attr("pickId", val["pickId"]);
+				
+				var column;
+				switch(val["zone"])
+				{
+				case pickZones.maindeck:
+					column = val["zoneColumn"];
+					break;	
+				case pickZones.sideboard:
+					column = maxColumns;
+					break;
+				default:
+					column = -1;
+				}
+
+				$("#deckbuilder tbody td:eq(" + column + ")").append(card);
+				card.draggable({
+					helper: "clone",
+					containment: $("#deckbuilder"),
+					revert: "invalid"
+				});
+				
+				$("#deckbuilder tbody td").droppable({
+					drop: function(e, droppedCard)
+					{
+						var pickId = droppedCard.draggable.attr("pickId");
+						droppedCard.draggable.detach().appendTo($(this));
+						
+						$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
+
+						refreshCardCounts();
+					}
+				});
+			});
+
+
+			refreshCardCounts();
+
+			$(document).tooltip({
+				items: "#deckbuilder .card",
+				track: true,
+				show: false,
+				hide: false,
+				content: function(){
+					var element = $(this);
+					return "<img src='" + element.attr("src") + "'>";
+				}
+			});
+
+			if(data["draftStatus"] != draftStatuses.finished)
+			{
+				timer = setTimeout(function(){ refreshDraft(); }, 1000);
+			}
+		}		
+	});
+}
+</script>

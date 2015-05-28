@@ -1,0 +1,6 @@
+<h2>Sets</h2>
+<?php
+foreach($this->sets as $set)
+{
+	echo "<a href='" . $this->url('browse-set', array('action' => 'set', 'set_id' => $set->setId)) . "'>[" . $set->code . "] " . $set->name . "</a><br />";
+}

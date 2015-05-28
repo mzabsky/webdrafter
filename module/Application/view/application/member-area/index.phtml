@@ -1,0 +1,77 @@
+<?php 
+if($this->setCreated)
+{
+?>
+	<div class="success-message"/>Set created!</div>
+<?php 
+}
+
+if($this->setRetired)
+{
+	?>
+	<div class="success-message"/>Set retired!</div>
+<?php 
+}
+
+
+?>
+
+<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
+<a href="<?php echo $this->url('member-area', array('action' => 'host-draft'));?>">Host a draft</a>
+<br />
+<br />
+Sets you created:<br>
+<?php
+foreach ($this->setsOwned as $set)
+{
+	echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a> <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a><br />";	
+}
+?>
+<br />
+Drafts you hosted:<br>
+<?php
+foreach ($this->draftsHosted as $draft)
+{
+	echo "<a href='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId)) . "'>" . $draft->name . "</a>";
+	echo " - ";
+	switch($draft->status)
+	{
+		case \Application\Model\Draft::STATUS_OPEN:
+			echo "OPEN";
+			break;
+		case \Application\Model\Draft::STATUS_RUNNING:
+			echo "RUNNING - pack " . $draft->packNumber . ", pick " . $draft->pickNumber;
+			break;
+		case \Application\Model\Draft::STATUS_FINISHED:
+			echo "FINISHED";
+			break;
+	}
+	
+	echo "<br />";
+}
+?>
+<br />
+Drafts you played in:<br>
+<?php
+foreach ($this->draftsPlayed as $draft)
+{
+	echo "<a href='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'>" . $draft["draftName"] . "</a>";
+	echo " - ";
+	switch($draft["draftStatus"])
+	{
+		case \Application\Model\Draft::STATUS_OPEN:
+			echo "OPEN";
+			break;
+		case \Application\Model\Draft::STATUS_RUNNING:
+			echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["packNumber"];
+			break;
+		case \Application\Model\Draft::STATUS_FINISHED:
+			echo "FINISHED";
+			break;
+	}
+	
+	echo "<br />";
+}
+
+
+?>

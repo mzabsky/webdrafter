@@ -1,0 +1,19 @@
+body {
+    padding-bottom: 40px;
+}
+
+#deckbuilder td
+{
+	width: 230px;
+}
+
+#deckbuilder tbody td
+{
+	padding-bottom: 280px;
+	vertical-align: top;
+}
+
+#deckbuilder img
+{
+	margin-bottom: -280px;
+}
