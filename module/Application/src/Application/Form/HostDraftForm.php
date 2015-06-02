@@ -9,7 +9,7 @@ use Application\Model\SetTable;
 
 class HostDraftForm extends Form
 {
-	public function __construct(SetTable $setTable)
+	public function __construct(SetTable $setTable, $mode)
 	{
 		parent::__construct(null);
 		//$this->setMethod("post");
@@ -26,69 +26,75 @@ class HostDraftForm extends Form
     	{
     		$packOptions[$set->setId] = $set->code . " - " . $set->name;
     	}
-    	
-		$this->add($factory->createElement(array(
-			'name' => 'pack1',
-			'type' => 'Zend\Form\Element\Select',
-			'required' => true,
-			'options' => array(
-				'label' => 'Pack #1',
-				'value_options' => $packOptions,
-				//'description' => 'Set for the first pack.'
-			),
-		)));
 
-		$this->add($factory->createElement(array(
-				'name' => 'pack2',
-				'type' => 'Zend\Form\Element\Select',
-				'required' => true,
-				'options' => array(
-						'label' => 'Pack #2',
-						'value_options' => $packOptions,
-						//'description' => 'Set for the first pack.'
-				),
-		)));
+    	$this->add($factory->createElement(array(
+    			'name' => 'mode',
+    			'type' => 'Zend\Form\Element\Hidden',
+    			'required' => true,
+			    'attributes' => array(
+			         'value' => $_REQUEST['mode']
+			    )
+    	)));
+
+    	if(isset($_REQUEST['number_of_packs']))
+    	{
+    		$numberOfPacks = (int)$_REQUEST['number_of_packs'];
+    	}
+    	else {
+    		switch($mode)
+    		{
+    			case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
+    				$numberOfPacks = 3;
+    				break;
+    			case \Application\Model\Draft::MODE_CHAOS_DRAFT:
+    			case \Application\Model\Draft::MODE_CUBE_DRAFT:
+    				$numberOfPacks = 1;
+    				break;
+    			case \Application\Model\Draft::MODE_SEALED_DECK:
+    				$numberOfPacks = 6;
+    				break;
+    			default:
+    				throw new \Exception("Invalid game mode " . $mode);
+    					
+    		}
+    		
+    	}
+    	
+    	$this->add($factory->createElement(array(
+    			'name' => 'number_of_packs',
+    			'type' => 'Zend\Form\Element\Hidden',
+    			'required' => true,
+    			'attributes' => array(
+    					'value' => $numberOfPacks
+    			)
+    	)));
+    	
+    	for($i = 1; $i <= $numberOfPacks; $i++)
+    	{
+    		$this->add($factory->createElement(array(
+    				'name' => 'pack' . $i,
+    				'type' => 'Zend\Form\Element\Select',
+    				'required' => true,
+    				'options' => array(
+    						'label' => 'Pack #' . $i,
+    						'value_options' => $packOptions,
+    						//'description' => 'Set for the first pack.'
+    				),
+    				'attributes' => array(
+    						'multiple' => $mode == \Application\Model\Draft::MODE_CHAOS_DRAFT ? 'multiple' : '0',
+    				),
+    		)));    			
+    	}
 		
-		$this->add($factory->createElement(array(
-				'name' => 'pack3',
-				'type' => 'Zend\Form\Element\Select',
-				'required' => true,
-				'options' => array(
-						'label' => 'Pack #3',
-						'value_options' => $packOptions,
-						//'description' => 'Set for the first pack.'
-				),
-		)));
-		
-		/*$this->add($factory->createElement(array(
-				'name' => 'mode',
-				'type' => 'Zend\Form\Element\Radio',
-				'required' => false,
-				'allow_empty' => true,
-				'attributes' => array(
-					'disabled' => 'disabled',
-					'value' => 1
-				),
-				'options' => array(
-						'label' => 'Game mode',
-						'value_options' => array(
-							1 => 'Booster draft',
-							2 => 'Cube draft',
-							3 => 'Sealed deck',
-						),
-						'description' => '(Only Booster draft is currently supported)'
-				),
-		)));*/
 		$this->add($factory->createElement(array(
 			'name' => 'submit',
             'attributes' => array(
-                'value' => 'Open the draft',
+                'value' => 'Open the event',
             ),
 			'options' => array(
-				'description' => 'Once the draft is opened, you can generate invite links and allow players to join.'
+				'description' => 'Once the event is opened, you can generate invite links and allow players to join.'
 			),
 			'type' => 'submit',
-			'required' => true,
 		)));
 
 		//$this->addElements(array($name, $code, $infoUrl, $artUrl, $file));

@@ -1,4 +1,5 @@
-<h2>Host a draft</h2>
+<h2>Host an event</h2>
+<!--  <button>Add pack</button>-->
 <?php
 $form = $this->form;
 $formLabel = $this->plugin('formLabel');
@@ -7,34 +8,24 @@ $form->setAttribute('action', $this->url('member-area', array('action' => 'host-
 $form->prepare();
  
 echo $this->form()->openTag($form);
+echo $this->formElement($form->get('mode'));
+echo $this->formElement($form->get('number_of_packs'));
+
+for($i = 1; $i <= $form->get('number_of_packs')->getvalue(); $i++)
+{
 ?>
 <div class="form_element">
 <?php
-    $pack1 = $form->get('pack1');
-    echo $formLabel->openTag() . $pack1->getOption('label');
-    echo $this->formElement($pack1);
-    echo $this->formElementErrors($pack1) . "<small>" . $pack1->getOption('description') . "</small>";
+    $pack = $form->get('pack' . $i);
+    echo $formLabel->openTag() /*. $pack->getOption('label')*/;
+    echo $this->formElement($pack);
+    echo $this->formElementErrors($pack) /*. "<small>" . $pack->getOption('description') . "</small>"*/;
     echo $formLabel->closeTag();
 ?>
 </div>
-<div class="form_element">
-<?php
-    $pack2 = $form->get('pack2');
-    echo $formLabel->openTag() . $pack2->getOption('label');
-    echo $this->formElement($pack2);
-    echo $this->formElementErrors($pack2) . "<small>" . $pack2->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
+<?php 
+}
 ?>
-</div>
-<div class="form_element">
-<?php
-    $pack3 = $form->get('pack3');
-    echo $formLabel->openTag() . $pack3->getOption('label');
-    echo $this->formElement($pack3);
-    echo $this->formElementErrors($pack3) . "<small>" . $pack3->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
 <div class="form_element">
 <?php
 /*

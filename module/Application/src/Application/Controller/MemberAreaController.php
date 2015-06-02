@@ -20,6 +20,7 @@ use Zend\View\Model\JsonModel;
 use Application\Model\DraftPlayer;
 use Application\Model\User;
 use Application\PackGenerator\BoosterDraftPackGenerator;
+use Application\PackGenerator\CubePackGenerator;
 
 class MemberAreaController extends AbstractActionController
 {
@@ -200,13 +201,26 @@ class MemberAreaController extends AbstractActionController
 		return $viewModel;
 	}
 	
+	public function selectGameModeAction()
+	{
+		$this->checkUser();
+		return new ViewModel();
+	}
+	
 	public function hostDraftAction()
 	{
 		$this->checkUser();
 		
+		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
+		{
+			throw new \Exception("Game mode not set");
+		}
+		
+		$mode = (int)$_REQUEST["mode"];
+		
 		$sm = $this->getServiceLocator();
-		$setTable = $sm->get('Application\Model\SetTable');
-		$form = new \Application\Form\HostDraftForm($setTable);
+		$setTable = $sm->get('Application\Model\SetTable');		
+		$form = new \Application\Form\HostDraftForm($setTable, $mode);
 	
 		if ($this->getRequest()->isPost())
 		{
@@ -222,7 +236,47 @@ class MemberAreaController extends AbstractActionController
 				{
 					
 					$setTable = $sm->get('Application\Model\SetTable');
-					$setIds = array($formData['pack1'], $formData['pack2'], $formData['pack3']);
+					
+
+					$setIds = array();
+					$numberOfPacks = (int)$formData['number_of_packs'];
+					switch($mode)
+					{
+						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
+						case \Application\Model\Draft::MODE_SEALED_DECK:
+						case \Application\Model\Draft::MODE_CUBE_DRAFT:
+							for($i = 1; $i <= $numberOfPacks; $i++)
+							{
+								$setIds[] = $formData['pack' . $i];
+							}
+							break;
+						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
+							$setIds = $formData['pack1'];
+							break;
+						default:
+							throw new \Exception("Invalid game mode " . $mode);
+								
+					}
+					
+					switch($mode)
+					{
+						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
+							$modeName = 'booster draft';
+							break;
+						case \Application\Model\Draft::MODE_SEALED_DECK:
+							$modeName = 'sealed deck';
+							break;
+						case \Application\Model\Draft::MODE_CUBE_DRAFT:
+							$modeName = 'cube draft';
+							break;
+						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
+							$modeName = 'chaos draft';
+							break;
+						default:
+							throw new \Exception("Invalid game mode " . $mode);
+					
+					}
+					
 					$sets = array();
 					$setCodes = array();					
 					foreach($setIds as $setId)
@@ -233,14 +287,14 @@ class MemberAreaController extends AbstractActionController
 					}
 					
 					$draft = new Draft();
-					$draft->name = join("/", $setCodes) . " on " . date("r").
+					$draft->name = join("/", $setCodes) . " " . $modeName . " on " . date("r").
 					$draft->status = Draft::STATUS_OPEN;
 					$draft->hostId = $_SESSION["user_id"];
 					$draft->createdOn = date("Y-m-d H:i:s");
 					$draft->pickNumber = 1;
 					$draft->packNumber = 1;
 					$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
-					$draft->gameMode = Draft::MODE_BOOSTER_DRAFT;
+					$draft->gameMode = $mode;
 						
 					$draftTable = $sm->get('Application\Model\DraftTable');
 					$draftTable->saveDraft($draft);
@@ -365,7 +419,7 @@ class MemberAreaController extends AbstractActionController
 				throw new Exception("Invalid status");
 			}
 			
-			$draft->status = Draft::STATUS_RUNNING;
+			$draft->status = $draft->gameMode == Draft::MODE_SEALED_DECK ? Draft::STATUS_FINISHED : Draft::STATUS_RUNNING;
 			$draftTable->saveDraft($draft); 
 
 			$draftPlayers = $draftPlayerTable->fetchJoinedByDraft($draftId);
@@ -377,33 +431,115 @@ class MemberAreaController extends AbstractActionController
 			$numberOfPlayers = count($draftPlayerArray);
 			
 			// Create packs
-			$packGenerator = new BoosterDraftPackGenerator();
-			$draftSets = $draftSetTable->fetchByDraft($draftId);
-			$picks = array();
-			foreach($draftSets as $setIndex => $draftSet)
-			{		
+			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
+			{
+				$packGenerator = new BoosterDraftPackGenerator();
+				$draftSets = $draftSetTable->fetchByDraft($draftId);
+				$picks = array();
+				foreach($draftSets as $setIndex => $draftSet)
+				{		
+					$cards = $cardTable->fetchBySet($draftSet->setId);
+					$cardArray = array();
+					foreach($cards as $card)
+					{
+						$cardArray[] = $card;
+					}
+					
+					$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers);
+					foreach($draftPlayerArray as $playerIndex => $player)
+					{
+						foreach ($packs[$playerIndex] as $card)
+						{
+							$pick = new Pick();
+							$pick->cardId = $card->cardId;
+							$pick->startingPlayerId = $player->draftPlayerId;
+							$pick->currentPlayerId = $player->draftPlayerId;
+							$pick->isPicked = $draft->gameMode == Draft::MODE_SEALED_DECK ? 1 : 0;
+							$pick->packNumber = $setIndex + 1;
+							$pick->pickNumber = null;
+							$pick->zone = Pick::ZONE_MAINDECK;
+							$pick->zoneColumn = 0;
+							$picks[] = $pick;
+						}
+					}
+				}
+			}
+			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT)
+			{
+				$packGenerator = new CubePackGenerator();				
+				$draftSet = $draftSetTable->fetchByDraft($draftId)->current();
 				$cards = $cardTable->fetchBySet($draftSet->setId);
-				$cardArray = array();
+				
+				$cardArray = array();				
 				foreach($cards as $card)
 				{
 					$cardArray[] = $card;
 				}
 				
-				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers);
+				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * 3);
+				
+				$picks = array();
 				foreach($draftPlayerArray as $playerIndex => $player)
 				{
-					foreach ($packs[$playerIndex] as $card)
+					for($i = 0; $i < 3; $i++)
 					{
-						$pick = new Pick();
-						$pick->cardId = $card->cardId;
-						$pick->startingPlayerId = $player->draftPlayerId;
-						$pick->currentPlayerId = $player->draftPlayerId;
-						$pick->isPicked = 0;
-						$pick->packNumber = $setIndex + 1;
-						$pick->pickNumber = null;
-						$pick->zone = Pick::ZONE_MAINDECK;
-						$pick->zoneColumn = 0;
-						$picks[] = $pick;
+						foreach ($packs[$playerIndex * 3 + $i] as $card)
+						{
+							$pick = new Pick();
+							$pick->cardId = $card->cardId;
+							$pick->startingPlayerId = $player->draftPlayerId;
+							$pick->currentPlayerId = $player->draftPlayerId;
+							$pick->isPicked = $draft->gameMode == Draft::MODE_SEALED_DECK ? 1 : 0;
+							$pick->packNumber = $i + 1;
+							$pick->pickNumber = null;
+							$pick->zone = Pick::ZONE_MAINDECK;
+							$pick->zoneColumn = 0;
+							$picks[] = $pick;
+						}
+					}
+				}
+			}
+			else if($draft->gameMode == Draft::MODE_CHAOS_DRAFT)
+			{
+				$packGenerator = new BoosterDraftPackGenerator();
+				$draftSets = $draftSetTable->fetchByDraft($draftId);
+				$draftSetArray = array();				
+				
+				$convertedDraftSets = \Application\resultSetToArray($draftSets);
+				while(count($draftSetArray) < 3 * $numberOfPlayers)
+				{
+					foreach($convertedDraftSets as $draftSet)
+					{
+						$draftSetArray[] = $draftSet;		
+					}
+					
+					if(count($draftSetArray) == 0) throw new \Exception("No sets selected for this draft");
+				}
+				
+				shuffle($draftSetArray);
+				
+				$picks = array();
+				foreach($draftPlayerArray as $playerIndex => $player)
+				{
+					for($i = 0; $i < 3; $i++)
+					{
+
+						$cards = $cardTable->fetchBySet($draftSetArray[$playerIndex * 3 + $i]->setId);
+						$pack = $packGenerator->generatePacks($cards, 1)[0];
+						
+						foreach ($pack as $card)
+						{
+							$pick = new Pick();
+							$pick->cardId = $card->cardId;
+							$pick->startingPlayerId = $player->draftPlayerId;
+							$pick->currentPlayerId = $player->draftPlayerId;
+							$pick->isPicked = $draft->gameMode == Draft::MODE_SEALED_DECK ? 1 : 0;
+							$pick->packNumber = $i + 1;
+							$pick->pickNumber = null;
+							$pick->zone = Pick::ZONE_MAINDECK;
+							$pick->zoneColumn = 0;
+							$picks[] = $pick;
+						}
 					}
 				}
 			}
