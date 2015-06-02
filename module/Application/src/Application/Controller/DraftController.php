@@ -71,6 +71,7 @@ class DraftController extends AbstractActionController
 		{
 			case Draft::STATUS_OPEN:
 				$jsonModel->hasJoined = $this->draftPlayer->hasJoined;
+				$jsonModel->draftPlayers = \Application\resultSetToArray($this->draftPlayerTable->fetchByDraft($this->draft->draftId));
 				break;
 			case Draft::STATUS_RUNNING:
 				$jsonModel->booster = \Application\resultSetToArray($this->pickTable->fetchBoosterForPlayer($this->draftPlayer->draftPlayerId));

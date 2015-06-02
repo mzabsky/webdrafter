@@ -107,7 +107,11 @@ function refreshDraft()
 		if(data["draftStatus"] == draftStatuses.open)
 		{
 			if(data["hasJoined"]){
-				$("#draft").html("You have joined this draft. Please wait until the host starts it.");
+				$("#draft").html("<p>You have joined this draft. Please wait until the host starts it.</p>");
+				$("#draft").append("<p><b>Joined players<b>: </p>");
+				$.each( data["draftPlayers"], function( key, val ) {
+					$("#draft").append(val["name"] + "<br/>");
+				});
 				timer = setTimeout(function(){ refreshDraft(); }, 1000);
 			}
 			else {
