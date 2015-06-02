@@ -98,13 +98,33 @@ class CreateSetForm extends Form
 		)));
 		
 		$this->add($factory->createElement(array(
+				'name' => 'download_url',
+				'required' => false,
+				'allow_empty' => true,
+				'options' => array(
+						'label' => 'Download URL:',
+						'description' => 'URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
+				),
+				'validators' => array(
+						array(
+								'name' => 'StringLength',
+								'options' => array(
+										'encoding' => 'UTF-8',
+										'min' => '3',
+										'max' => '255',
+								),
+						),
+				),
+		)));
+		
+		$this->add($factory->createElement(array(
 			'name' => 'file',
 			'type' => 'file',
 			'required' => true,
 			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Set file: ',
-				'description' => 'Text file containing the cards. Exported using <a href="http://www.mtgsalvation.com/forums/creativity/custom-card-creation/597656-isochron-drafter-a-way-to-draft-custom-sets-online">IsochronDrafter</a> MSE2 set exporter.'
+				'description' => 'Text file containing the cards. Exported using <a href="http://puu.sh/i8GMt/28e82db942.zip">WebDrafter</a> MSE2 set exporter.'
 			),
 			'filters' => array(
 				array(

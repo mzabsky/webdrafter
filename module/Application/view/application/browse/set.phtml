@@ -1,6 +1,7 @@
 <h2><?php echo "[" . $this->set->code . "] " . $this->set->name; ?></h2>
 <?php if($this->set->isRetired){ ?><p><b>This set is retired and is only stored for archiving purposes.</b></p><?php } ?>
 <p><a href="<?php echo $this->set->url ?>">Set information</a></p>
+<?php if($this->set->downloadUrl != null) { ?><p><a href="<?php echo $this->set->downloadUrl ?>">Set download</a></p><?php } ?>
 <p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></p>
 <p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></p>
 <?php

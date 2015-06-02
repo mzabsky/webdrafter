@@ -156,6 +156,7 @@ class MemberAreaController extends AbstractActionController
 					$set->name = $formData["name"];
 					$set->code = $formData["code"];
 					$set->url = $formData["info_url"];
+					$set->downloadUrl = $formData["download_url"];
 					$set->userId = $_SESSION["user_id"];
 					$set->isRetired = 0;
 					

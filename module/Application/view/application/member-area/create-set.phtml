@@ -46,6 +46,15 @@ echo $this->form()->openTag($form);
 </div>
 <div class="form_element">
 <?php
+    $downloadUrl = $form->get('download_url');
+    echo $formLabel->openTag() . $downloadUrl->getOption('label');
+    echo $this->formInput($downloadUrl);
+    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
     $file = $form->get('file');
     echo $formLabel->openTag() . $file->getOption('label');
     echo $this->formInput($file);

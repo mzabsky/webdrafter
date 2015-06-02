@@ -10,6 +10,7 @@ class Set
 	public $url;
 	public $userId;
 	public $isRetired;
+	public $downloadUrl;
 
     public function exchangeArray($data)
     {
@@ -19,5 +20,6 @@ class Set
         $this->url = (!empty($data['url'])) ? $data['url'] : null;
         $this->userId = (!empty($data['user_id'])) ? $data['user_id'] : null;
         $this->isRetired = $data['is_retired'];
+        $this->downloadUrl = (!empty($data['download_url'])) ? $data['download_url'] : null;
     }
 }

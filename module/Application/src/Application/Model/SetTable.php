@@ -45,6 +45,7 @@ class SetTable
 			'url'  => $set->url,
 			'user_id'  => $set->userId,
 			'is_retired'  => $set->isRetired,
+			'download_url'  => $set->downloadUrl,
 		);
 	
 		$id = (int) $set->setId;
