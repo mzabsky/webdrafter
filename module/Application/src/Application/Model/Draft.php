@@ -8,6 +8,12 @@ class Draft
 	const STATUS_RUNNING = 2;
 	const STATUS_FINISHED = 3;
 	
+
+	const MODE_BOOSTER_DRAFT = 1;
+	const MODE_CUBE_DRAFT = 2;
+	const MODE_CHAOS_DRAFT = 3;
+	const MODE_SEALED_DECK = 4;
+	
 	public $draftId;
 	public $status;
 	public $createdOn;
@@ -16,6 +22,7 @@ class Draft
 	public $packNumber;
 	public $pickNumber;
 	public $lobbyKey;
+	public $gameMode;
 
     public function exchangeArray($data)
     {
@@ -27,5 +34,6 @@ class Draft
         $this->packNumber = $data['pack_number'];
         $this->pickNumber = $data['pick_number'];
         $this->lobbyKey = $data['lobby_key'];
+        $this->gameMode = $data['game_mode'];
     }
 }

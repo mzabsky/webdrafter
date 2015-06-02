@@ -126,6 +126,7 @@ class DraftTable
 			'pack_number'  => $draft->packNumber,
 			'pick_number'  => $draft->pickNumber,
 			'lobby_key'  => $draft->lobbyKey,
+			'game_mode'  => $draft->game_mode,
 		);
 	
 		$id = (int) $draft->draftId;

@@ -240,6 +240,7 @@ class MemberAreaController extends AbstractActionController
 					$draft->pickNumber = 1;
 					$draft->packNumber = 1;
 					$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
+					$draft->gameMode = Draft::MODE_BOOSTER_DRAFT;
 						
 					$draftTable = $sm->get('Application\Model\DraftTable');
 					$draftTable->saveDraft($draft);
