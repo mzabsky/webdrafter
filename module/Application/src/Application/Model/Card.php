@@ -8,6 +8,8 @@ class Card
 	public $setId;
 	public $name;
 	public $colors;
+	public $types;
+	public $cmc;
 	public $rarity;
 	public $artUrl;
 
@@ -19,6 +21,8 @@ class Card
         $this->colors = (!empty($data['colors'])) ? $data['colors'] : null;
         $this->rarity = (!empty($data['rarity'])) ? $data['rarity'] : null;
         $this->artUrl = (!empty($data['art_url'])) ? $data['art_url'] : null;
+        $this->types = (!empty($data['types'])) ? $data['types'] : null;
+        $this->cmc = $data['cmc'];
     }
     
     public function __toString ()

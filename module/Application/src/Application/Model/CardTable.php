@@ -65,6 +65,8 @@ class CardTable
 			'colors'  => $card->colors,
 			'rarity'  => $card->rarity,
 			'art_url'  => $card->artUrl,
+			'types'  => $card->types,
+			'cmc'  => $card->cmc,
 		);
 	
 		$id = (int) $card->cardId;

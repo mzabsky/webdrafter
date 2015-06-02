@@ -4,7 +4,7 @@ namespace Application\SetParser;
 
 use Application\Model\Set;
 
-class IsochronDrafterSetParser
+class MagicWorkstationSetParser
 {
 	public function Parse($string)
 	{
@@ -12,6 +12,9 @@ class IsochronDrafterSetParser
 		
 		$rows = explode("\n", $string);
 		array_shift($rows); // Two meaningless lines in the start
+		array_shift($rows);
+		array_shift($rows);
+		array_shift($rows);
 		array_shift($rows);
 		
 		$currentCard = new \Application\Model\Card();
@@ -24,6 +27,7 @@ class IsochronDrafterSetParser
 			{
 				case "name":
 					$currentCard->name = $data;
+					$currentCard->color = "";
 					$state = "rarity";
 					break;
 				case "rarity":
@@ -33,25 +37,7 @@ class IsochronDrafterSetParser
 					else if($data == "mythic rare") $currentCard->rarity = "M";
 					else if($data == "basic land") $currentCard->rarity = "B";
 					else if($data == "special") $currentCard->rarity = "S";
-					else throw new \Exception("Invalid rarity " + $data);
-					$state = "colors";
-					break;
-				case "colors":
-					$currentCard->colors = "";
-					if(strpos($data, 'white') !== false) $currentCard->colors .= "W";
-					if(strpos($data, 'blue') !== false) $currentCard->colors .= "U";
-					if(strpos($data, 'black') !== false) $currentCard->colors .= "B";
-					if(strpos($data, 'red') !== false) $currentCard->colors .= "R";
-					if(strpos($data, 'green') !== false) $currentCard->colors .= "G";
-					if(strpos($data, 'land') !== false) $currentCard->colors = "";
-					$state = "types";
-					break;
-				case "types":
-					$currentCard->types = $data;
-					$state = "cmc";
-					break;
-				case "cmc":
-					$currentCard->cmc = (int)$data;
+					else throw new \Exception("Invalid rarity");
 					$state = "empty";
 					break;
 				case "empty":
