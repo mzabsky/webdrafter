@@ -35,11 +35,17 @@ class CardTable
 		return $resultSet;
 	}
 	
-	public function fetchPickedCards($draftPlayerId, $zone)
+	public function fetchPickedCards($draftPlayerId, $zone = null)
 	{
 		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($draftPlayerId, $zone){
 			$select->join('pick', 'card.card_id = pick.card_id', array());
-			$select->where(array('pick.current_player_id' => $draftPlayerId, 'is_picked' => 1, 'zone' => $zone));
+			$select->where(array('pick.current_player_id' => $draftPlayerId, 'is_picked' => 1));
+			
+			if($zone != null)
+			{
+				$select->where(array('zone' => $zone));
+			}
+			
 			$select->order('pick.pack_number ASC, pick.pick_number ASC');
 		});
 		return $resultSet;
