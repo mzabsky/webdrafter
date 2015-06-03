@@ -164,6 +164,20 @@ class DraftController extends AbstractActionController
 			{
 				$draftSets = \Application\resultSetToArray($this->draftSetTable->fetchByDraft($this->draft->draftId));
 				
+				switch($this->gameMode)
+				{
+					case Draft::MODE_BOOSTER_DRAFT:
+					case Draft::MODE_SEALED_DECK:
+						$actualNumberOfPacks = count($draftSets);
+						break;
+					case Draft::MODE_CHAOS_DRAFT:
+					case Draft::MODE_CUBE_DRAFT:
+						$actualNumberOfPacks = 3;
+						break;
+					default:
+						throw new \Exception("Invalid game mode " . $this->gameMode);
+				}
+				
 				if($this->draft->pickNumber < 14)
 				{
 					//DIE("shift");
@@ -198,7 +212,7 @@ class DraftController extends AbstractActionController
 						//$this->pickTable->shiftPicks($fromPlayerId, $toPlayerId, $this->draft->packNumber);
 					}
 				}
-				else if($this->draft->packNumber < count($draftSets))
+				else if($this->draft->packNumber < $actualNumberOfPacks)
 				{
 					//DIE("pack");
 					
