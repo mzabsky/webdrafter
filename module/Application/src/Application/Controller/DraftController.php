@@ -164,7 +164,7 @@ class DraftController extends AbstractActionController
 			{
 				$draftSets = \Application\resultSetToArray($this->draftSetTable->fetchByDraft($this->draft->draftId));
 				
-				switch($this->gameMode)
+				switch($this->draft->gameMode)
 				{
 					case Draft::MODE_BOOSTER_DRAFT:
 					case Draft::MODE_SEALED_DECK:
