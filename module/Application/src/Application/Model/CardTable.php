@@ -41,7 +41,7 @@ class CardTable
 			$select->join('pick', 'card.card_id = pick.card_id', array());
 			$select->where(array('pick.current_player_id' => $draftPlayerId, 'is_picked' => 1));
 			
-			if($zone != null)
+			if($zone !== null)
 			{
 				$select->where(array('zone' => $zone));
 			}
