@@ -1,11 +1,12 @@
 <audio id="audio_notification" src="/audio/267337__gkillhour__ding-4.wav" preload="auto"></audio>
 <h2><?php echo $this->draft->name; ?></h2>
+<div id="cardSizeSlider"></div>
 <div id="draft">Loading...</div>
 <div style="display:none" id="cardpool">
 <?php
 foreach ($this->cards as $card)
 {
-	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' height='300' style='padding:6px;min-width:215px;vertical-align:middle' class='card'/>\n"; 	
+	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' style='padding:6px;min-width:50px;vertical-align:middle' class='card'/>\n"; 	
 }
 ?>
 </div>
@@ -256,6 +257,32 @@ function refreshDraft()
 				timer = setTimeout(function(){ refreshDraft(); }, 1000);
 			}
 		}		
+
+		// Make the newly constructed UI elements are properly sized
+		updateSizes($("#cardSizeSlider").slider("value")); 
 	});
 }
+
+function sliderCallback (event, ui)
+{
+	updateSizes(ui.value); 
+};
+
+function updateSizes(size)
+{
+	console.log(size);
+	console.log($("#deckbuilder td"));
+	$(".card").height(size);
+	$("#deckbuilder td").width(218 * size / 300 + 12);
+	$("#deckbuilder img").css("margin-bottom", (-274) * (size) / (300) - 6);
+}
+
+$("#cardSizeSlider").slider({
+	  range: "min",
+      min: 100,
+      max: 600,
+      value: 200,
+      slide: sliderCallback,
+      change: sliderCallback
+});
 </script>
