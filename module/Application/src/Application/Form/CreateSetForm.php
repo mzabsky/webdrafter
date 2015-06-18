@@ -88,7 +88,7 @@ class CreateSetForm extends Form
 			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Art source URL:',
-				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed as &lt;Art source URL&gt;/&lt;Card name&gt;.png.'
+				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed using the format below.'
 			),
 			'validators' => array(
 				array(
