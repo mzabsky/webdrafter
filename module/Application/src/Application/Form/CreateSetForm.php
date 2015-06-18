@@ -8,6 +8,11 @@ use Zend\Form\Element\File;
 
 class CreateSetForm extends Form
 {
+	const NAME_DOT_PNG = 1;
+	const NAME_DOT_FULL_DOT_PNG = 2;
+	const NAME_DOT_JPG = 3;
+	const NAME_DOT_FULL_DOT_JPG = 4;
+	
 	public function __construct($options = null)
 	{
 		parent::__construct($options);
@@ -95,6 +100,22 @@ class CreateSetForm extends Form
 					),
 				),
 			),
+		)));
+		
+		$this->add($factory->createElement(array(
+				'name' => 'art_url_format',
+				'type' => 'Zend\Form\Element\Select',
+				'required' => true,
+				'options' => array(
+						'label' => 'Art URL format:',
+						'description' => '',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
+						'value_options' => [
+								CreateSetForm::NAME_DOT_PNG => '<base URL>/<card name>.png',
+								CreateSetForm::NAME_DOT_FULL_DOT_PNG => '<base URL>/<card name>.full.png',
+								CreateSetForm::NAME_DOT_JPG => '<base URL>/<card name>.jpg',
+								CreateSetForm::NAME_DOT_FULL_DOT_JPG => '<base URL>/<card name>.full.jpg',
+						],
+				),
 		)));
 		
 		$this->add($factory->createElement(array(

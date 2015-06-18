@@ -21,6 +21,7 @@ use Application\Model\DraftPlayer;
 use Application\Model\User;
 use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
+use Application\Form\CreateSetForm;
 
 class MemberAreaController extends AbstractActionController
 {
@@ -175,7 +176,25 @@ class MemberAreaController extends AbstractActionController
 					foreach($cards as $card)
 					{
 						$card->setId = $set->setId;
-						$card->artUrl = $artUrl . "/" . preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name) . ".png";
+						$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
+						switch($formData["art_url_format"])
+						{
+							case CreateSetForm::NAME_DOT_PNG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".png";
+								break;
+							case CreateSetForm::NAME_DOT_FULL_DOT_PNG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
+								break;
+							case CreateSetForm::NAME_DOT_JPG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
+								break;
+							case CreateSetForm::NAME_DOT_FULL_DOT_JPG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
+								break;
+							default:
+								throw new \Exception("Invalid art URL format.");
+						}
+						
 						$cardTable->saveCard($card);
 					}
 

@@ -33,7 +33,7 @@ class IsochronDrafterSetParser
 					else if($data == "mythic rare") $currentCard->rarity = "M";
 					else if($data == "basic land") $currentCard->rarity = "B";
 					else if($data == "special") $currentCard->rarity = "S";
-					else throw new \Exception("Invalid rarity " + $data);
+					else throw new \Exception("Invalid rarity " . $data);
 					$state = "colors";
 					break;
 				case "colors":
