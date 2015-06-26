@@ -361,5 +361,118 @@ class DraftController extends AbstractActionController
 		$jsonModel = new JsonModel();
 		return $jsonModel;
 	}
+	
+	public function sortPicksAction()
+	{
+		$this->init();
+
+
+		if($this->draft->status != Draft::STATUS_FINISHED)
+		{
+			throw new \Exception("Invalid draft status");
+		}
+
+
+		if(!isset($_GET["sort_by"]))
+		{
+			throw new \Exception("Invalid sort by");
+		}
+		
+		$cards = $this->cardTable->fetchPickedCards($this->draftPlayer->draftPlayerId);
+		$cardsById = array();
+		foreach($cards as $card)
+		{
+			$cardsById[$card->cardId] = $card;
+		}
+		
+		$picks = $this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId);		
+		
+		foreach($picks as $pick)
+		{
+			if($pick->zone != Pick::ZONE_MAINDECK) continue;
+			
+
+			//var_dump($pick->zoneColumn);
+			
+			$card = $cardsById[$pick->cardId];
+			switch ($_GET["sort_by"])
+			{
+				case "color":
+					if(strlen($card->colors) == 0)
+					{
+						$pick->zoneColumn = 0;
+					}
+					else if(strlen($card->colors) > 1)
+					{
+						$pick->zoneColumn = 1;
+					}
+					else if($card->colors == "W")
+					{
+						$pick->zoneColumn = 2;
+					}
+					else if($card->colors == "U")
+					{
+						$pick->zoneColumn = 3;
+					}
+					else if($card->colors == "B")
+					{
+						$pick->zoneColumn = 4;
+					}
+					else if($card->colors == "R")
+					{
+						$pick->zoneColumn = 5;
+					}
+					else if($card->colors == "G")
+					{
+						$pick->zoneColumn = 6;
+					}
+					else 
+					{
+						$pick->zoneColumn = 0;
+					}
+					break;
+				case "cmc":
+					if($card->cmc < 6)
+					{
+						$pick->zoneColumn = (int)$card->cmc;
+					}
+					else {
+						$pick->zoneColumn = 6;
+					}
+					break;
+				case "rarity":
+					if($card->rarity == "M")
+					{
+						$pick->zoneColumn = 0;
+					}
+					else if($card->rarity == "R")
+					{
+						$pick->zoneColumn = 1;
+					}
+					else if($card->rarity == "U")
+					{
+						$pick->zoneColumn = 2;
+					}
+					else if($card->rarity == "C")
+					{
+						$pick->zoneColumn = 3;
+					}					
+					else
+					{
+						$pick->zoneColumn = 4;
+					}
+					break;
+				default:
+					throw new \Exception("Invalid sort by");
+			}
+			
+			//var_dump($pick->zoneColumn);
+			$this->pickTable->savePick($pick);
+			//break;
+		}
+
+		$jsonModel = new JsonModel();
+		return $jsonModel;
+	}
 }
 ;

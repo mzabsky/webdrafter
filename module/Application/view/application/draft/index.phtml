@@ -183,7 +183,9 @@ function refreshDraft()
 			$("#draft").append("<p>The draft has concluded.</p>");
 			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=text'>Export deck as text</a>.</p>");
 			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=cockatrice'>Export deck for Cockatrice</a>.</p>");
-			$("#draft").append("<p>Picked cards:</p><p>Cards in deck: <span id='totalcount'></span></p> <table id='deckbuilder' border style='table-layout: fixed; width: 0px;'><thead><tr></tr></thead><tbody><tr></tr></tbody></table>");
+			$("#draft").append("<p>Picked cards:</p><p>Cards in deck: <span id='totalcount'></span></p>");
+			$("#draft").append("<p><button id='sort-by-color'>Sort by color</button><button id='sort-by-cmc'>Sort by CMC</button><button id='sort-by-rarity'>Sort by rarity</button></p>");
+			$("#draft").append("<table id='deckbuilder' border style='table-layout: fixed; width: 0px;'><thead><tr></tr></thead><tbody><tr></tr></tbody></table>");
 
 			var maxColumns = 7;
 			for(var i = 0; i < maxColumns; i++)
@@ -238,6 +240,17 @@ function refreshDraft()
 				});
 			});
 
+			$('#sort-by-color').click(function(){
+				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=color", function() { location.reload(); });
+			});
+
+			$('#sort-by-cmc').click(function(){
+				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=cmc", function() { location.reload(); });
+			});
+
+			$('#sort-by-rarity').click(function(){
+				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=rarity", function() { location.reload(); });
+			});
 
 			refreshCardCounts();
 

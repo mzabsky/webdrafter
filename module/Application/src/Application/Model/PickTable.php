@@ -124,7 +124,10 @@ class PickTable
 			$pick->pickId = $this->tableGateway->lastInsertValue;
 		} else {
 			if ($this->getPick($id)) {
-				$this->tableGateway->update($data, array('pick_id' => $id));
+				$n = $this->tableGateway->update($data, array('pick_id' => $id));
+				/*var_dump($n);
+				var_dump($id );
+		var_dump($data);*/
 			} else {
 				throw new \Exception('Pick id does not exist');
 			}
