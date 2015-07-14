@@ -296,10 +296,10 @@ class DraftController extends AbstractActionController
 		
 		switch($type){
 			case 'text':
-				$viewModel->setTemplate('Application/draft/export-text.phtml');
+				$viewModel->setTemplate('application/draft/export-text.phtml');
 				break;
 			case 'cockatrice':
-				$viewModel->setTemplate('Application/draft/export-cockatrice.phtml');
+				$viewModel->setTemplate('application/draft/export-cockatrice.phtml');
 				break;
 			default:
 				throw new \Exception("Invalid export type");
