@@ -8,7 +8,7 @@ else
 ?>
 
 <p>You can join this draft by entering your desired player name and clicking "Join draft":</p>
-<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get">Player name: <input type='text' name='player_name' id='player_name' /> <input type="submit" value="Join draft"/></submit></form>
+<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get" id="joinform">Player name: <input type='text' name='player_name' id='player_name' /> <input type="submit" onclick="$(this).attr('disabled', 'disabled'); $('#joinform').submit();" value="Join draft"/></submit></form>
 <?php 
 }
 ?>
