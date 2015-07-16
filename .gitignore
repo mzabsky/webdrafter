@@ -8,3 +8,5 @@ nbproject
 .settings
 composer.lock
 vendor/bin
+
+config/client_secret.json

@@ -54,15 +54,70 @@ class MemberAreaController extends AbstractActionController
 	public function loginAction()
 	{
 		$redirectUri = $this->url()->fromRoute('member-area', array('action' => 'login'), array('force_canonical' => true));
+
+		$scopes = implode(' ', array(
+				//\Google_Service_Drive::DRIVE_METADATA_READONLY,
+				\Google_Service_Drive::DRIVE_READONLY,
+				\Google_Service_Oauth2::USERINFO_EMAIL,
+				\Google_Service_Oauth2::USERINFO_PROFILE)
+		);
 		
-		$provider = new \League\OAuth2\Client\Provider\Google([
+		$client = new \Google_Client();
+		$client->setApplicationName('WebDrafter');
+		$client->setScopes($scopes);
+		$client->setAuthConfigFile('config/client_secret.json');
+		$client->setAccessType('offline');
+		
+		
+		/*$provider = new \League\OAuth2\Client\Provider\Google([
 				'clientId'      => $this->getServiceLocator()->get('Config')['auth']['clientId'],
 				'clientSecret'  => $this->getServiceLocator()->get('Config')['auth']['clientSecret'],
 				'redirectUri'   => $redirectUri,
 				'scopes'        => ['email']
-		]);
+		]);*/
 		
-		if (!isset($_GET['code'])) {
+		if (isset($_GET['code'])) {
+			$client->authenticate($_GET['code']);
+			
+			$_SESSION['access_token'] = $client->getAccessToken();
+			
+			$plus = new \Google_Service_Plus($client);
+			$me = $plus->people->get("me");
+			$_SESSION["email"] = $me['emails'][0]['value'];
+			
+			$sm = $this->getServiceLocator();
+			$userTable = $sm->get('Application\Model\UserTable');
+			$user = $userTable->tryGetUserByEmail($_SESSION["email"]);
+			if($user == null)
+			{
+				$user = new User();
+				$user->email = $userDetails->email;
+				$userTable->saveUser($user);
+				$_SESSION["user_id"] = $user->userId;
+			}
+			else
+			{
+				$_SESSION["user_id"] = $user->userId;
+			}
+			
+			$this->redirect()->toRoute('member-area');	
+		}
+		else if(isset($_SESSION['access_token']))
+		{
+			$client->setAccessToken($_SESSION['access_token']);
+		}
+		else {
+			$client->setRedirectUri($redirectUri);
+			header("Location: " . $client->createAuthUrl());
+			exit;
+		}
+		
+		if ($client->isAccessTokenExpired()) {
+			$client->refreshToken($client->getRefreshToken());
+			//file_put_contents($credentialsPath, $client->getAccessToken());
+		}
+		
+		/*if (!isset($_GET['code'])) {
 		
 			// If we don't have an authorization code then get one
 			$authUrl = $provider->getAuthorizationUrl();
@@ -122,7 +177,7 @@ class MemberAreaController extends AbstractActionController
 		
 			// Number of seconds until the access token will expire, and need refreshing
 			echo $token->expires;
-		}
+		}*/
 		
 		return new ViewModel();
 	}
@@ -612,6 +667,12 @@ class MemberAreaController extends AbstractActionController
 		$setTable->saveSet($set);
 
 		return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-retired'));
+	}
+	
+	public function googleDriveAction()
+	{
+		
+		die();
 	}
 }
 ?>
