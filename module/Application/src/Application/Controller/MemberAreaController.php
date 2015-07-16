@@ -41,6 +41,7 @@ class MemberAreaController extends AbstractActionController
 		if ($this->googleClient->isAccessTokenExpired()) {
 			$refreshToken = $this->googleClient->getRefreshToken();
 			if($refreshToken == null){
+				session_destroy();
 				$this->redirect()->toRoute('member-area', array('action' => 'login'));
 			}
 			
