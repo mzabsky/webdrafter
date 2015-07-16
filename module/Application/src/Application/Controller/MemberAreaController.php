@@ -25,16 +25,54 @@ use Application\Form\CreateSetForm;
 
 class MemberAreaController extends AbstractActionController
 {
-	private function checkUser()
+	private $googleClient;
+	
+	private function initUser()
 	{
-		if(!isset($_SESSION['user_id'])){
-			throw new \Exception("Must be logged in to access this page");
+		if(!isset($_SESSION['user_id']))
+		{
+			$this->redirect()->toRoute('member-area', array('action' => 'login'));
+			//throw new \Exception("Must be logged in to access this page");
 		}		
+		
+		$this->googleClient = $this->createClient();
+		$this->googleClient->setAccessToken($_SESSION["access_token"]);
+		
+		if ($this->googleClient->isAccessTokenExpired()) {
+			$refreshToken = $this->googleClient->getRefreshToken();
+			if($refreshToken == null){
+				$this->redirect()->toRoute('member-area', array('action' => 'login'));
+			}
+			
+			$this->googleClient->refreshToken($refreshToken);
+			//file_put_contents($credentialsPath, $client->getAccessToken());
+		}
+	}
+	
+	private function createClient()
+	{
+		$redirectUri = $this->url()->fromRoute('member-area', array('action' => 'login'), array('force_canonical' => true));
+		
+		$scopes = implode(' ', array(
+				//\Google_Service_Drive::DRIVE_METADATA_READONLY,
+				\Google_Service_Drive::DRIVE_READONLY,
+				\Google_Service_Oauth2::USERINFO_EMAIL,
+				\Google_Service_Oauth2::USERINFO_PROFILE)
+		);
+		
+		$client = new \Google_Client();
+		$client->setApplicationName('WebDrafter');
+		$client->setScopes($scopes);
+		$client->setAuthConfigFile('config/client_secret.json');
+		$client->setAccessType('offline');
+		$client->setRedirectUri($redirectUri);
+		
+		return $client;
 	}
 	
 	public function indexAction()
 	{	
-		$this->checkUser();
+		$this->initUser();
 		
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
@@ -53,21 +91,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function loginAction()
 	{
-		$redirectUri = $this->url()->fromRoute('member-area', array('action' => 'login'), array('force_canonical' => true));
-
-		$scopes = implode(' ', array(
-				//\Google_Service_Drive::DRIVE_METADATA_READONLY,
-				\Google_Service_Drive::DRIVE_READONLY,
-				\Google_Service_Oauth2::USERINFO_EMAIL,
-				\Google_Service_Oauth2::USERINFO_PROFILE)
-		);
-		
-		$client = new \Google_Client();
-		$client->setApplicationName('WebDrafter');
-		$client->setScopes($scopes);
-		$client->setAuthConfigFile('config/client_secret.json');
-		$client->setAccessType('offline');
-		
+		$client = $this->createClient();
 		
 		/*$provider = new \League\OAuth2\Client\Provider\Google([
 				'clientId'      => $this->getServiceLocator()->get('Config')['auth']['clientId'],
@@ -105,9 +129,9 @@ class MemberAreaController extends AbstractActionController
 		else if(isset($_SESSION['access_token']))
 		{
 			$client->setAccessToken($_SESSION['access_token']);
+			$this->redirect()->toRoute('member-area');	
 		}
 		else {
-			$client->setRedirectUri($redirectUri);
 			header("Location: " . $client->createAuthUrl());
 			exit;
 		}
@@ -116,6 +140,12 @@ class MemberAreaController extends AbstractActionController
 			$client->refreshToken($client->getRefreshToken());
 			//file_put_contents($credentialsPath, $client->getAccessToken());
 		}
+		
+		//$service = new \Google_Service_Drive($client);
+		// https://developers.google.com/drive/v2/reference/files/list
+		// http://googledrive.com/host/<folderID>/<filename>
+		//var_dump($service->files->listFiles(array("q" => "'0B1Of4LlhxnImMW1sejdGNkZHQnM' in parents", "maxResults" => 1000))->getItems());
+		//die();
 		
 		/*if (!isset($_GET['code'])) {
 		
@@ -192,7 +222,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createSetAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		
 		$form = new \Application\Form\CreateSetForm();		
 	
@@ -270,6 +300,8 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		$viewModel = new ViewModel();
+		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
+		$viewModel->accessToken = $_SESSION['access_token'];
 		$viewModel->form = $form;
 		
 		return $viewModel;
@@ -277,13 +309,13 @@ class MemberAreaController extends AbstractActionController
 	
 	public function selectGameModeAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		return new ViewModel();
 	}
 	
 	public function hostDraftAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		
 		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
 		{
@@ -403,7 +435,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function draftAdminAction()
 	{	
-		$this->checkUser();
+		$this->initUser();
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -420,7 +452,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function getDraftPlayersAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -441,7 +473,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function addDraftPlayerAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
@@ -470,7 +502,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function startDraftAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 		
 		try
 		{
@@ -646,7 +678,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function retireSetAction()
 	{
-		$this->checkUser();
+		$this->initUser();
 	
 		if(!isset($_GET["set_id"]) || strlen($_GET["set_id"]) < 1)
 		{

@@ -1,3 +1,40 @@
+   <script>   
+    var createPicker = function() {
+		var view = new google.picker.DocsView();
+		view.setIncludeFolders(true) 
+        .setMimeTypes("application/vnd.google-apps.folder")
+        .setSelectFolderEnabled(true);
+        
+        var picker = new google.picker.PickerBuilder()
+            //.addView(google.picker.ViewId.PDFS)
+            .addView(view)
+            .setOAuthToken(<?php echo $this->accessToken ?>.access_token)
+            .setAppId("<?php echo $this->driveAppId ?>")
+            .enableFeature(google.picker.Feature.NAV_HIDDEN)
+            .setTitle("Select a folder with card images")
+            .setCallback(function pickerCallback(data) {
+                switch (data.action) {
+                    case google.picker.Action.PICKED:
+                        console.log(data);
+                        //$("input[name=art_url]").val("Google Drive: " + data.docs[0].name);
+                        $("input[name=art_url]").val("http://googledrive.com/host/" + data.docs[0].id);
+                        //$("input[name=art_url]").attr('disabled', 'disabled');
+                        $("input[name=google_file_id]").val(data.docs[0].id);
+                        //window.location = "file.php?id=" + encodeURIComponent(data.docs[0].id);
+                    break;
+                }
+            })
+            .build();
+
+       	$('.google_drive_button').click(function(){
+            picker.setVisible(true);
+            return false;
+       	});
+    }
+
+    google.setOnLoadCallback(createPicker);
+    google.load("picker", "1");
+    </script>
 <h2>Create a set</h2>
 <?php
 $form = $this->form;
@@ -40,7 +77,7 @@ echo $this->form()->openTag($form);
     $artUrl = $form->get('art_url');
     echo $formLabel->openTag() . $artUrl->getOption('label');
     echo $this->formInput($artUrl);
-    echo $this->formElementErrors($artUrl) . "<small>" . $artUrl->getOption('description') . "</small>";
+    echo $this->formElementErrors($artUrl) . " <button class='google_drive_button'>Pick from Google Drive</button> <small>" . $artUrl->getOption('description') . "</small>";
     echo $formLabel->closeTag();
 ?>
 </div>
@@ -72,6 +109,7 @@ echo $this->form()->openTag($form);
 ?>
 <div class="form_element">
 <?php
+echo $this->formInput($form->get('google_file_id'));
 echo $this->formSubmit($form->get('submit'));
 ?>
 </div>

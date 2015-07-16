@@ -88,7 +88,7 @@ class CreateSetForm extends Form
 			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Art source URL:',
-				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed using the format below.'
+				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed as <base URL>/<file name> (as chosen below).'
 			),
 			'validators' => array(
 				array(
@@ -107,13 +107,13 @@ class CreateSetForm extends Form
 				'type' => 'Zend\Form\Element\Select',
 				'required' => true,
 				'options' => array(
-						'label' => 'Art URL format:',
+						'label' => 'Art file name format:',
 						'description' => '',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
 						'value_options' => [
-								CreateSetForm::NAME_DOT_PNG => '<base URL>/<card name>.png',
-								CreateSetForm::NAME_DOT_FULL_DOT_PNG => '<base URL>/<card name>.full.png',
-								CreateSetForm::NAME_DOT_JPG => '<base URL>/<card name>.jpg',
-								CreateSetForm::NAME_DOT_FULL_DOT_JPG => '<base URL>/<card name>.full.jpg',
+								CreateSetForm::NAME_DOT_PNG => '<card name>.png',
+								CreateSetForm::NAME_DOT_FULL_DOT_PNG => '<card name>.full.png',
+								CreateSetForm::NAME_DOT_JPG => '<card name>.jpg',
+								CreateSetForm::NAME_DOT_FULL_DOT_JPG => '<card name>.full.jpg',
 						],
 				),
 		)));
@@ -156,6 +156,12 @@ class CreateSetForm extends Form
             		)
 				),
 			),
+		)));
+
+
+		$this->add($factory->createElement(array(
+				'name' => 'google_file_id',
+				'type' => 'hidden',
 		)));
 		
 		/*$file = new File('file');
