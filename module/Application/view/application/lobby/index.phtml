@@ -1,14 +1,14 @@
 <h2><?php echo $this->draft->name; ?></h2>
 <?php if($this->draft->status != \Application\Model\Draft::STATUS_OPEN){?>
-<p>This draft is not currently open for joining.</p>
+<p>This event is not currently open for joining.</p>
 <?php 
 }
 else
 {
 ?>
 
-<p>You can join this draft by entering your desired player name and clicking "Join draft":</p>
-<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get" id="joinform">Player name: <input type='text' name='player_name' id='player_name' /> <input type="submit" onclick="$(this).attr('disabled', 'disabled'); $('#joinform').submit();" value="Join draft"/></submit></form>
+<p>You can join this event by entering your desired player name and clicking "Join event":</p>
+<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get" id="joinform">Player name: <input type='text' name='player_name' id='player_name' /> <input type="submit" onclick="$(this).attr('disabled', 'disabled'); $('#joinform').submit();" value="Join event"/></submit></form>
 <?php 
 }
 ?>

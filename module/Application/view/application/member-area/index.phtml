@@ -17,7 +17,7 @@ if($this->setRetired)
 ?>
 
 <a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
-<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'));?>">Host a draft</a>
+<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'));?>">Host an event</a>
 <br />
 <br />
 Sets you created:<br>
@@ -28,7 +28,7 @@ foreach ($this->setsOwned as $set)
 }
 ?>
 <br />
-Drafts you hosted:<br>
+Events you hosted:<br>
 <?php
 foreach ($this->draftsHosted as $draft)
 {
@@ -51,7 +51,7 @@ foreach ($this->draftsHosted as $draft)
 }
 ?>
 <br />
-Drafts you played in:<br>
+Events you played in:<br>
 <?php
 foreach ($this->draftsPlayed as $draft)
 {

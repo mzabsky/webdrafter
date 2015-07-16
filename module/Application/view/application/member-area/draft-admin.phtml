@@ -3,7 +3,7 @@
 if($this->draftOpened)
 {
 ?>
-	<div class="success-message">Draft opened!</div>
+	<div class="success-message">Event opened!</div>
 <?php 
 }
 ?>
@@ -38,7 +38,7 @@ function refreshPlayersList()
 		$("#draft_players").empty();
 		if(data["draft"]["status"] == draftStatuses.open)
 		{
-			$("#draft_players").append("<p>The draft is now open for players to join. Link to open lobby for this draft:</p>");
+			$("#draft_players").append("<p>The event is now open for players to join. Link to open lobby for this event:</p>");
 			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' size='65' style='font-family:monospace'/><br/>");
 			$("#draft_players").append("<p>Share this link with the players - each player will be able to join at their own leisure.</p>")
 			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name and click \"Join\". Feel free to use one of those links yourself (you still have to open it and join).</p>");
@@ -50,19 +50,19 @@ function refreshPlayersList()
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 			
-			$("#draft_players").append("<p>Once all the players have joined, you can start the draft by clicking \"Start draft\". Once the draft is started, players that haven't joined yet won't be able to join anymore. Places at the draft table will only be created for the players that have joined.");
-			$("#draft_players").append("<button onclick=\"startDraft()\">Start draft</button>");
+			$("#draft_players").append("<p>Once all the players have joined, you can start the event by clicking \"Start event\". Once the event is started, players that haven't joined yet won't be able to join anymore. Places at the table will only be created for the players that have joined.");
+			$("#draft_players").append("<button onclick=\"startDraft()\">Start event</button>");
 		}
 		else if(data["draft"]["status"] == draftStatuses.running || data["draft"]["status"] == draftStatuses.finished)
 		{
 			if(data["draft"]["status"] == draftStatuses.running)
 			{
-				$("#draft_players").append("<p>The draft is now running and players can make their picks. You can obtain their pick lists here. If you are playing in the draft, please don't use this to get an unfair advantage, please :)</p>");
+				$("#draft_players").append("<p>The event is now running and players can make their picks. You can obtain their pick/pool lists here. If you are playing in the draft, please don't use this to get an unfair advantage, please :)</p>");
 				$("#draft_players").append("<button onclick=\"refreshPlayersListExplicit()\">Refresh</button><br/>");
 				$("#draft_players").append("Pack: " + data["draft"]["packNumber"] + ", pick: " + data["draft"]["pickNumber"] + "<br/>");
 			}
 			else {
-				$("#draft_players").append("<p>The draft has concluded. You can obtain the pick lists here.</p>");
+				$("#draft_players").append("<p>The event has concluded. You can obtain the pick lists here.</p>");
 			}
 			
 			var items = [];
