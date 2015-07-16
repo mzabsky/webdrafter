@@ -55,7 +55,7 @@ class IsochronDrafterSetParser
 					$state = "empty";
 					break;
 				case "empty":
-					if(strpos($currentCard->types, 'Token') !== false)
+					if(strpos($currentCard->types, 'Token') === false)
 					{
 						$cards[] = $currentCard;
 					}
