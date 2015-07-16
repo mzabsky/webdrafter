@@ -55,7 +55,11 @@ class IsochronDrafterSetParser
 					$state = "empty";
 					break;
 				case "empty":
-					$cards[] = $currentCard;
+					if(strpos($currentCard->types, 'Token') !== false)
+					{
+						$cards[] = $currentCard;
+					}
+					
 					$currentCard = new \Application\Model\Card();
 					$state = "name";
 					break;
