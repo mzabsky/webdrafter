@@ -6,7 +6,7 @@
 <?php
 foreach ($this->cards as $card)
 {
-	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' style='padding:6px;min-width:50px;vertical-align:middle' class='card'/>\n"; 	
+	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card'/>\n"; 	
 }
 ?>
 </div>
@@ -226,12 +226,41 @@ function refreshDraft()
 					containment: $("#deckbuilder"),
 					revert: "invalid"
 				});
+
+				card.click(function(){
+					$(this).toggleClass("selectedCard");
+				});
 				
 				$("#deckbuilder tbody td").droppable({
 					drop: function(e, droppedCard)
 					{
+						var droppable = $(this);
+
+						console.log(droppable.attr("zoneColumn") );
+						console.log(droppedCard.draggable.parent().attr("zoneColumn"));
+						if(droppable.attr("zoneColumn") == droppedCard.draggable.attr("zoneColumn")) {
+							
+							console.log("skip");
+							return;
+						}					
+						
 						var pickId = droppedCard.draggable.attr("pickId");
 						droppedCard.draggable.detach().appendTo($(this));
+
+												
+						$.each( $("#deckbuilder .selectedCard"), function( index, selectedCard ) {
+							//console.log($(selectedCard).attr("pickId"));
+							if($(selectedCard).attr("pickId") != pickId)
+							{
+								var selectedCardPickId = $(selectedCard).attr("pickId");
+								//console.log(selectedCard);
+								$(selectedCard).detach().appendTo(droppable);
+
+								$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + selectedCardPickId + "&zone=" + droppable.attr("zone") + "&zone_column=" + droppable.attr("zoneColumn"));
+							}
+						});
+
+						$("#deckbuilder .selectedCard").removeClass("selectedCard");
 						
 						$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
 
@@ -287,7 +316,7 @@ function updateSizes(size)
 	console.log($("#deckbuilder td"));
 	$(".card").height(size);
 	$("#deckbuilder td").width(218 * size / 300 + 12);
-	$("#deckbuilder img").css("margin-bottom", (-274) * (size) / (300) - 6);
+	$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));
 }
 
 $("#cardSizeSlider").slider({
