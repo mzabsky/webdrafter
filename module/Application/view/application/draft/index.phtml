@@ -281,6 +281,17 @@ function refreshDraft()
 				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=rarity", function() { location.reload(); });
 			});
 
+			$("#deckbuilder thead tr td").click(function(){
+				//
+				console.log($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size());
+				if($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size() != 0){
+					$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").addClass("selectedCard");
+				}
+				else {
+					$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").removeClass("selectedCard");
+				}	
+			});
+			
 			refreshCardCounts();
 
 			$(document).tooltip({
@@ -312,8 +323,8 @@ function sliderCallback (event, ui)
 
 function updateSizes(size)
 {
-	console.log(size);
-	console.log($("#deckbuilder td"));
+	//console.log(size);
+	//console.log($("#deckbuilder td"));
 	$(".card").height(size);
 	$("#deckbuilder td").width(218 * size / 300 + 12);
 	$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));
