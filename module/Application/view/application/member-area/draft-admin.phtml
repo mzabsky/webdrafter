@@ -39,14 +39,14 @@ function refreshPlayersList()
 		if(data["draft"]["status"] == draftStatuses.open)
 		{
 			$("#draft_players").append("<p>The event is now open for players to join. Link to open lobby for this event:</p>");
-			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' size='65' style='font-family:monospace'/><br/>");
+			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br/>");
 			$("#draft_players").append("<p>Share this link with the players - each player will be able to join at their own leisure.</p>")
 			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name and click \"Join\". Feel free to use one of those links yourself (you still have to open it and join).</p>");
 			$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
 
 			var items = [];
 			$.each( data["draftPlayers"], function( key, val ) {
-				var url = "<input type='text' readonly value='/draft/" + val["inviteKey"] + "' size='65' style='font-family:monospace'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
+				var url = "<input type='text' readonly value='/draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 			
