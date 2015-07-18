@@ -87,7 +87,7 @@ return array(
      					'action'     => 'sets',
         			),
         		),
-        	),          
+        	),        
         	'browse-set' => array(
         		'type' => 'Segment',
         		'options' => array(
@@ -115,6 +115,16 @@ return array(
         			),
         		),
         	),
+        	'tutorial' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/tutorial',
+       				'defaults' => array(
+      					'controller' => 'Application\Controller\Tutorial',
+     					'action'     => 'index',
+        			),
+        		),
+        	),    
             'application' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -159,7 +169,8 @@ return array(
             'Application\Controller\MemberArea' => 'Application\Controller\MemberAreaController',
             'Application\Controller\Browse' => 'Application\Controller\BrowseController',
             'Application\Controller\Generator' => 'Application\Controller\GeneratorController',
-            'Application\Controller\Lobby' => 'Application\Controller\LobbyController'
+            'Application\Controller\Lobby' => 'Application\Controller\LobbyController',
+            'Application\Controller\Tutorial' => 'Application\Controller\TutorialController'
         ),
     ),
     'view_manager' => array(
