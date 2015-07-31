@@ -247,6 +247,8 @@ function refreshDraft()
 						var pickId = droppedCard.draggable.attr("pickId");
 						droppedCard.draggable.detach().appendTo($(this));
 
+
+						var zoneSettings = new Array();
 												
 						$.each( $("#deckbuilder .selectedCard"), function( index, selectedCard ) {
 							//console.log($(selectedCard).attr("pickId"));
@@ -256,14 +258,20 @@ function refreshDraft()
 								//console.log(selectedCard);
 								$(selectedCard).detach().appendTo(droppable);
 
-								$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + selectedCardPickId + "&zone=" + droppable.attr("zone") + "&zone_column=" + droppable.attr("zoneColumn"));
+								zoneSettings.push({pick_id: selectedCardPickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
+								
+								//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + selectedCardPickId + "&zone=" + droppable.attr("zone") + "&zone_column=" + droppable.attr("zoneColumn"));
 							}
 						});
 
 						$("#deckbuilder .selectedCard").removeClass("selectedCard");
-						
-						$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
 
+
+						zoneSettings.push({pick_id: pickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
+						//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
+
+						$.post( "<?php echo $this->url('draft', array('action' => 'sync-pick-zones', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", { zone_settings: zoneSettings });
+						
 						refreshCardCounts();
 					}
 				});

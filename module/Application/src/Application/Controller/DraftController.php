@@ -370,34 +370,35 @@ class DraftController extends AbstractActionController
 		{
 			throw new \Exception("Invalid draft status");
 		}
-	
-		foreach($_POST["zone"] as $pickId => $zone)
 		
-		if(!isset($_GET["pick_id"]) || strlen($_GET["pick_id"]) < 1)
+		foreach ($_POST['zone_settings'] as $zoneSetting)
 		{
-			throw new \Exception("Invalid pick Id");
+			if(!isset($zoneSetting["pick_id"]))
+			{
+				throw new \Exception("Invalid pick ID");
+			}
+			
+			if(!isset($zoneSetting["zone"]))
+			{
+				throw new \Exception("Invalid zone");
+			}
+			
+			if(!isset($zoneSetting["zone_column"]))
+			{
+				throw new \Exception("Invalid zone column");
+			}
+			
+			$pick = $this->pickTable->getPick((int)$zoneSetting["pick_id"]);
+			if($pick->currentPlayerId != $this->draftPlayer->draftPlayerId)
+			{
+				throw new \Exception("Not your pick");
+			}
+
+			$pick->zone = (int)$zoneSetting["zone"];
+			$pick->zoneColumn = (int)$zoneSetting["zone_column"];
+			$this->pickTable->savePick($pick);
 		}
-	
-		if(!isset($_GET["zone"]))
-		{
-			throw new \Exception("Invalid zone");
-		}
-	
-		if(!isset($_GET["zone_column"]))
-		{
-			throw new \Exception("Invalid zone column");
-		}
-	
-		$pick = $this->pickTable->getPick((int)$_GET["pick_id"]);
-		if($pick->currentPlayerId != $this->draftPlayer->draftPlayerId)
-		{
-			throw new \Exception("Not your pick");
-		}
-	
-		$pick->zone = (int)$_GET["zone"];
-		$pick->zoneColumn = (int)$_GET["zone_column"];
-		$this->pickTable->savePick($pick);
-	
+		
 		$jsonModel = new JsonModel();
 		return $jsonModel;
 	}
