@@ -46,7 +46,7 @@ function refreshPlayersList()
 
 			var items = [];
 			$.each( data["draftPlayers"], function( key, val ) {
-				var url = "<input type='text' readonly value='/draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
+				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 			
@@ -72,7 +72,7 @@ function refreshPlayersList()
 					return;
 				}
 				
-				var url = "<a href='/draft/" + val["inviteKey"] + "/pick-list'>" + val["name"] + "</a>";
+				var url = "<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>/draft/" + val["inviteKey"] + "/pick-list'>" + val["name"] + "</a>";
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 		}
