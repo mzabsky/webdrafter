@@ -238,7 +238,7 @@ class MemberAreaController extends AbstractActionController
 			} 
 			else 
 			{
-				var_dump($form->getMessages());
+				//var_dump($form->getMessages());
 			}
 		}
 		
