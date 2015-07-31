@@ -116,7 +116,7 @@ class MemberAreaController extends AbstractActionController
 			if($user == null)
 			{
 				$user = new User();
-				$user->email = $userDetails->email;
+				$user->email = $_SESSION["email"];
 				$userTable->saveUser($user);
 				$_SESSION["user_id"] = $user->userId;
 			}
@@ -139,76 +139,7 @@ class MemberAreaController extends AbstractActionController
 		
 		if ($client->isAccessTokenExpired()) {
 			$client->refreshToken($client->getRefreshToken());
-			//file_put_contents($credentialsPath, $client->getAccessToken());
 		}
-		
-		//$service = new \Google_Service_Drive($client);
-		// https://developers.google.com/drive/v2/reference/files/list
-		// http://googledrive.com/host/<folderID>/<filename>
-		//var_dump($service->files->listFiles(array("q" => "'0B1Of4LlhxnImMW1sejdGNkZHQnM' in parents", "maxResults" => 1000))->getItems());
-		//die();
-		
-		/*if (!isset($_GET['code'])) {
-		
-			// If we don't have an authorization code then get one
-			$authUrl = $provider->getAuthorizationUrl();
-			$_SESSION['oauth2state'] = $provider->state;
-			header('Location: '.$authUrl);
-			exit;
-		
-			// Check given state against previously stored one to mitigate CSRF attack
-		} elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
-		
-			unset($_SESSION['oauth2state']);
-			exit('Invalid state');
-		
-		} else {
-		
-			// Try to get an access token (using the authorization code grant)
-			$token = $provider->getAccessToken('authorization_code', [
-				'code' => $_GET['code']
-			]);
-		
-			// Optional: Now you have a token you can look up a users profile data
-			try {
-		
-				// We got an access token, let's now get the user's details
-				$userDetails = $provider->getUserDetails($token);
-		
-				$_SESSION["email"] = $userDetails->email;
-
-				$sm = $this->getServiceLocator();
-				$userTable = $sm->get('Application\Model\UserTable');
-				$user = $userTable->tryGetUserByEmail($userDetails->email);				
-				if($user == null)
-				{
-					$user = new User();
-					$user->email = $userDetails->email;
-					$userTable->saveUser($user);
-					$_SESSION["user_id"] = $user->userId;
-				}
-				else 
-				{
-					$_SESSION["user_id"] = $user->userId;
-				}
-				
-				return $this->redirect()->toRoute('member-area');				
-		
-			} catch (Exception $e) {
-		
-				// Failed to get user details
-				exit('Oh dear...');
-			}
-		
-			// Use this to interact with an API on the users behalf
-			echo $token->accessToken;
-		
-			// Use this to get a new access token if the old one expires
-			echo $token->refreshToken;
-		
-			// Number of seconds until the access token will expire, and need refreshing
-			echo $token->expires;
-		}*/
 		
 		return new ViewModel();
 	}
@@ -225,25 +156,36 @@ class MemberAreaController extends AbstractActionController
 	{
 		$this->initUser();
 		
+		$sm = $this->getServiceLocator();
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
 		$form = new \Application\Form\CreateSetForm();		
 	
 		if ($this->getRequest()->isPost()) 
 		{
-			$formData = $this->getRequest()->getPost();
+			$formData = array_merge_recursive(
+            	$this->getRequest()->getPost()->toArray(),
+            	$this->getRequest()->getFiles()->toArray()
+        	);
+			
+			/*if ($formData['file']['tmp_name'] == "" || $formData['file']['tmp_name'] === null) {
+				$formData['file'] = null;
+			}*/
+			
+			$set = $sm->get('Application\Model\Set');
+			$form->setInputFilter($set->getInputFilter());
+			
 			$form->setData($formData);
 			
 			if ($form->isValid($formData)) 
 			{
-				$sm = $this->getServiceLocator();
-				$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 				$adapter->getDriver()->getConnection()->beginTransaction();
 				
 				try
 				{
-					$set = new Set();
 					$set->name = $formData["name"];
 					$set->code = $formData["code"];
-					$set->url = $formData["info_url"];
+					$set->url = $formData["url"];
 					$set->downloadUrl = $formData["download_url"];
 					$set->userId = $_SESSION["user_id"];
 					$set->isRetired = 0;
@@ -292,11 +234,11 @@ class MemberAreaController extends AbstractActionController
 					throw $e;
 				}
 								
-				return $this->redirect()->toRoute('member-area', array(), array('query' => 'draft-opened'));
+				return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-created'));
 			} 
 			else 
 			{
-				$form->populate($formData);
+				var_dump($form->getMessages());
 			}
 		}
 		

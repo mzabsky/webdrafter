@@ -67,7 +67,7 @@ echo $this->form()->openTag($form);
 </div>
 <div class="form_element">
 <?php
-    $infoUrl = $form->get('info_url');
+    $infoUrl = $form->get('url');
     echo $formLabel->openTag() . $infoUrl->getOption('label');
     echo $this->formInput($infoUrl);
     echo $this->formElementErrors($infoUrl) . "<small>" . $infoUrl->getOption('description') . "</small>";
@@ -105,7 +105,7 @@ echo $this->form()->openTag($form);
 <?php
     $file = $form->get('file');
     echo $formLabel->openTag() . $file->getOption('label');
-    echo $this->formInput($file);
+    echo $this->formFile($file);
     echo $this->formElementErrors($file) . "<small>" . $file->getOption('description') . "</small>";
     echo $formLabel->closeTag();
 ?>

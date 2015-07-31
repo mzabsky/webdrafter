@@ -19,71 +19,38 @@ class CreateSetForm extends Form
 		//$this->setMethod("post");
 		
 		$this->setName('create_set');
+		$this->setAttribute('enctype', 'multipart/form-data');
 
 		$factory = new \Zend\Form\Factory();	
 		
 		$this->add($factory->createElement(array(
 			'name' => 'name',
-			'required' => true,
-			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Name',
 				'description' => 'Representative name of the set. Must be unique (consider including version or date).'
-			),
-			'validators' => array(
-				array(
-					'name' => 'StringLength',
-						'options' => array(
-						'encoding' => 'UTF-8',
-						'min' => '4',
-						'max' => '255',
-					),
-				),
-			),
+			)
 		)));
 		
 		$this->add($factory->createElement(array(
 			'name' => 'code',
-			'required' => true,
-			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Code:',
 				'description' => '3-5 uppercase letter code. Doesn\'t have to be unique.'
-			),
-			'validators' => array(
-				array(
-					'name' => 'StringLength',
-					'options' => array(
-						'encoding' => 'UTF-8',
-						'min' => '3',
-						'max' => '5',
-					),
-				),
-			),
+			)
 		)));
 		
 		$this->add($factory->createElement(array(
-			'name' => 'info_url',
-			'required' => true,
-			'allow_empty' => false,
+			'name' => 'url',
+			'type' => 'url',
 			'options' => array(
 				'label' => 'Information URL:',
 				'description' => 'Link to a webpage containing additional information about the set (such as forum thread).'
-			),
-			'validators' => array(
-				array(
-					'name' => 'StringLength',
-					'options' => array(
-						'encoding' => 'UTF-8',
-						'min' => '3',
-						'max' => '255',
-					),
-				),
 			),
 		)));
 		
 		$this->add($factory->createElement(array(
 			'name' => 'art_url',
+			'type' => 'url',
 			'required' => true,
 			'allow_empty' => false,
 			'options' => array(
@@ -120,21 +87,10 @@ class CreateSetForm extends Form
 		
 		$this->add($factory->createElement(array(
 				'name' => 'download_url',
-				'required' => false,
-				'allow_empty' => true,
+				'type' => 'url',
 				'options' => array(
 						'label' => 'Download URL:',
 						'description' => 'URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
-				),
-				'validators' => array(
-						array(
-								'name' => 'StringLength',
-								'options' => array(
-										'encoding' => 'UTF-8',
-										'min' => '3',
-										'max' => '255',
-								),
-						),
 				),
 		)));
 		

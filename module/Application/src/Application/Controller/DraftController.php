@@ -362,6 +362,46 @@ class DraftController extends AbstractActionController
 		return $jsonModel;
 	}
 	
+	public function syncPickZonesAction()
+	{
+		$this->init();
+	
+		if($this->draft->status != Draft::STATUS_FINISHED)
+		{
+			throw new \Exception("Invalid draft status");
+		}
+	
+		foreach($_POST["zone"] as $pickId => $zone)
+		
+		if(!isset($_GET["pick_id"]) || strlen($_GET["pick_id"]) < 1)
+		{
+			throw new \Exception("Invalid pick Id");
+		}
+	
+		if(!isset($_GET["zone"]))
+		{
+			throw new \Exception("Invalid zone");
+		}
+	
+		if(!isset($_GET["zone_column"]))
+		{
+			throw new \Exception("Invalid zone column");
+		}
+	
+		$pick = $this->pickTable->getPick((int)$_GET["pick_id"]);
+		if($pick->currentPlayerId != $this->draftPlayer->draftPlayerId)
+		{
+			throw new \Exception("Not your pick");
+		}
+	
+		$pick->zone = (int)$_GET["zone"];
+		$pick->zoneColumn = (int)$_GET["zone_column"];
+		$this->pickTable->savePick($pick);
+	
+		$jsonModel = new JsonModel();
+		return $jsonModel;
+	}
+	
 	public function sortPicksAction()
 	{
 		$this->init();

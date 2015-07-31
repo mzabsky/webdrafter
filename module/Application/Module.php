@@ -47,6 +47,12 @@ class Module
     {
         return array(
             'factories' => array(
+                'Application\Model\Set' =>  function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+            		$set = new \Application\Model\Set();
+            		$set->setDbAdapter($dbAdapter);
+            		return $set;
+                },
                 'Application\Model\SetTable' =>  function($sm) {
                     $tableGateway = $sm->get('SetTableGateway');
                     $table = new \Application\Model\SetTable($tableGateway);
