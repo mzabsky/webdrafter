@@ -37,6 +37,7 @@ class LobbyController extends AbstractActionController
 		
 		$viewModel = new ViewModel();
 		$viewModel->draft = $this->draft;
+		$viewModel->nameTaken = isset($_GET["name-taken"]);
 		return $viewModel;
 	}
 	
@@ -54,6 +55,11 @@ class LobbyController extends AbstractActionController
 			throw new \Exception("Name not set");
 		}
 
+		if(!$this->draftPlayerTable->checkPlayerNameOpenInDraft($_GET["player_name"], $this->draft->draftId))
+		{
+			return $this->redirect()->toRoute('lobby', array('lobby_key' => $this->lobbyKey), array('query' => 'name-taken'));
+		}
+		
 		$inviteKey = md5("draftplayer_" . time());
 		
 		$draftPlayer = new \Application\Model\DraftPlayer();

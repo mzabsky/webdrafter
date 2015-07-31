@@ -49,6 +49,17 @@ class DraftPlayerTable
 		return $row;
 	}
 	
+	public function checkPlayerNameOpenInDraft($playerName, $draftId)
+	{
+		$draftId  = (int) $draftId;
+		$rowset = $this->tableGateway->select(array('draft_id' => $draftId, 'name' => $playerName));
+		$row = $rowset->current();
+		if (!$row) {
+			return true;
+		}
+		return false;
+	}
+	
 	public function getDraftPlayerByInviteKey($inviteKey)
 	{
 		$rowset = $this->tableGateway->select(array('invite_key' => $inviteKey));

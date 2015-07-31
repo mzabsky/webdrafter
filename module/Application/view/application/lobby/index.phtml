@@ -5,6 +5,11 @@
 }
 else
 {
+	if($this->nameTaken)
+	{
+		echo "<p><strong>Chosen player name is already taken in this draft.</strong></p>";
+	}
+	
 ?>
 
 <p>You can join this event by entering your desired player name and clicking "Join event":</p>
