@@ -15,6 +15,7 @@ use Zend\Mvc\MvcEvent;
 use League\OAuth2\Client\Provider;
 use Application\Model\Draft;
 use Application\Model\Pick;
+use Application\Model\DraftPlayerTable;
 use Zend\View\Model\JsonModel;
 
 class DraftController extends AbstractActionController
@@ -58,6 +59,9 @@ class DraftController extends AbstractActionController
 		}
 		
 		$viewModel->cards = $cardArray;
+		
+		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');
+		$viewModel->basics = $basicTable->fetchByDraftPlayer($this->draftPlayer->draftPlayerId);
 		return $viewModel;
 	}	
 	
@@ -282,6 +286,15 @@ class DraftController extends AbstractActionController
 			{
 				$sideboardArray[$card->name] = 1;
 			}
+		}
+		
+		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');
+		$basics = $basicTable->fetchByDraftPlayer($this->draftPlayer->draftPlayerId);
+		
+		$basicTypes = array('W' => 'Plains', 'U' => 'Island', 'B' => 'Swamp', 'R' => 'Mountain', 'G' => 'Forest');
+		foreach($basics as $basic)
+		{
+			$maindeckArray[$basicTypes[$basic->color]] = $basic->count;
 		}
 		
 		$response = $this->getResponse();
@@ -511,6 +524,36 @@ class DraftController extends AbstractActionController
 			$this->pickTable->savePick($pick);
 			//break;
 		}
+
+		$jsonModel = new JsonModel();
+		return $jsonModel;
+	}
+	
+	public function updateBasicAction()
+	{
+		$this->init();
+		
+		$colors = array("W", "U", "B", "R", "G");
+		if(!isset($_GET["color"]) || !in_array($_GET["color"], $colors)){
+			throw new Exception("Invalid color");
+		}
+		
+		if(!isset($_GET["count"]) || (int)$_GET["count"] < 0){
+			throw new Exception("Invalid count");
+		}
+		
+		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');
+		$basic = $basicTable->getByDraftPlayerAndColor($this->draftPlayer->draftPlayerId, $_GET["color"]);
+		
+		if($basic == null)
+		{
+			$basic = new \Application\Model\DraftPlayerBasic();
+			$basic->draftPlayerId = $this->draftPlayer->draftPlayerId;
+			$basic->color = $_GET["color"];
+		}
+		
+		$basic->count = (int)$_GET["count"];
+		$basicTable->saveDraftPlayerBasic($basic);
 
 		$jsonModel = new JsonModel();
 		return $jsonModel;

@@ -17,6 +17,13 @@ var timer = null;
 var xhr = null;
 var lastPackPick = null;
 var lastDraftInfo = null;
+var existingBasics = {
+	<?php
+	foreach($this->basics as $basic)
+	{
+		echo '"' . $basic->color . '": ' . $basic->count . ',';
+	}?>
+};
 /*var lastDraftInfos = {
 	all: null,
 	draftPlayers: null,
@@ -77,6 +84,22 @@ function refreshCardCounts()
 		  $(this).html(count);
 	});
 	$("#totalcount").html(total);
+}
+
+var basicXhr = null;
+function changeBasicCount(color, change)
+{
+	var oldValue = parseInt($(".basics_mid_row td[basicColor='" + color + "'] span").html());
+	var newValue = Math.max(oldValue + change, 0);
+	$(".basics_mid_row td[basicColor='" + color + "'] span").html(newValue);
+
+	if(basicXhr != null)
+	{
+		basicXhr.abort();
+		basicXhr = null;
+	}
+	
+	basicXhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'update-basic', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?color=" + color + "&count=" + newValue);
 }
 
 function refreshDraft()
@@ -187,6 +210,14 @@ function refreshDraft()
 			$("#draft").append("<p><button id='sort-by-color'>Sort by color</button><button id='sort-by-cmc'>Sort by CMC</button><button id='sort-by-rarity'>Sort by rarity</button></p>");
 			$("#draft").append("<table id='deckbuilder' border style='table-layout: fixed; width: 0px;'><thead><tr></tr></thead><tbody><tr></tr></tbody></table>");
 
+			$("#deckbuilder").after("<p>Basic lands:</p><table id='basics'><tr class='basics_up_row'></tr><tr class='basics_mid_row'></tr><tr class='basics_down_row'></tr></table>");
+
+			$.each(["W", "U", "B", "R", "G"], function( key, val ) {
+				$(".basics_up_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",1)'>+</button></td>");
+				$(".basics_mid_row").append("<td basicColor='" + val + "'>" + val + ": <span class='basics_number'>" + (existingBasics[val] != null ? existingBasics[val] : 0) + "</span></td>");
+				$(".basics_down_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",-1)'>-</button></td>");
+			});
+			
 			var maxColumns = 7;
 			for(var i = 0; i < maxColumns; i++)
 			{

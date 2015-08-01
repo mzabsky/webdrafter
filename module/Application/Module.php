@@ -130,6 +130,17 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\User());
                     return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
                 },
+                'Application\Model\DraftPlayerBasicTable' =>  function($sm) {
+                    $tableGateway = $sm->get('DraftPlayerBasicTableGateway');
+                    $table = new \Application\Model\DraftPlayerBasicTable($tableGateway);
+                    return $table;
+                },
+                'DraftPlayerBasicTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftPlayerBasic());
+                    return new TableGateway('draft_player_basic', $dbAdapter, null, $resultSetPrototype);
+                },
             )
         );
      }
