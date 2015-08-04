@@ -1,3 +1,27 @@
+<script>
+$(function(){
+	$("#tabs").tabs();
+	
+	$('#owned_sets_grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15
+	});
+	
+	$('#hosted_events_grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15
+	});
+	
+	$('#played_events_grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15
+	});
+
+});
+</script>
 <?php 
 if($this->setCreated)
 {
@@ -16,62 +40,110 @@ if($this->setRetired)
 
 ?>
 
-<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
 <a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'));?>">Host an event</a>
-<br />
-<br />
-Sets you created:<br>
-<?php
-foreach ($this->setsOwned as $set)
-{
-	echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a> <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a><br />";	
-}
-?>
-<br />
-Events you hosted:<br>
-<?php
-foreach ($this->draftsHosted as $draft)
-{
-	echo "<a href='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId)) . "'>" . $draft->name . "</a>";
-	echo " - ";
-	switch($draft->status)
-	{
-		case \Application\Model\Draft::STATUS_OPEN:
-			echo "OPEN";
-			break;
-		case \Application\Model\Draft::STATUS_RUNNING:
-			echo "RUNNING - pack " . $draft->packNumber . ", pick " . $draft->pickNumber;
-			break;
-		case \Application\Model\Draft::STATUS_FINISHED:
-			echo "FINISHED";
-			break;
-	}
-	
-	echo "<br />";
-}
-?>
-<br />
-Events you played in:<br>
-<?php
-foreach ($this->draftsPlayed as $draft)
-{
-	echo "<a href='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'>" . $draft["draftName"] . "</a>";
-	echo " - ";
-	switch($draft["draftStatus"])
-	{
-		case \Application\Model\Draft::STATUS_OPEN:
-			echo "OPEN";
-			break;
-		case \Application\Model\Draft::STATUS_RUNNING:
-			echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["packNumber"];
-			break;
-		case \Application\Model\Draft::STATUS_FINISHED:
-			echo "FINISHED";
-			break;
-	}
-	
-	echo "<br />";
-}
 
-
-?>
+<div id="tabs">
+	<ul>
+		<li><a href="#played_events_tab">Played events</a></li>
+		<li><a href="#hosted_events_tab">Hosted events</a></li>
+		<li><a href="#owned_sets_tab">Owned sets</a></li>
+		<!--  <li><a href="#events_played_tab">Account settings</a></li>-->
+	</ul>
+	<div id="owned_sets_tab">
+		<p>This page contains an overview of sets you own.</p>
+		<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
+		<table id="owned_sets_grid" class="display hover stripe" >
+			<thead>
+				<tr>
+					<th>Set name</th>
+					<th>Number of cards</th>
+					<th>Number of drafts</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->setsOwned as $set)
+		{
+			echo "<tr><td>";
+			echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a> <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a><br />";
+			echo "</td><td>0</td><td>0</td></tr>";	
+		}
+		?>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="hosted_events_tab">
+		<p>This page contains an overview of drafts and other events you played in.</p>
+		<table id="hosted_events_grid" class="display hover stripe" >
+			<thead>
+				<tr>
+					<th>Event name</th>
+					<th>Status</th>
+					<th>Number of players</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->draftsHosted as $draft)
+		{
+			echo "<tr><td>";
+			echo "<a href='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId)) . "'>" . $draft->name . "</a>";
+		
+			echo "</td><td>";
+			switch($draft->status)
+			{
+				case \Application\Model\Draft::STATUS_OPEN:
+					echo "OPEN";
+					break;
+				case \Application\Model\Draft::STATUS_RUNNING:
+					echo "RUNNING - pack " . $draft->packNumber . ", pick " . $draft->pickNumber;
+					break;
+				case \Application\Model\Draft::STATUS_FINISHED:
+					echo "FINISHED";
+					break;
+			}
+			
+			echo "</td><td>0</td></tr>";
+		}
+		?>
+			</tbody>
+		</table>
+	</div>
+	<div id="played_events_tab">
+		<p>This page contains an overview of drafts and other events you hosted.</p>
+		<table id="played_events_grid" class="display hover stripe" >
+			<thead>
+				<tr>
+					<th>Event name</th>
+					<th>Status</th>
+					<th>Number of players</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->draftsPlayed as $draft)
+		{
+			echo "<tr><td>";
+			echo "<a href='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'>" . $draft["draftName"] . "</a>";
+		
+			echo "</td><td>";
+			switch($draft["draftStatus"])
+			{
+				case \Application\Model\Draft::STATUS_OPEN:
+					echo "OPEN";
+					break;
+				case \Application\Model\Draft::STATUS_RUNNING:
+					echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["packNumber"];
+					break;
+				case \Application\Model\Draft::STATUS_FINISHED:
+					echo "FINISHED";
+					break;
+			}
+			echo "</td><td>0</td></tr>";
+		}
+		?>
+			</tbody>
+		</table>
+	</div>
+</div>
