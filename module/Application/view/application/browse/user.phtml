@@ -12,7 +12,7 @@ $(function(){
 	});
 });
 </script>
-<h2><?php echo $this->user->name; ?></h2>
+<h2 id="contentTitle"><?php echo $this->user->name; ?></h2>
 <?php echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
 <table id="owned_sets_grid" class="display hover stripe clickableRows" >
 	<thead>

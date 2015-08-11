@@ -1,4 +1,4 @@
-<h2><?php echo "[" . $this->set->code . "] " . $this->set->name; ?></h2>
+<h2 id="contentTitle"><?php echo "[" . $this->set->code . "] " . $this->set->name; ?></h2>
 <?php if($this->set->isRetired){ ?><p><b>This set is retired and is only stored for archiving purposes.</b></p><?php } ?>
 <p><a href="<?php echo $this->set->url ?>" target="_blank">Set information</a></p>
 <?php if($this->set->downloadUrl != null) { ?><p><a href="<?php echo $this->set->downloadUrl ?>">Set download</a></p><?php } ?>
