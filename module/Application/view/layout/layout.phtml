@@ -33,7 +33,7 @@
         	<div id="header">
 	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
 	        	<div id="menuBar">
-		        	<a href="<?php echo $this->url('browse') ?>">Browse sets</a>
+		        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
 		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
 	        	</div>
 	        	<div id="userPanel">
@@ -44,10 +44,11 @@
 		        		<a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
 		        	<?php } ?>
 	        	</div>
-        		<div class="clear">
+        		<div class="clear"></div>
         	</div>
-            <?php echo $this->content; ?>
-            <hr>
+        	<div id="body">
+            	<?php echo $this->content; ?>
+            </div>
             <footer>
                 <p>&copy; <?php echo date('Y') ?> by Matej Zabsky.</p>
             </footer>
