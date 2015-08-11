@@ -57,7 +57,7 @@ if($this->setRetired)
 				<tr>
 					<th>Set name</th>
 					<th>Number of cards</th>
-					<th>Number of drafts</th>
+					<th>Number of events</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -65,7 +65,7 @@ if($this->setRetired)
 		foreach ($this->setsOwned as $set)
 		{
 			echo "<tr><td>";
-			echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a> <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a><br />";
+			echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a> <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a>";
 			echo "</td><td>0</td><td>0</td></tr>";	
 		}
 		?>
