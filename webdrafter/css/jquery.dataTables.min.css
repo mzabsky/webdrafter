@@ -53,6 +53,8 @@ table.dataTable {
     background-color: white; }
     table.dataTable tbody tr.selected {
       background-color: #b0bed9; }
+    table.dataTable.clickableRows tbody tr {
+      cursor: pointer; }
   table.dataTable tbody th,
   table.dataTable tbody td {
     padding: 8px 10px; }
@@ -362,3 +364,6 @@ table.dataTable td {
     text-align: center; }
   .dataTables_wrapper .dataTables_filter {
     margin-top: 0.5em; } }
+  table.dataTable td.nameCell {
+  	font-weight: bold;
+  }

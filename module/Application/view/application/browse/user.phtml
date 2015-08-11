@@ -5,11 +5,16 @@ $(function(){
 		"lengthChange": false,
 		"pageLength": 15
 	});
+
+	$('#owned_sets_grid tbody').on( 'click', 'tr', function () {
+		$(this).addClass('selected');
+		window.location = $(this).attr('url');
+	});
 });
 </script>
 <h2><?php echo $this->user->name; ?></h2>
 <?php echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
-<table id="owned_sets_grid" class="display hover stripe" >
+<table id="owned_sets_grid" class="display hover stripe clickableRows" >
 	<thead>
 		<tr>
 			<th>Set name</th>
@@ -21,9 +26,9 @@ $(function(){
 <?php
 foreach ($this->sets as $set)
 {
-	echo "<tr><td>";
-	echo "<a href='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'>" . $set->name . "</a>";
-	echo "</td><td>0</td><td>0</td></tr>";	
+	echo "<tr url='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'><td class='nameCell'>";
+	echo $set->name;
+	echo "</th><td>0</td><td>0</td></tr>";	
 }
 ?>
 		</tr>
