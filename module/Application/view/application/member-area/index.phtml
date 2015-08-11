@@ -11,13 +11,15 @@ $(function(){
 	$('#hosted_events_grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
-		"pageLength": 15
+		"pageLength": 15,
+		"order": [[ 1, "desc" ]]
 	});
 	
 	$('#played_events_grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
-		"pageLength": 15
+		"pageLength": 15,
+		"order": [[ 1, "desc" ]]
 	});
 
 	$('.dataTable').on( 'click', 'tr', function () {
