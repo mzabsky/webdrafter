@@ -49,9 +49,9 @@ class Module
             'factories' => array(
                 'Application\Model\Set' =>  function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-            		$set = new \Application\Model\Set();
-            		$set->setDbAdapter($dbAdapter);
-            		return $set;
+            		$user = new \Application\Model\Set();
+            		$user->setDbAdapter($dbAdapter);
+            		return $user;
                 },
                 'Application\Model\SetTable' =>  function($sm) {
                     $tableGateway = $sm->get('SetTableGateway');
@@ -119,6 +119,12 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Pick());
                     return new TableGateway('pick', $dbAdapter, null, $resultSetPrototype);
                 },
+                'Application\Model\User' =>  function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+            		$user = new \Application\Model\User();
+            		$user->setDbAdapter($dbAdapter);
+            		return $user;
+                },
                 'Application\Model\UserTable' =>  function($sm) {
                     $tableGateway = $sm->get('UserTableGateway');
                     $table = new \Application\Model\UserTable($tableGateway);
@@ -127,7 +133,7 @@ class Module
                 'UserTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\User());
+                    $resultSetPrototype->setArrayObjectPrototype($sm->get('Application\Model\User'));
                     return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\DraftPlayerBasicTable' =>  function($sm) {

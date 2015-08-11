@@ -42,3 +42,8 @@ body {
 .tutorials img {
 	display: block;
 }
+
+textarea {
+	width: 500px;
+	height: 250px;
+}

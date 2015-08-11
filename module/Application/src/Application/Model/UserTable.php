@@ -46,6 +46,9 @@ class UserTable
 		$data = array(
 			'user_id' => $user->userId,
 			'email'  => $user->email,
+			'name'  => $user->name,
+			'email_privacy'  => $user->emailPrivacy,
+			'email'  => $user->email,
 		);
 	
 		$id = (int) $user->userId;

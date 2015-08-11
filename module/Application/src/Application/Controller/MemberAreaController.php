@@ -26,8 +26,9 @@ use Application\Form\CreateSetForm;
 class MemberAreaController extends AbstractActionController
 {
 	private $googleClient;
+	private $user;
 	
-	private function initUser()
+	private function initUser($allowUnregistered = false)
 	{
 		if(!isset($_SESSION['user_id']))
 		{
@@ -47,6 +48,14 @@ class MemberAreaController extends AbstractActionController
 			
 			$this->googleClient->refreshToken($refreshToken);
 			//file_put_contents($credentialsPath, $client->getAccessToken());
+		}
+		
+		$sm = $this->getServiceLocator();
+		$userTable = $sm->get('Application\Model\UserTable');
+		$this->user = $userTable->tryGetUserByEmail($_SESSION["email"]);
+		
+		if($this->user->name == null && !$allowUnregistered){
+			$this->redirect()->toRoute('member-area', array('action' => 'register'));
 		}
 	}
 	
@@ -90,6 +99,55 @@ class MemberAreaController extends AbstractActionController
 		return $viewModel;
 	}
 	
+	public function registerAction()
+	{
+		$this->initUser(true);
+
+		if($_SESSION["not_registered"] != true){
+			return $this->redirect()->toRoute('member-area');
+		}
+		
+		$sm = $this->getServiceLocator();
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\RegistrationForm();
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+
+			$userTable = $sm->get('Application\Model\UserTable');
+			$user = $userTable->tryGetUserByEmail($_SESSION["email"]);
+			$form->setInputFilter($user->getInputFilter());
+				
+			$form->setData($formData);
+				
+			if ($form->isValid($formData))
+			{
+				$user->name = $formData["name"];
+				$user->emailPrivacy = $formData["email_privacy"];
+				$user->about = $formData["about"];
+					
+				$userTable->saveUser($user);
+				
+				$_SESSION["not_registered"] = false;
+		
+				return $this->redirect()->toRoute('member-area');
+			}
+			else
+			{
+				//var_dump($form->getMessages());
+			}
+		}
+		
+		$viewModel = new ViewModel();
+		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
+		$viewModel->accessToken = $_SESSION['access_token'];
+		$viewModel->form = $form;
+		
+		return $viewModel;
+	}
+	
 	public function loginAction()
 	{
 		$client = $this->createClient();
@@ -123,6 +181,15 @@ class MemberAreaController extends AbstractActionController
 			else
 			{
 				$_SESSION["user_id"] = $user->userId;
+			}
+			
+			if($user->name === null)
+			{
+				$_SESSION["not_registered"] = true;
+				$this->redirect()->toRoute('member-area', array('action' => 'register'));	
+			}
+			else {
+				$_SESSION["not_registered"] = false;
 			}
 			
 			$this->redirect()->toRoute('member-area');	
