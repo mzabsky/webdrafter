@@ -82,6 +82,7 @@ if($this->setRetired)
 			<thead>
 				<tr>
 					<th>Event name</th>
+					<th>Date and time</th>
 					<th>Status</th>
 					<th>Number of players</th>
 				</tr>
@@ -93,6 +94,8 @@ if($this->setRetired)
 			echo "<tr url='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId)) . "'><td class='nameCell'>";
 			echo $draft->name;
 		
+			echo "</td><td>";
+			echo $draft->createdOn;			
 			echo "</td><td>";
 			switch($draft->status)
 			{
@@ -119,6 +122,7 @@ if($this->setRetired)
 			<thead>
 				<tr>
 					<th>Event name</th>
+					<th>Date and time</th>
 					<th>Status</th>
 					<th>Number of players</th>
 				</tr>
@@ -130,6 +134,8 @@ if($this->setRetired)
 			echo "<tr url='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'><td class='nameCell'>";
 			echo $draft["draftName"];
 		
+			echo "</td><td>";
+			echo $draft["createdOn"];			
 			echo "</td><td>";
 			switch($draft["draftStatus"])
 			{

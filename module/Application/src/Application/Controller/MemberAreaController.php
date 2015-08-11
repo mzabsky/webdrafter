@@ -403,7 +403,7 @@ class MemberAreaController extends AbstractActionController
 					}
 					
 					$draft = new Draft();
-					$draft->name = join("/", $setCodes) . " " . $modeName . " on " . date("r").
+					$draft->name = join("/", $setCodes) . " " . $modeName;
 					$draft->status = Draft::STATUS_OPEN;
 					$draft->hostId = $_SESSION["user_id"];
 					$draft->createdOn = date("Y-m-d H:i:s");

@@ -81,6 +81,7 @@ class DraftPlayerTable
 			'name'  => $draftPlayer->name,
 			'invite_key'  => $draftPlayer->inviteKey,
 			'player_number'  => $draftPlayer->playerNumber,
+			'datetime'  => $draftPlayer->datetime,
 		);
 	
 		$id = (int) $draftPlayer->draftPlayerId;

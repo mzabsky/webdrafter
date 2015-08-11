@@ -46,7 +46,7 @@ class DraftTable
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('draft');
 		//$select->forUpdate();
-		$select->columns(array('draft_name' => 'name', 'draft_status' => 'status', 'pack_number', 'pick_number'));
+		$select->columns(array('draft_name' => 'name', 'draft_status' => 'status', 'pack_number', 'pick_number','created_on'));
 		$select->join('draft_player', 'draft_player.draft_id = draft.draft_id', array('invite_key'));
 		$select->where(array('draft_player.user_id' => $userId));
 		$select->order('draft.created_on DESC');
@@ -62,7 +62,8 @@ class DraftTable
 				'draftName' => $result->draft_name, 
 				'draftStatus' => $result->draft_status, 
 				'packNumber' => $result->pack_number, 
-				'pickNumber' => $result->pick_number
+				'pickNumber' => $result->pick_number,
+				'createdOn' => $result->created_on
 			);
 		}
 	
