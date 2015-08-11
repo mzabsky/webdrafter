@@ -30,15 +30,22 @@
     </head>
     <body>
         <div class="container">
-        	<a href="<?php echo $this->url('home')?>"><h1>WebDrafter</h1></a>
-        	<?php if(isset($_SESSION["email"])){?>
-        		Logged in as <?=$_SESSION["email"] ?> <a href="<?php echo $this->url('member-area')?>">Member area</a> <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-        	<?php } else  {?>
-        		<a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
-        	<?php } ?>
-        	<a href="<?php echo $this->url('browse') ?>">Browse sets</a>
-        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
-        	<hr />
+        	<div id="header">
+	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
+	        	<div id="menuBar">
+		        	<a href="<?php echo $this->url('browse') ?>">Browse sets</a>
+		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+	        	</div>
+	        	<div id="userPanel">
+		        	<?php if(isset($_SESSION["email"])){?>
+		        		Logged in as <?=$_SESSION["email"] ?> <br />
+		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> <a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+		        	<?php } else  {?>
+		        		<a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
+		        	<?php } ?>
+	        	</div>
+        		<div class="clear">
+        	</div>
             <?php echo $this->content; ?>
             <hr>
             <footer>
