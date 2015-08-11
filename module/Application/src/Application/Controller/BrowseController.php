@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 
 class BrowseController extends AbstractActionController
 {
-    public function setsAction()
+    public function indexAction()
     {
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
