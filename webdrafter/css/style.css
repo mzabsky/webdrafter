@@ -89,6 +89,17 @@ footer {
 	text-align: center;
 }
 
+#tabs {
+	border: none !important;
+	margin: 0 -20px 0 -20px;
+}
+
+#tabs .ui-widget-header {
+	border-left: none !important;
+	border-top: none !important;
+	border-right: none !important;
+}
+
 #deckbuilder td
 {
 	width: 230px;
