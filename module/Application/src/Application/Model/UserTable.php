@@ -48,7 +48,7 @@ class UserTable
 			'email'  => $user->email,
 			'name'  => $user->name,
 			'email_privacy'  => $user->emailPrivacy,
-			'email'  => $user->email,
+			'about'  => $user->about,
 		);
 	
 		$id = (int) $user->userId;
