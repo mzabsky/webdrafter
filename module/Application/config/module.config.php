@@ -91,7 +91,7 @@ return array(
         	'browse-set' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/browse/:action/:set_id',
+        			'route' => '/browse/set/:set_id',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                     	'set_id' => '[0-9]+'
@@ -101,7 +101,21 @@ return array(
      					'action'     => 'set',
         			),
         		),
-        	), 
+        	),       
+        	'browse-user' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/browse/user/:user_id',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    	'user_id' => '[0-9]+'
+                    ),
+       				'defaults' => array(
+      					'controller' => 'Application\Controller\Browse',
+     					'action'     => 'user',
+        			),
+        		),
+        	),  
         	'generate-pool' => array(
         		'type' => 'Segment',
         		'options' => array(

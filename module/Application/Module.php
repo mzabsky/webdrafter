@@ -37,7 +37,8 @@ class Module
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                     'League' => __DIR__ . '/../../vendor/League',
                     'Guzzle' => __DIR__ . '/../../vendor/Guzzle',
-                    'Symfony' => __DIR__ . '/../../vendor/Symfony'
+                    'Symfony' => __DIR__ . '/../../vendor/Symfony',
+                    'Michelf' => __DIR__ . '/../../vendor/Michelf'
                 ),
             ),
         );

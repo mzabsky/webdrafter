@@ -39,4 +39,19 @@ class BrowseController extends AbstractActionController
     	 
     	return $viewModel;
     }
+    
+    public function userAction()
+    {
+    	$userId = $this->getEvent()->getRouteMatch()->getParam('user_id');
+    	 
+    	$sm = $this->getServiceLocator();
+    	$setTable = $sm->get('Application\Model\SetTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+    
+    	$viewModel = new ViewModel();
+    	$viewModel->user = $userTable->getUser($userId);
+    	$viewModel->sets = $setTable->fetchByUser($userId);
+    
+    	return $viewModel;
+    }
 }
