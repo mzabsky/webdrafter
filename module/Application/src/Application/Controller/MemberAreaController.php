@@ -92,9 +92,9 @@ class MemberAreaController extends AbstractActionController
 		
 		$viewModel->setCreated = isset($_GET["set-created"]);
 		$viewModel->setRetired = isset($_GET["set-retired"]);
-		$viewModel->draftsHosted = $draftTable->fetchByHost($_SESSION["user_id"]);
+		$viewModel->draftsHosted = $draftTable->getPastDraftsByHost($_SESSION["user_id"]);
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
-		$viewModel->setsOwned = $setTable->fetchByUser($_SESSION["user_id"]);
+		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"]);
 		
 		return $viewModel;
 	}

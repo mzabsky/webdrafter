@@ -63,15 +63,16 @@ if($this->setRetired)
 					<th>Set name</th>
 					<th>Number of cards</th>
 					<th>Number of events</th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
 		<?php
 		foreach ($this->setsOwned as $set)
 		{
-			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'><td class='nameCell'>";
-			echo $set->name . " <a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set->setId . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a>";
-			echo "</td><td>0</td><td>0</td></tr>";	
+			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo $set["setName"];
+			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td><td><a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set["setId"] . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a></td></tr>";	
 		}
 		?>
 				</tr>
@@ -93,26 +94,26 @@ if($this->setRetired)
 		<?php
 		foreach ($this->draftsHosted as $draft)
 		{
-			echo "<tr url='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId)) . "'><td class='nameCell'>";
-			echo $draft->name;
+			echo "<tr url='" . $this->url('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft["draftId"])) . "'><td class='nameCell'>";
+			echo $draft["draftName"];
 		
 			echo "</td><td>";
-			echo $draft->createdOn;			
+			echo $draft["createdOn"];			
 			echo "</td><td>";
-			switch($draft->status)
+			switch($draft["draftStatus"])
 			{
 				case \Application\Model\Draft::STATUS_OPEN:
 					echo "OPEN";
 					break;
 				case \Application\Model\Draft::STATUS_RUNNING:
-					echo "RUNNING - pack " . $draft->packNumber . ", pick " . $draft->pickNumber;
+					echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["pickNumber"];
 					break;
 				case \Application\Model\Draft::STATUS_FINISHED:
 					echo "FINISHED";
 					break;
 			}
 			
-			echo "</td><td>0</td></tr>";
+			echo "</td><td>" . $draft["playerCount"] . "</td></tr>";
 		}
 		?>
 			</tbody>
@@ -125,6 +126,7 @@ if($this->setRetired)
 				<tr>
 					<th>Event name</th>
 					<th>Date and time</th>
+					<th>Host</th>
 					<th>Status</th>
 					<th>Number of players</th>
 				</tr>
@@ -137,7 +139,9 @@ if($this->setRetired)
 			echo $draft["draftName"];
 		
 			echo "</td><td>";
-			echo $draft["createdOn"];			
+			echo $draft["createdOn"];	
+			echo "</td><td>";
+			echo $draft["hostName"];				
 			echo "</td><td>";
 			switch($draft["draftStatus"])
 			{
@@ -151,7 +155,7 @@ if($this->setRetired)
 					echo "FINISHED";
 					break;
 			}
-			echo "</td><td>0</td></tr>";
+			echo "</td><td>" . $draft["playerCount"] . "</td></tr>";
 		}
 		?>
 			</tbody>
