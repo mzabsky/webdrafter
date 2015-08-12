@@ -50,7 +50,7 @@ class BrowseController extends AbstractActionController
     
     	$viewModel = new ViewModel();
     	$viewModel->user = $userTable->getUser($userId);
-    	$viewModel->sets = $setTable->fetchByUser($userId);
+    	$viewModel->sets = $setTable->getSetsByUser($userId);
     
     	return $viewModel;
     }

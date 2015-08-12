@@ -24,12 +24,12 @@ $(function(){
 	</thead>
 	<tbody>
 <?php
-foreach ($this->sets as $set)
-{
-	echo "<tr url='" . $this->url('browse-set', array('set_id' => $set->setId)) . "'><td class='nameCell'>";
-	echo $set->name;
-	echo "</th><td>0</td><td>0</td></tr>";	
-}
+		foreach ($this->sets as $set)
+		{
+			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo $set["setName"];
+			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
+		}
 ?>
 		</tr>
 	</tbody>
