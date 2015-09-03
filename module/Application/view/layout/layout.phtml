@@ -37,9 +37,12 @@
 		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
 	        	</div>
 	        	<div id="userPanel">
-		        	<?php if(isset($_SESSION["email"])){?>
-		        		Logged in as <?=$_SESSION["email"] ?> <br />
-		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> <a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+		        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
+		        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
+		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
+		        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
+		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+		        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
 		        	<?php } else  {?>
 		        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
 		        	<?php } ?>

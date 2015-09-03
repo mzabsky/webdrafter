@@ -22,39 +22,21 @@ use Application\Model\User;
 use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
 use Application\Form\CreateSetForm;
+use Application\GoogleAuthentication;
 
 class MemberAreaController extends AbstractActionController
 {
-	private $googleClient;
-	private $user;
-	
 	private function initUser($allowUnregistered = false)
 	{
-		if(!isset($_SESSION['user_id']))
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		
+		if($auth->GetStatus() == GoogleAuthentication::STATUS_ANONYMOUS)
 		{
 			$this->redirect()->toRoute('member-area', array('action' => 'login'));
-			//throw new \Exception("Must be logged in to access this page");
-		}		
-		
-		$this->googleClient = $this->createClient();
-		$this->googleClient->setAccessToken($_SESSION["access_token"]);
-		
-		if ($this->googleClient->isAccessTokenExpired()) {
-			$refreshToken = $this->googleClient->getRefreshToken();
-			if($refreshToken == null){
-				session_destroy();
-				$this->redirect()->toRoute('member-area', array('action' => 'login'));
-			}
-			
-			$this->googleClient->refreshToken($refreshToken);
-			//file_put_contents($credentialsPath, $client->getAccessToken());
 		}
-		
-		$sm = $this->getServiceLocator();
-		$userTable = $sm->get('Application\Model\UserTable');
-		$this->user = $userTable->tryGetUserByEmail($_SESSION["email"]);
-		
-		if($this->user->name == null && !$allowUnregistered){
+		else if($auth->GetStatus() == GoogleAuthentication::STATUS_NOT_REGISTERED && !$allowUnregistered)
+		{
 			$this->redirect()->toRoute('member-area', array('action' => 'register'));
 		}
 	}

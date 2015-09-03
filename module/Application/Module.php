@@ -17,8 +17,11 @@ use Zend\Db\ResultSet\HydratingResultSet;
 
 class Module
 {
+	private $googleAuthentication;
+	
     public function onBootstrap(MvcEvent $e)
     {
+    	$sm = $e->getApplication()->getServiceManager();
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
@@ -48,6 +51,13 @@ class Module
     {
         return array(
             'factories' => array(
+                'Application\GoogleAuthentication' =>  function($sm) {
+                	if($this->googleAuthentication == null)
+                	{
+                		$this->googleAuthentication = new \Application\GoogleAuthentication($sm);
+                	}
+            		return $this->googleAuthentication;
+                },
                 'Application\Model\Set' =>  function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
             		$user = new \Application\Model\Set();
@@ -150,6 +160,18 @@ class Module
                 },
             )
         );
+     }
+     
+     public function getViewHelperConfig()
+     {
+     	return array(
+     			'factories' => array(
+     					'auth' => function($sm) {
+     						$helper = new \Application\View\Helper\Auth() ;
+     						return $helper;
+     					}
+     			)
+     	);
      }
 }
 
