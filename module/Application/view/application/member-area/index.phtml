@@ -44,6 +44,12 @@ if($this->setRetired)
 <?php 
 }
 
+if($this->accountUpdated)
+{
+	?>
+	<div class="success-message"/>Account settings changed!</div>
+<?php 
+}
 
 ?>
 
@@ -52,7 +58,7 @@ if($this->setRetired)
 		<li><a href="#played_events_tab">Played events</a></li>
 		<li><a href="#hosted_events_tab">Hosted events</a></li>
 		<li><a href="#owned_sets_tab">Owned sets</a></li>
-		<!--  <li><a href="#events_played_tab">Account settings</a></li>-->
+		<li><a href="#account_settings_tab">Account settings</a></li>
 	</ul>
 	<div id="owned_sets_tab">
 		<p>This page contains an overview of sets you own.</p>
@@ -160,5 +166,8 @@ if($this->setRetired)
 		?>
 			</tbody>
 		</table>
+	</div>
+	<div id="account_settings_tab">	
+		<?php echo $this->partial('/application/member-area/register', array('form' => $this->form, 'registrationMode' => false)); ?>
 	</div>
 </div>

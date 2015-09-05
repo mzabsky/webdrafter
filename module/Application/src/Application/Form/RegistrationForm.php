@@ -12,23 +12,32 @@ class RegistrationForm extends Form
 	const EMAIL_PRIVACY_REGISTERED_ONLY = 2;
 	const EMAIL_PRIVACY_PRIVATE = 3;
 	
-	public function __construct($options = null)
+	private $includeName;
+	
+	public function isNameIncluded(){
+		return $this->includeName;
+	}
+	
+	public function __construct($includeName)
 	{
-		parent::__construct($options);
+		parent::__construct();
 		//$this->setMethod("post");
+
+		$this->includeName = $includeName;
 		
 		$this->setName('register');
 
 		$factory = new \Zend\Form\Factory();	
 
-		
-		$this->add($factory->createElement(array(
-			'name' => 'name',
-			'options' => array(
-				'label' => 'Display name: ',
-				'description' => 'Name that will represent you on the site. Must be unique. Cannot be changed.'
-			)
-		)));
+		if($includeName){
+			$this->add($factory->createElement(array(
+					'name' => 'name',
+					'options' => array(
+							'label' => 'Display name: ',
+							'description' => 'Name that will represent you on the site. Must be unique. Cannot be changed.'
+					)
+			)));
+		}		
 		
 		$this->add($factory->createElement(array(
 			'name' => 'email_privacy',
@@ -49,14 +58,14 @@ class RegistrationForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About me: ',
-				'description' => 'Arbitrary text displayed in your profile. Formatted with <a href="https://help.github.com/articles/markdown-basics/">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
+				'description' => 'Arbitrary text displayed in your profile. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
 			),
 		)));
 
 		$this->add($factory->createElement(array(
 			'name' => 'submit',
             'attributes' => array(
-                'value' => 'Register',
+                'value' => 'Submit',
             ),
 			'type' => 'submit',
 			'required' => true,

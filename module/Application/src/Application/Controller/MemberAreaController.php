@@ -67,16 +67,54 @@ class MemberAreaController extends AbstractActionController
 		$this->initUser();
 		
 		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\RegistrationForm(false);
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index')));
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+		
+			$userTable = $sm->get('Application\Model\UserTable');
+			$user = $auth->getUser();
+			$inputFilter = $user->getInputFilter();
+			$inputFilter->remove('name');
+			$form->setInputFilter($inputFilter);
+		
+			$form->setData($formData);
+			
+			if ($form->isValid($formData))
+			{
+				$user->emailPrivacy = $formData["email_privacy"];
+				$user->about = $formData["about"];
+					
+				$userTable->saveUser($user);
+		
+				return $this->redirect()->toRoute('member-area', array(), array('query' => 'account-updated'));
+			}
+			else
+			{
+			}
+		}
+		else {
+			$user = $auth->getUser();
+			$form->setData($user->getArray());
+		}
 		
 		$viewModel = new ViewModel();
 		
 		$viewModel->setCreated = isset($_GET["set-created"]);
 		$viewModel->setRetired = isset($_GET["set-retired"]);
+		$viewModel->accountUpdated = isset($_GET["account-updated"]);
 		$viewModel->draftsHosted = $draftTable->getPastDraftsByHost($_SESSION["user_id"]);
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
 		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"]);
+		$viewModel->form = $form;
 		
 		return $viewModel;
 	}
@@ -90,9 +128,11 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
-		$form = new \Application\Form\RegistrationForm();
+		$form = new \Application\Form\RegistrationForm(true);
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'register')));
 		
 		if ($this->getRequest()->isPost())
 		{
@@ -112,8 +152,6 @@ class MemberAreaController extends AbstractActionController
 					
 				$userTable->saveUser($user);
 				
-				$_SESSION["not_registered"] = false;
-		
 				return $this->redirect()->toRoute('member-area');
 			}
 			else
@@ -121,11 +159,14 @@ class MemberAreaController extends AbstractActionController
 				//var_dump($form->getMessages());
 			}
 		}
+		else {
+		}
 		
 		$viewModel = new ViewModel();
 		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
 		$viewModel->accessToken = $_SESSION['access_token'];
 		$viewModel->form = $form;
+		$viewModel->registrationMode = true;
 		
 		return $viewModel;
 	}

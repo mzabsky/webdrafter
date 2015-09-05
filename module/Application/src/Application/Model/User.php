@@ -26,6 +26,17 @@ class User implements InputFilterAwareInterface
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
     }
     
+    public function getArray()
+    {
+    	return array(
+    		'user_id' => $this->userId,
+    		'email' => $this->email,
+    		'name' => $this->name,
+    		'email_privacy' => $this->emailPrivacy,
+    		'about' => $this->about,
+    	);
+    }
+    
     public function setDbAdapter(\Zend\Db\Adapter\Adapter $adapter)
     {
     	$this->dbAdapter = $adapter;
