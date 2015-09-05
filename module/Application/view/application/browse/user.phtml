@@ -13,7 +13,18 @@ $(function(){
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->user->name; ?></h2>
-<?php echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
+<?php 
+
+if(
+	($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) ||
+	$this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_PUBLIC
+)
+{
+	echo "<p>Email: " . $this->user->email . "</p>";
+}
+
+
+echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
 <table id="owned_sets_grid" class="display hover stripe clickableRows" >
 	<thead>
 		<tr>

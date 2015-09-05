@@ -33,12 +33,14 @@ class MemberAreaController extends AbstractActionController
 		
 		if($auth->GetStatus() == GoogleAuthentication::STATUS_ANONYMOUS)
 		{
-			$this->redirect()->toRoute('member-area', array('action' => 'login'));
+			return $this->redirect()->toRoute('member-area', array('action' => 'login'));
 		}
 		else if($auth->GetStatus() == GoogleAuthentication::STATUS_NOT_REGISTERED && !$allowUnregistered)
 		{
-			$this->redirect()->toRoute('member-area', array('action' => 'register'));
+			return $this->redirect()->toRoute('member-area', array('action' => 'register'));
 		}
+		
+		return NULL;
 	}
 	
 	private function createClient()
@@ -64,7 +66,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function indexAction()
 	{	
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
 		$auth = $sm->get('Application\GoogleAuthentication');
@@ -121,7 +123,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function registerAction()
 	{
-		$this->initUser(true);
+		if(($redirect = $this->initUser(true)) != NULL) return $redirect;
 
 		if($_SESSION["not_registered"] != true){
 			return $this->redirect()->toRoute('member-area');
@@ -244,7 +246,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createSetAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
@@ -342,13 +344,13 @@ class MemberAreaController extends AbstractActionController
 	
 	public function selectGameModeAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		return new ViewModel();
 	}
 	
 	public function hostDraftAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
 		{
@@ -468,7 +470,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function draftAdminAction()
 	{	
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -485,7 +487,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function getDraftPlayersAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -506,7 +508,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function addDraftPlayerAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
@@ -535,7 +537,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function startDraftAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		try
 		{
@@ -711,7 +713,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function retireSetAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		if(!isset($_GET["set_id"]) || strlen($_GET["set_id"]) < 1)
 		{

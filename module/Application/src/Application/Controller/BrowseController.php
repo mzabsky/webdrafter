@@ -18,9 +18,11 @@ class BrowseController extends AbstractActionController
     {
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
     	
     	$viewModel = new ViewModel(); 
-    	$viewModel->sets = $setTable->fetchAll();
+    	$viewModel->sets = $setTable->getSets();
+    	$viewModel->users = $userTable->getUsers();
     	
         return $viewModel;
     }

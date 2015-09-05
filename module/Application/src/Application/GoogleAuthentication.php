@@ -18,7 +18,7 @@ class GoogleAuthentication
 	private function initUser()
 	{
 		$this->googleClient = $this->createClient();
-		
+
 		if(!isset($_SESSION['user_id']))
 		{
 			$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
