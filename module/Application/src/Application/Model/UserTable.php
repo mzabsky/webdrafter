@@ -39,7 +39,7 @@ class UserTable
 		$select = new Select('user');
 		$select->columns(array('user_name' => 'name', 'user_id'));
 		$select->join(array('draft_player_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, user_id FROM draft_player GROUP BY user_id)')), 'user.user_id = draft_player_count.user_id', array('draft_count' => 'count'));
-		$select->join(array('set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(set_id) count, user_id FROM `set` GROUP BY user_id)')), 'user.user_id = set_count.user_id', array('set_count' => 'count'));
+		$select->join(array('set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(set_id) count, user_id FROM `set` WHERE is_retired = 0 GROUP BY user_id)')), 'user.user_id = set_count.user_id', array('set_count' => 'count'));
 		$select->where(array('user.name IS NOT NULL'));
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		
