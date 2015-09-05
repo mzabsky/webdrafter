@@ -40,18 +40,54 @@ class DraftTable
 		});
 		return $resultSet;
 	}
+
+	public function getPastDraftsByHost($userId)
+	{
+		$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('draft');
+		//$select->forUpdate();
+		$select->columns(array('draft_name' => 'name', 'draft_status' => 'status', 'pack_number', 'pick_number','created_on','draft_id'));
+		$select->join('draft_player', 'draft_player.draft_id = draft.draft_id', array('invite_key'));
+		$select->join(array('draft_player_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(draft_player_id) count, draft_id FROM draft_player GROUP BY draft_id)')), 'draft.draft_id = draft_player_count.draft_id', array('player_count' => 'count'));
+		$select->where(array('draft.host_id' => $userId));
+		$select->order('draft.created_on DESC');
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
+	
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+	
+		$resultArray = array();
+		foreach ($resultSet as $result)
+		{
+			$resultArray[] = array(
+					'draftId' => $result->draft_id,
+					'inviteKey' => $result->invite_key,
+					'draftName' => $result->draft_name,
+					'draftStatus' => $result->draft_status,
+					'packNumber' => $result->pack_number,
+					'pickNumber' => $result->pick_number,
+					'createdOn' => $result->created_on,
+					'playerCount' => $result->player_count
+			);
+		}
+	
+		return $resultArray;
+	}
 	
 	public function getPastDraftsByUser($userId)
 	{
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('draft');
 		//$select->forUpdate();
-		$select->columns(array('draft_name' => 'name', 'draft_status' => 'status', 'pack_number', 'pick_number'));
+		$select->columns(array('draft_name' => 'name', 'draft_status' => 'status', 'pack_number', 'pick_number','created_on'));
 		$select->join('draft_player', 'draft_player.draft_id = draft.draft_id', array('invite_key'));
+		$select->join('user', 'draft.host_id = user.user_id', array('host_id' => 'user_id', 'host_name' => 'name'));
+		$select->join(array('draft_player_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(draft_player_id) count, draft_id FROM draft_player GROUP BY draft_id)')), 'draft.draft_id = draft_player_count.draft_id', array('player_count' => 'count'));
 		$select->where(array('draft_player.user_id' => $userId));
 		$select->order('draft.created_on DESC');
-		//var_dump($selectString);
 		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
+		
 		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
 	
 		$resultArray = array();
@@ -62,7 +98,11 @@ class DraftTable
 				'draftName' => $result->draft_name, 
 				'draftStatus' => $result->draft_status, 
 				'packNumber' => $result->pack_number, 
-				'pickNumber' => $result->pick_number
+				'pickNumber' => $result->pick_number,
+				'createdOn' => $result->created_on,
+				'hostName' => $result->host_name,
+				'hostId' => $result->host_id,
+				'playerCount' => $result->player_count
 			);
 		}
 	

@@ -80,7 +80,7 @@ class DraftPlayerTable
 			'user_id'  => $draftPlayer->userId,
 			'name'  => $draftPlayer->name,
 			'invite_key'  => $draftPlayer->inviteKey,
-			'player_number'  => $draftPlayer->playerNumber,
+			'player_number'  => $draftPlayer->playerNumber
 		);
 	
 		$id = (int) $draftPlayer->draftPlayerId;

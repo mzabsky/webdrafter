@@ -22,32 +22,25 @@ use Application\Model\User;
 use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
 use Application\Form\CreateSetForm;
+use Application\GoogleAuthentication;
 
 class MemberAreaController extends AbstractActionController
 {
-	private $googleClient;
-	
-	private function initUser()
+	private function initUser($allowUnregistered = false)
 	{
-		if(!isset($_SESSION['user_id']))
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		
+		if($auth->GetStatus() == GoogleAuthentication::STATUS_ANONYMOUS)
 		{
-			$this->redirect()->toRoute('member-area', array('action' => 'login'));
-			//throw new \Exception("Must be logged in to access this page");
-		}		
-		
-		$this->googleClient = $this->createClient();
-		$this->googleClient->setAccessToken($_SESSION["access_token"]);
-		
-		if ($this->googleClient->isAccessTokenExpired()) {
-			$refreshToken = $this->googleClient->getRefreshToken();
-			if($refreshToken == null){
-				session_destroy();
-				$this->redirect()->toRoute('member-area', array('action' => 'login'));
-			}
-			
-			$this->googleClient->refreshToken($refreshToken);
-			//file_put_contents($credentialsPath, $client->getAccessToken());
+			return $this->redirect()->toRoute('member-area', array('action' => 'login'));
 		}
+		else if($auth->GetStatus() == GoogleAuthentication::STATUS_NOT_REGISTERED && !$allowUnregistered)
+		{
+			return $this->redirect()->toRoute('member-area', array('action' => 'register'));
+		}
+		
+		return NULL;
 	}
 	
 	private function createClient()
@@ -73,19 +66,109 @@ class MemberAreaController extends AbstractActionController
 	
 	public function indexAction()
 	{	
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\RegistrationForm(false);
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index')));
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+		
+			$userTable = $sm->get('Application\Model\UserTable');
+			$user = $auth->getUser();
+			$inputFilter = $user->getInputFilter();
+			$inputFilter->remove('name');
+			$form->setInputFilter($inputFilter);
+		
+			$form->setData($formData);
+			
+			if ($form->isValid($formData))
+			{
+				$user->emailPrivacy = $formData["email_privacy"];
+				$user->about = $formData["about"];
+					
+				$userTable->saveUser($user);
+		
+				return $this->redirect()->toRoute('member-area', array(), array('query' => 'account-updated'));
+			}
+			else
+			{
+			}
+		}
+		else {
+			$user = $auth->getUser();
+			$form->setData($user->getArray());
+		}
 		
 		$viewModel = new ViewModel();
 		
 		$viewModel->setCreated = isset($_GET["set-created"]);
 		$viewModel->setRetired = isset($_GET["set-retired"]);
-		$viewModel->draftsHosted = $draftTable->fetchByHost($_SESSION["user_id"]);
+		$viewModel->accountUpdated = isset($_GET["account-updated"]);
+		$viewModel->draftsHosted = $draftTable->getPastDraftsByHost($_SESSION["user_id"]);
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
-		$viewModel->setsOwned = $setTable->fetchByUser($_SESSION["user_id"]);
+		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"]);
+		$viewModel->form = $form;
+		
+		return $viewModel;
+	}
+	
+	public function registerAction()
+	{
+		if(($redirect = $this->initUser(true)) != NULL) return $redirect;
+
+		if($_SESSION["not_registered"] != true){
+			return $this->redirect()->toRoute('member-area');
+		}
+		
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\RegistrationForm(true);
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'register')));
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+
+			$userTable = $sm->get('Application\Model\UserTable');
+			$user = $userTable->tryGetUserByEmail($_SESSION["email"]);
+			$form->setInputFilter($user->getInputFilter());
+				
+			$form->setData($formData);
+				
+			if ($form->isValid($formData))
+			{
+				$user->name = $formData["name"];
+				$user->emailPrivacy = $formData["email_privacy"];
+				$user->about = $formData["about"];
+					
+				$userTable->saveUser($user);
+				
+				return $this->redirect()->toRoute('member-area');
+			}
+			else
+			{
+				//var_dump($form->getMessages());
+			}
+		}
+		else {
+		}
+		
+		$viewModel = new ViewModel();
+		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
+		$viewModel->accessToken = $_SESSION['access_token'];
+		$viewModel->form = $form;
+		$viewModel->registrationMode = true;
 		
 		return $viewModel;
 	}
@@ -125,6 +208,15 @@ class MemberAreaController extends AbstractActionController
 				$_SESSION["user_id"] = $user->userId;
 			}
 			
+			if($user->name === null)
+			{
+				$_SESSION["not_registered"] = true;
+				$this->redirect()->toRoute('member-area', array('action' => 'register'));	
+			}
+			else {
+				$_SESSION["not_registered"] = false;
+			}
+			
 			$this->redirect()->toRoute('member-area');	
 		}
 		else if(isset($_SESSION['access_token']))
@@ -154,7 +246,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createSetAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
@@ -252,13 +344,13 @@ class MemberAreaController extends AbstractActionController
 	
 	public function selectGameModeAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		return new ViewModel();
 	}
 	
 	public function hostDraftAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
 		{
@@ -336,7 +428,7 @@ class MemberAreaController extends AbstractActionController
 					}
 					
 					$draft = new Draft();
-					$draft->name = join("/", $setCodes) . " " . $modeName . " on " . date("r").
+					$draft->name = join("/", $setCodes) . " " . $modeName;
 					$draft->status = Draft::STATUS_OPEN;
 					$draft->hostId = $_SESSION["user_id"];
 					$draft->createdOn = date("Y-m-d H:i:s");
@@ -378,7 +470,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function draftAdminAction()
 	{	
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -395,7 +487,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function getDraftPlayersAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -416,7 +508,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function addDraftPlayerAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
@@ -445,7 +537,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function startDraftAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		try
 		{
@@ -621,7 +713,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function retireSetAction()
 	{
-		$this->initUser();
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		if(!isset($_GET["set_id"]) || strlen($_GET["set_id"]) < 1)
 		{

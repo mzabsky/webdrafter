@@ -11,13 +11,15 @@
         ?>
 
         <!-- Le styles -->
-        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
+       					->prependStylesheet($this->basePath('css/jquery.dataTables.min.css'))
                         ->prependStylesheet($this->basePath('css/style.css'))
-        				->prependStylesheet('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css') ?>
+        				->prependStylesheet('css/jquery-ui.css') ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
             ->prependFile($this->basePath('js/webdrafter.js'))
+            ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
             //->prependFile($this->basePath('js/jquery.min.js'))
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
@@ -28,19 +30,32 @@
     </head>
     <body>
         <div class="container">
-        	<a href="<?php echo $this->url('home')?>"><h1>WebDrafter</h1></a>
-        	<?php if(isset($_SESSION["email"])){?>
-        		Logged in as <?=$_SESSION["email"] ?> <a href="<?php echo $this->url('member-area')?>">Member area</a> <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-        	<?php } else  {?>
-        		<a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
-        	<?php } ?>
-        	<a href="<?php echo $this->url('browse') ?>">Browse sets</a>
-        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
-        	<hr />
-            <?php echo $this->content; ?>
-            <hr>
+        	<div id="header">
+	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
+	        	<div id="menuBar">
+		        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
+		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+	        	</div>
+	        	<div id="userPanel">
+		        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
+		        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
+		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
+		        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
+		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+		        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
+		        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
+		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+		        	<?php } else  {?>
+		        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
+		        	<?php } ?>
+	        	</div>
+        		<div class="clear"></div>
+        	</div>
+        	<div id="body">
+            	<?php echo $this->content; ?>
+            </div>
             <footer>
-                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky.</p>
+                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky. All dates and times are in CEST.</p> 
             </footer>
         </div> <!-- /container -->
         <?php echo $this->inlineScript() ?>

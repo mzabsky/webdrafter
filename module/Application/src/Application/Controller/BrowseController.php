@@ -14,13 +14,15 @@ use Zend\View\Model\ViewModel;
 
 class BrowseController extends AbstractActionController
 {
-    public function setsAction()
+    public function indexAction()
     {
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
     	
     	$viewModel = new ViewModel(); 
-    	$viewModel->sets = $setTable->fetchAll();
+    	$viewModel->sets = $setTable->getSets();
+    	$viewModel->users = $userTable->getUsers();
     	
         return $viewModel;
     }
@@ -37,6 +39,21 @@ class BrowseController extends AbstractActionController
     	$viewModel->set = $setTable->getSet($setId);
     	$viewModel->cards = $cardTable->fetchBySet($setId);
     	 
+    	return $viewModel;
+    }
+    
+    public function userAction()
+    {
+    	$userId = $this->getEvent()->getRouteMatch()->getParam('user_id');
+    	 
+    	$sm = $this->getServiceLocator();
+    	$setTable = $sm->get('Application\Model\SetTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+    
+    	$viewModel = new ViewModel();
+    	$viewModel->user = $userTable->getUser($userId);
+    	$viewModel->sets = $setTable->getSetsByUser($userId);
+    
     	return $viewModel;
     }
 }

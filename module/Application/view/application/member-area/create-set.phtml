@@ -35,7 +35,7 @@
     google.setOnLoadCallback(createPicker);
     google.load("picker", "1");
     </script>
-<h2>Create a set</h2>
+<h2 id="contentTitle">Create a set</h2>
 <p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
 
 <?php
@@ -58,19 +58,19 @@ echo $this->form()->openTag($form);
 </div>
 <div class="form_element">
 <?php
-    $code = $form->get('code');
-    echo $formLabel->openTag() . $code->getOption('label');
-    echo $this->formInput($code);
-    echo $this->formElementErrors($code) . "<small>" . $code->getOption('description') . "</small>";
+    $emailPrivacy = $form->get('code');
+    echo $formLabel->openTag() . $emailPrivacy->getOption('label');
+    echo $this->formInput($emailPrivacy);
+    echo $this->formElementErrors($emailPrivacy) . "<small>" . $emailPrivacy->getOption('description') . "</small>";
     echo $formLabel->closeTag();
 ?>
 </div>
 <div class="form_element">
 <?php
-    $infoUrl = $form->get('url');
-    echo $formLabel->openTag() . $infoUrl->getOption('label');
-    echo $this->formInput($infoUrl);
-    echo $this->formElementErrors($infoUrl) . "<small>" . $infoUrl->getOption('description') . "</small>";
+    $about = $form->get('url');
+    echo $formLabel->openTag() . $about->getOption('label');
+    echo $this->formInput($about);
+    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
     echo $formLabel->closeTag();
 ?>
 </div>
