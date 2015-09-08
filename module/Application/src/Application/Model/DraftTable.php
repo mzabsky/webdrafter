@@ -115,7 +115,8 @@ class DraftTable
 		$select = new Select('draft_player', array());
 		$select->columns(array(
 			'draft_player_name' => new \Zend\Db\Sql\Expression('draft_player.name'),
-			'has_picked' => new \Zend\Db\Sql\Expression('pick.is_picked')
+			'has_picked' => new \Zend\Db\Sql\Expression('pick.is_picked'),
+			'user_id' => new \Zend\Db\Sql\Expression('draft_player.user_id')
 		));
 		$select->join('draft', 'draft.draft_id = draft_player.draft_id');
 		$select->join('pick', 'draft_player.draft_player_id = pick.current_player_id AND draft.pack_number = pick.pack_number AND draft.pick_number = pick.pick_number', array(), 'left');		
@@ -128,7 +129,7 @@ class DraftTable
 		$indicators = array();
 		foreach ($resultSet as $result)
 		{
-			$indicators[$result->draft_player_name] = !is_null($result->has_picked);
+			$indicators[$result->draft_player_name] = array('hasPicked' => !is_null($result->has_picked), 'userId' => $result->user_id);
 		}
 	
 		return $indicators;

@@ -152,13 +152,22 @@ function refreshDraft()
 			var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";	
 			$("#draft").append(directionArrow);
 			$.each( data["pickIndicators"], function( key, val ) {
-				if(val)
+				var link;
+				if(val['userId'] == null)
 				{
-					$("#draft").append("<b>" + key + "</b>" + directionArrow);
+					link = key;
+				}
+				else {
+					link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '<a>';
+				}
+
+				if(val['hasPicked'])
+				{
+					$("#draft").append("<i>" + link + "</i>" + directionArrow);
 				}
 				else 
 				{
-					$("#draft").append(key + directionArrow);
+					$("#draft").append(link + directionArrow);
 				}
 			});
 			
