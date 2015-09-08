@@ -134,7 +134,14 @@ function refreshDraft()
 				$("#draft").html("<p>You have joined this draft. Please wait until the host starts it.</p>");
 				$("#draft").append("<p><b>Joined players<b>: </p>");
 				$.each( data["draftPlayers"], function( key, val ) {
-					$("#draft").append(val["name"] + "<br/>");
+					if(val["userId"] == null)
+					{
+						$("#draft").append(val["name"] + "<br/>");
+					}
+					else 
+					{
+						$("#draft").append("<a href='/user/" + val["userId"] +"'>" + val["name"] + "</a><br/>");
+					}
 				});
 				timer = setTimeout(function(){ refreshDraft(); }, 1000);
 			}
@@ -158,12 +165,12 @@ function refreshDraft()
 					link = key;
 				}
 				else {
-					link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '<a>';
+					link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
 				}
 
 				if(val['hasPicked'])
 				{
-					$("#draft").append("<i>" + link + "</i>" + directionArrow);
+					$("#draft").append("<span style='display: inline-block; background: #33FF33'>" + link + "</span>" + directionArrow);
 				}
 				else 
 				{
