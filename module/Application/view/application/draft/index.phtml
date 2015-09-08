@@ -140,7 +140,11 @@ function refreshDraft()
 			}
 			else {
 				$("#draft").html("You have not joined this draft yet. If the host starts it now, you will not be opart of the draft. Click the button below to join.<br /><br />");
-				$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' /> <button onclick='joinDraft()'>Join draft</button>");
+				$("#draft").append("Player name: <button onclick='joinDraft()'>Join draft</button>");
+<?php if($this->auth()->getStatus() != \Application\GoogleAuthentication::STATUS_LOGGED_IN){ ?>
+				$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' />");
+<?php } ?>
+				$("#draft").append("<button onclick='joinDraft()'>Join draft</button>");
 			}
 		}
 		else if(data["draftStatus"] == draftStatuses.running)

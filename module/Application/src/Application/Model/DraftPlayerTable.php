@@ -70,6 +70,16 @@ class DraftPlayerTable
 		return $row;
 	}
 	
+	public function getDraftPlayerByUserId($draftId, $userId)
+	{
+		$rowset = $this->tableGateway->select(array('draft_id' => $draftId, 'user_id' => $userId));
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
+		}
+		return $row;
+	}
+	
 	public function saveDraftPlayer(DraftPlayer $draftPlayer)
 	{
 		$data = array(

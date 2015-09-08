@@ -101,4 +101,9 @@ class GoogleAuthentication
 	{
 		return $this->authStatus;
 	}
+	
+	public function isLoggedIn()
+	{
+		return $this->authStatus == GoogleAuthentication::STATUS_LOGGED_IN;
+	}
 }

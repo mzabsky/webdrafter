@@ -109,14 +109,29 @@ class DraftController extends AbstractActionController
 		{
 			throw new \Exception("Already joined");
 		}
-		if(!isset($_GET["name"]) || strlen($_GET["name"]) < 1)
+		
+		$auth = $this->sm->get("Application\GoogleAuthentication");
+		if($auth->isLoggedIn())
+		{
+			$name = $auth->getUser()->name;
+		}
+		else if(isset($_GET["player_name"]) && strlen($_GET["player_name"]) > 0)
+		{
+			$name = $_GET["player_name"];
+		}
+		else 
 		{
 			throw new \Exception("Name not set");
 		}
 
+		if(!$this->draftPlayerTable->checkPlayerNameOpenInDraft($name, $this->draft->draftId))
+		{
+			return $this->redirect()->toRoute('draft', array('invite_key' => $this->lobbyKey), array('query' => 'name-taken'));
+		}
+		
 		$this->draftPlayer->hasJoined = 1;
-		$this->draftPlayer->name = $_GET["name"];
-		$this->draftPlayer->userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : null;
+		$this->draftPlayer->name = $name;
+		$this->draftPlayer->userId = $auth->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN ? $auth->getUser()->userId : null;
 		$this->draftPlayerTable->saveDraftPlayer($this->draftPlayer);
 		
 		$jsonModel = new JsonModel();

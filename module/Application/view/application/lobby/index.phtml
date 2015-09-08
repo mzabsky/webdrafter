@@ -13,7 +13,13 @@ else
 ?>
 
 <p>You can join this event by entering your desired player name and clicking "Join event":</p>
-<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get" id="joinform">Player name: <input type='text' name='player_name' id='player_name' /> <input type="submit" onclick="$(this).attr('disabled', 'disabled'); $('#joinform').submit();" value="Join event"/></submit></form>
+<form action="<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>" method="get" id="joinform">
+<?php if($this->auth()->getStatus() != \Application\GoogleAuthentication::STATUS_LOGGED_IN){ ?>
+	Player name: 
+	<input type='text' name='player_name' id='player_name' />
+<?php } ?>
+	<input type="submit" onclick="$(this).attr('disabled', 'disabled'); $('#joinform').submit();" value="Join event"/>
+</submit></form>
 <?php 
 }
 ?>

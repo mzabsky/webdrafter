@@ -39,9 +39,9 @@ function refreshPlayersList()
 		if(data["draft"]["status"] == draftStatuses.open)
 		{
 			$("#draft_players").append("<p>The event is now open for players to join. Link to open lobby for this event:</p>");
-			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br/>");
+			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br /><a href='<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey));?>' target='blank'>Join event as player</a><br/>");
 			$("#draft_players").append("<p>Share this link with the players - each player will be able to join at their own leisure.</p>")
-			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name and click \"Join\". Feel free to use one of those links yourself (you still have to open it and join).</p>");
+			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name (or log in) and click \"Join\". </p>");
 			$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
 
 			var items = [];

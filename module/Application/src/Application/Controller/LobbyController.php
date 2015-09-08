@@ -35,6 +35,15 @@ class LobbyController extends AbstractActionController
 	{
 		$this->init();
 		
+		$auth = $this->sm->get("Application\GoogleAuthentication");
+		if($auth->isLoggedIn())
+		{
+			$draftPlayer = $this->draftPlayerTable->getDraftPlayerByUserId($this->draft->draftId, $auth->getUser()->userId);
+			if($draftPlayer != null){
+				return $this->redirect()->toRoute('draft', array('invite_key' => $draftPlayer->inviteKey));
+			}
+		}
+		
 		$viewModel = new ViewModel();
 		$viewModel->draft = $this->draft;
 		$viewModel->nameTaken = isset($_GET["name-taken"]);
@@ -50,12 +59,21 @@ class LobbyController extends AbstractActionController
 			throw new \Exception("Invalid draft status");
 		}
 		
-		if(!isset($_GET["player_name"]) || strlen($_GET["player_name"]) < 1)
+		$auth = $this->sm->get("Application\GoogleAuthentication");
+		if($auth->isLoggedIn())
+		{
+			$name = $auth->getUser()->name;
+		}
+		else if(isset($_GET["player_name"]) && strlen($_GET["player_name"]) > 0)
+		{
+			$name = $_GET["player_name"];
+		}
+		else 
 		{
 			throw new \Exception("Name not set");
 		}
 
-		if(!$this->draftPlayerTable->checkPlayerNameOpenInDraft($_GET["player_name"], $this->draft->draftId))
+		if(!$this->draftPlayerTable->checkPlayerNameOpenInDraft($name, $this->draft->draftId))
 		{
 			return $this->redirect()->toRoute('lobby', array('lobby_key' => $this->lobbyKey), array('query' => 'name-taken'));
 		}
@@ -66,8 +84,8 @@ class LobbyController extends AbstractActionController
 		$draftPlayer->draftId = $this->draft->draftId;
 		$draftPlayer->inviteKey = $inviteKey;
 		$draftPlayer->hasJoined = 1;
-		$draftPlayer->name = $_GET["player_name"];
-		$draftPlayer->userId = isset($_SESSION["user_id"]) ? $_SESSION["user_id"] : null;
+		$draftPlayer->name = $name;
+		$draftPlayer->userId = $auth->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN ? $auth->getUser()->userId : null;
 		$this->draftPlayerTable->saveDraftPlayer($draftPlayer);
 		
 		return $this->redirect()->toRoute('draft', array('invite_key' => $inviteKey));
