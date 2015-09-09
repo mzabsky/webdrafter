@@ -342,7 +342,7 @@ function refreshDraft()
 
 			$("#deckbuilder thead tr td").click(function(){
 				//
-				console.log($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size());
+				//console.log($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size());
 				if($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size() != 0){
 					$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").addClass("selectedCard");
 				}
