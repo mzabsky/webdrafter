@@ -100,6 +100,31 @@ footer {
 	border-right: none !important;
 }
 
+.success-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px limegreen solid;
+	background: lightgreen;
+	font-size: 1.1em;
+}
+
+.warning-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px goldenrod solid;
+	background: yellow;
+	font-size: 1.1em;
+}
+
+.error-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px red solid;
+	background: salmon;
+	font-size: 1.1em;
+}
+
+
 #deckbuilder td
 {
 	width: 230px;
@@ -144,4 +169,90 @@ footer {
 textarea {
 	width: 500px;
 	height: 250px;
+}
+
+.set_status_picker td
+{
+	padding: 5px;
+}
+
+.set_status_picker td.picker
+{
+	border: 1px black solid;
+	cursor: pointer;
+    *cursor: hand;
+}
+
+.set_status_picker .current td.picker
+{
+	border-width: 4px;
+}
+
+.set_status_picker h3
+{
+	font-size: 0.92em;
+	margin: 0;
+}
+
+
+.set_status_picker td.indicator 
+{
+	color: white;
+	background: none;
+	border: 0;
+}
+
+.set_status_picker .current td.indicator 
+{
+	color: black;
+}
+
+.set_status_picker .set_status_unplayable td.picker
+{
+	background: salmon;
+}
+
+.set_status_picker .set_status_design td.picker
+{
+	background: orange;
+}
+
+.set_status_picker .set_status_development td.picker
+{
+	background: yellow;
+}
+
+.set_status_picker .set_status_finishing td.picker
+{
+	background: yellowgreen;
+}
+
+.set_status_picker .set_status_finished td.picker
+{
+	background: lightgreen;
+}
+
+.set_status_picker .set_status_discontinued td.picker
+{
+	background: lightgray;
+}
+
+#setPreview {
+	margin: 5px;
+	padding: 5px;
+	border: 1px gray solid;
+	width:90%;
+}
+
+#setPreview h3 {
+	margin: 3px;
+}
+
+#cardImageCheckResult {
+	font-weight: bold;
+	color: red;
+}
+
+#setPreviewFailureList {	
+	color: red;
 }

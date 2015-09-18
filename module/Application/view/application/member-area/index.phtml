@@ -76,7 +76,7 @@ if($this->accountUpdated)
 		<?php
 		foreach ($this->setsOwned as $set)
 		{
-			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo "<tr url='" . $this->url('member-area-manage-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
 			echo $set["setName"];
 			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td><td><a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set["setId"] . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a></td></tr>";	
 		}

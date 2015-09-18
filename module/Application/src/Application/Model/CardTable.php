@@ -66,7 +66,7 @@ class CardTable
 	{
 		$data = array(
 			'card_id' => $card->cardId,
-			'set_id' => $card->setId,
+			'set_version_id' => $card->setVersionId,
 			'name'  => $card->name,
 			'colors'  => $card->colors,
 			'rarity'  => $card->rarity,

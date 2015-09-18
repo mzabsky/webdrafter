@@ -12,23 +12,48 @@ class Set implements InputFilterAwareInterface
 	public $setId;
 	public $name;
 	public $code;
-	public $url;
 	public $userId;
-	public $isRetired;
-	public $downloadUrl;
+	public $about;
+	public $createdOn;
+	public $status;
+	public $isPrivate;
+	public $currentSetVersionId;
+	
+	const STATUS_UNPLAYABLE = 1;
+	const STATUS_DESIGN = 2;
+	const STATUS_DEVELOPMENT = 3;
+	const STATUS_FINISHING = 4;
+	const STATUS_FINISHED = 5;
+	const STATUS_DISCONTINUED = 6;
 	
 	private $inputFilter;
 	private $dbAdapter;
+	
+	public function getArray(){
+		return array(
+			'set_id' => $this->setId,
+			'name' => $this->name,
+			'code' => $this->code,
+			'user_id' => $this->userId,
+			'about' => $this->about,
+			'created_on' => $this->createdOn,
+			'status' => $this->status,
+			'is_private' => $this->isPrivate,
+			'current_set_version_id' => $this->currentSetVersionId
+		);
+	}
 	
     public function exchangeArray($data)
     {
         $this->setId     = (!empty($data['set_id'])) ? $data['set_id'] : null;
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
         $this->code = (!empty($data['code'])) ? $data['code'] : null;
-        $this->url = (!empty($data['url'])) ? $data['url'] : null;
         $this->userId = (!empty($data['user_id'])) ? $data['user_id'] : null;
-        $this->isRetired = $data['is_retired'];
-        $this->downloadUrl = (!empty($data['download_url'])) ? $data['download_url'] : null;
+        $this->about = (!empty($data['about'])) ? $data['about'] : null;
+        $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
+        $this->status = (!empty($data['status'])) ? $data['status'] : null;
+        $this->isPrivate = (!empty($data['is_private'])) ? $data['is_private'] : null;
+        $this->currentSetVersionId = (!empty($data['current_set_version_id'])) ? $data['current_set_version_id'] : null;
     }
     
     public function setDbAdapter(\Zend\Db\Adapter\Adapter $adapter)
@@ -93,6 +118,24 @@ class Set implements InputFilterAwareInterface
     		));
     
     		$inputFilter->add(array(
+    				'name'     => 'about',
+    				'required' => false,
+    				'filters'  => array(
+    						array('name' => 'StripTags'),
+    				),
+    				'validators' => array(
+    						array(
+    								'name'    => 'StringLength',
+    								'options' => array(
+    										'encoding' => 'UTF-8',
+    										'min'      => 0,
+    										'max'      => 5000,
+    								),
+    						),
+    				),
+    		));
+    
+    		/*$inputFilter->add(array(
     			'name'     => 'url',
     			'required' => false,
     			'filters'  => array(
@@ -173,7 +216,7 @@ class Set implements InputFilterAwareInterface
     					'options' => array(),
     				),
     			),
-    		));
+    		));*/
     
     		$this->inputFilter = $inputFilter;
     	}

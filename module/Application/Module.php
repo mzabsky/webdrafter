@@ -64,6 +64,12 @@ class Module
             		$user->setDbAdapter($dbAdapter);
             		return $user;
                 },
+                'Application\Model\SetVersion' =>  function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+            		$user = new \Application\Model\SetVersion();
+            		$user->setDbAdapter($dbAdapter);
+            		return $user;
+                },
                 'Application\Model\SetTable' =>  function($sm) {
                     $tableGateway = $sm->get('SetTableGateway');
                     $table = new \Application\Model\SetTable($tableGateway);
@@ -74,6 +80,17 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Set());
                     return new TableGateway('set', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\SetVersionTable' =>  function($sm) {
+                    $tableGateway = $sm->get('SetVersionTableGateway');
+                    $table = new \Application\Model\SetVersionTable($tableGateway);
+                    return $table;
+                },
+                'SetVersionTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Set());
+                    return new TableGateway('set_version', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\CardTable' =>  function($sm) {
                     $tableGateway = $sm->get('CardTableGateway');

@@ -23,6 +23,7 @@ use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
 use Application\Form\CreateSetForm;
 use Application\GoogleAuthentication;
+use Application\Form\UploadCardsForm;
 
 class MemberAreaController extends AbstractActionController
 {
@@ -115,7 +116,7 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->accountUpdated = isset($_GET["account-updated"]);
 		$viewModel->draftsHosted = $draftTable->getPastDraftsByHost($_SESSION["user_id"]);
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
-		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"]);
+		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"], true);
 		$viewModel->form = $form;
 		
 		return $viewModel;
@@ -277,15 +278,18 @@ class MemberAreaController extends AbstractActionController
 				{
 					$set->name = $formData["name"];
 					$set->code = $formData["code"];
-					$set->url = $formData["url"];
-					$set->downloadUrl = $formData["download_url"];
+					$set->about = $formData["about"];
+					//$set->url = $formData["url"];
+					//$set->downloadUrl = $formData["download_url"];
 					$set->userId = $_SESSION["user_id"];
-					$set->isRetired = 0;
+					$set->isPrivate = 1;
+					$set->currentSetVersion = null;
+					$set->status = Set::STATUS_UNPLAYABLE;
 					
 					$setTable = $sm->get('Application\Model\SetTable');
 					$setTable->saveSet($set);
 					
-					$artUrl = $formData["art_url"];
+					/*$artUrl = $formData["art_url"];
 					
 					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
 					
@@ -316,7 +320,7 @@ class MemberAreaController extends AbstractActionController
 						}
 						
 						$cardTable->saveCard($card);
-					}
+					}*/
 
 					$adapter->getDriver()->getConnection()->commit();
 				}
@@ -326,7 +330,7 @@ class MemberAreaController extends AbstractActionController
 					throw $e;
 				}
 								
-				return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-created'));
+				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-created'));
 			} 
 			else 
 			{
@@ -335,8 +339,6 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		$viewModel = new ViewModel();
-		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
-		$viewModel->accessToken = $_SESSION['access_token'];
 		$viewModel->form = $form;
 		
 		return $viewModel;
@@ -711,35 +713,272 @@ class MemberAreaController extends AbstractActionController
 		}
 	}
 	
-	public function retireSetAction()
+	public function setSetPrivateModeAction()
 	{
 		if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
-		if(!isset($_GET["set_id"]) || strlen($_GET["set_id"]) < 1)
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$set = $setTable->getSet($setId);
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		$set->isPrivate = isset($_GET["private"]);
+		$setTable->saveSet($set);
+		
+		return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('query' => 'changes-saved'));
+	}
+	
+	public function manageSetAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		$form = new \Application\Form\CreateSetForm();
+		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));		
+		
+		$uploadForm = new \Application\Form\UploadCardsForm();
+		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = array_merge_recursive(
+            	$this->getRequest()->getPost()->toArray(),
+            	$this->getRequest()->getFiles()->toArray()
+        	);
+			
+			if(isset($formData["submit"]))
+			{
+				// Set properties form
+				$set = $sm->get('Application\Model\Set');
+				$inputFilter = $set->getInputFilter();
+				//$inputFilter->remove('name');
+				$form->setInputFilter($inputFilter);
+				
+				$form->setData($formData);
+				
+				if ($form->isValid($formData))
+				{
+					$set->name = $formData["name"];
+					$set->code = $formData["code"];
+					$set->about = $formData["about"];
+						
+					$setTable = $sm->get('Application\Model\SetTable');
+					$setTable->saveSet($set);
+				
+					return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'changes-saved'));
+				}
+				else
+				{
+					//var_dump($form->getMessages());
+				}
+			}
+			else if(isset($formData["upload"]))
+			{
+				$uploadForm->setInputFilter($form->getInputFilter());
+				
+				$uploadForm->setData($formData);
+				
+				if ($uploadForm->isValid($formData)) 
+				{
+					$artUrl = $formData["art_url"];
+					
+					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
+					
+					$parser = new \Application\SetParser\IsochronDrafterSetParser();
+					$cards = $parser->Parse($fileContents);
+					
+					foreach($cards as $card)
+					{
+						$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
+						switch($formData["art_url_format"])
+						{
+							case UploadCardsForm::NAME_DOT_PNG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".png";
+								break;
+							case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
+								break;
+							case UploadCardsForm::NAME_DOT_JPG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
+								break;
+							case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
+								$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
+								break;
+							default:
+								throw new \Exception("Invalid art URL format.");
+						}
+					}
+
+					$guid = \uniqid();
+					
+					$_SESSION["card_file_cards"] = serialize($cards);
+					$_SESSION["card_file_guid"] = $guid;
+			
+					return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload' => $guid)));
+				} 
+				else 
+				{
+					//var_dump($form->getMessages());
+				}
+			}	
+		}
+		
+		if(!isset($formData["submit"]))
+		{
+			$form->setData($set->getArray());
+		}
+		
+
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+		$setVersions = $setVersionTable->fetchBySet($set->setId);		
+		
+		$viewModel = new ViewModel();
+		$viewModel->setCreated = isset($_GET['set-created']);
+		$viewModel->changesSaved = isset($_GET['changes-saved']);
+		$viewModel->setVersionCreated = isset($_GET['set-version-created']);
+		$viewModel->setVersions = \Application\resultSetToArray($setVersions);
+		
+		$viewModel->set = $set;		
+		$viewModel->form = $form;
+		$viewModel->uploadForm = $uploadForm;
+		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
+		$viewModel->accessToken = $_SESSION['access_token'];
+		return $viewModel;
+	}
+	
+	public function setSetStatusAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		if(!isset($_GET["status"]) || $_GET["status"] < Set::STATUS_UNPLAYABLE || $_GET["status"] > Set::STATUS_DISCONTINUED)
 		{
 			throw new \Exception("Set not set");
 		}
 		
-		$sm = $this->getServiceLocator();
-		$setTable = $sm->get('Application\Model\SetTable');
-	
-		$set = $setTable->getSet($_GET["set_id"]);
-		
-		if($_SESSION["user_id"] != $set->userId)
-		{
-			throw new \Exception("You don't own this set.");			
+		$set = $setTable->getSet($setId);
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
 		}
 		
-		$set->isRetired = 1;
+		$set->status = $_GET["status"];
 		$setTable->saveSet($set);
-
-		return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-retired'));
+		
+		$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'status_tab', 'query' => 'changes-saved'));
 	}
 	
-	public function googleDriveAction()
+	public function createSetVersionAction()
 	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+
+		$set = $setTable->getSet($setId);
 		
-		die();
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		if(!isset($_GET["upload"]) || $_GET["upload"] != $_SESSION["card_file_guid"])
+		{
+			$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload_tab', 'query' => 'upload-expired'));
+		}
+	
+		$cards = unserialize($_SESSION["card_file_cards"]);
+		
+		$sm = $this->getServiceLocator();
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\CreateSetVersionForm();
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = array_merge_recursive(
+					$this->getRequest()->getPost()->toArray(),
+					$this->getRequest()->getFiles()->toArray()
+			);
+				
+			$setVersion = $sm->get('Application\Model\SetVersion');
+			$form->setInputFilter($setVersion->getInputFilter());
+				
+			$form->setData($formData);
+				
+			if ($form->isValid($formData))
+			{
+				$adapter->getDriver()->getConnection()->beginTransaction();
+		
+				try
+				{
+					$setVersion->setId = $set->setId;
+					$setVersion->name = $formData["name"];
+					$setVersion->downloadUrl = $formData["download_url"];
+					$setVersion->about = $formData["about"];
+					//$setVersion->createdOn = $formData["about"];
+						
+					$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+					$setVersionTable->saveSetVersion($setVersion);
+
+					$set->currentSetVersionId = $setVersion->setVersionId;
+					$setTable->saveSet($set);
+					
+					$cardTable = $sm->get('Application\Model\CardTable');
+					foreach($cards as $card)
+					{
+						$card->setVersionId = $setVersion->setVersionId;
+
+						$cardTable->saveCard($card);
+					}
+		
+					unset($_SESSION["card_file_guid"]);
+					unset($_SESSION["card_file_cards"]);
+					
+					$adapter->getDriver()->getConnection()->commit();
+				}
+				catch(Exception $e)
+				{
+					$adapter->getDriver()->getConnection()->rollback();
+					throw $e;
+				}
+		
+				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
+			}
+			else
+			{
+				//var_dump($form->getMessages());
+			}
+		}
+		
+		$viewModel = new ViewModel();
+		
+		$viewModel->set = $set;
+		$viewModel->cards = $cards;
+		$viewModel->form = $form;	
+		$viewModel->uploadGuid = $_GET["upload"];	
+		return $viewModel;
 	}
 }
 ?>

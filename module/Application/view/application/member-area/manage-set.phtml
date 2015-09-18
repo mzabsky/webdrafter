@@ -1,0 +1,254 @@
+<script>
+$(function(){
+	$("#tabs").tabs();
+
+	$('.set_status_picker tr').click(function(){
+		window.location = $(this).attr('url');
+	})
+});
+
+var createPicker = function() {
+	var view = new google.picker.DocsView();
+	view.setIncludeFolders(true) 
+    .setMimeTypes("application/vnd.google-apps.folder")
+    .setSelectFolderEnabled(true);
+    
+    var picker = new google.picker.PickerBuilder()
+        //.addView(google.picker.ViewId.PDFS)
+        .addView(view)
+        .setOAuthToken(<?php echo $this->accessToken ?>.access_token)
+        .setAppId("<?php echo $this->driveAppId ?>")
+        .enableFeature(google.picker.Feature.NAV_HIDDEN)
+        .setTitle("Select a folder with card images")
+        .setCallback(function pickerCallback(data) {
+            switch (data.action) {
+                case google.picker.Action.PICKED:
+                    $("input[name=art_url]").val("http://googledrive.com/host/" + data.docs[0].id);
+                    $("input[name=google_file_id]").val(data.docs[0].id);
+                	break;
+            }
+        })
+        .build();
+
+   	$('.google_drive_button').click(function(){
+        picker.setVisible(true);
+        return false;
+   	});
+}
+
+google.setOnLoadCallback(createPicker);
+google.load("picker", "1");
+
+</script>
+<h2 id="contentTitle"><?php echo $this->set->name ?></h2>
+<?php 
+if($this->setCreated)
+{
+?>
+	<div class="success-message"/>Set created!</div>
+<?php 
+}
+
+if($this->changesSaved)
+{
+	?>
+	<div class="success-message"/>Changes saved!</div>
+<?php 
+}
+
+if($this->setVersionCreated)
+{
+	?>
+	<div class="success-message"/>Set version created!</div>
+<?php 
+}
+
+if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE)
+{
+	?>
+	<div class="warning-message"/>This set is marked as unplayable, it can't be used to host events!</div>
+<?php 
+}
+
+if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED)
+{
+	?>
+	<div class="warning-message"/>This set is marked as discontinued, it can't be used to host events!</div>
+<?php 
+}
+
+
+if($this->set->isPrivate)
+{
+	?>
+	<div class="warning-message"/>This set is marked as private, it is not visible in any public listings!</div>
+<?php 
+}
+
+if(count($this->setVersions) == 0)
+{
+	?>
+	<div class="warning-message"/>No card file was uploaded for this set yet, users won't see any cards!</div>
+<?php 
+}
+
+?>
+<p>
+	<a href='<?php echo $this->url('browse-set', array('set_id' => $set->setId)) ?>'>Go to set page</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<?php if($this->set->isPrivate){ ?>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $set->setId)) ?>'>Make public</a>
+	<?php } else { ?>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $set->setId), array('query' => 'private')) ?>'>Make private</a>
+	<?php } ?>
+	</a>
+</p>
+<div id="tabs">
+	<ul>
+		<li><a href="#details_tab">Set details</a></li>
+		<li><a href="#status_tab">Development stage</a></li>
+		<li><a href="#history_tab">Version history</a></li>
+		<li><a href="#upload_tab">Upload card file</a></li>
+	</ul>
+	<div id="details_tab">
+		<?php
+		$form = $this->form;
+		$formLabel = $this->plugin('formLabel');
+		 
+		$form->prepare();
+		 
+		echo $this->form()->openTag($form);
+		?>
+		<div class="form_element">
+		<?php
+		    $name = $form->get('name');
+		    echo $formLabel->openTag() . $name->getOption('label');
+		    echo $this->formInput($name);
+		    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		</div>
+		<div class="form_element">
+		<?php
+		    $downloadUrl = $form->get('code');
+		    echo $formLabel->openTag() . $downloadUrl->getOption('label');
+		    echo $this->formInput($downloadUrl);
+		    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		</div>
+		<div class="form_element">
+		<?php
+		    $about = $form->get('about');
+		    echo $formLabel->openTag() . $about->getOption('label');
+		    echo $this->formTextarea($about);
+		    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		</div>
+		<div class="form_element">
+		<?php
+		echo $this->formSubmit($form->get('submit'));
+		?>
+		</div>
+		<?php
+		echo $this->form()->closeTag();
+		?>
+	</div>
+	<div id="status_tab">
+		Here you can set how far into the development your set is. You can include additional information into the set description.
+		<table class="set_status_picker">
+			<tr class='set_status_unplayable <?php if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_UNPLAYABLE ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #1: Unplayable prototype</h3>
+					Very incomplete prototype of the set, not playable in limited. <strong>Can't be used to host events</strong>.
+				</td>				
+			</tr>
+			<tr class='set_status_design <?php if($this->set->status == \Application\Model\Set::STATUS_DESIGN) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DESIGN ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #2: Design</h3>
+					Mechanics are being figured out and the set file is being filled out, but it may be missing significant chunks of the total card count. Playtesting in limited is possible.
+				</td>				
+			</tr>
+			<tr class='set_status_development <?php if($this->set->status == \Application\Model\Set::STATUS_DEVELOPMENT) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DEVELOPMENT ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #3: Development</h3>
+					The set file is complete or almost complete and the mechanics are generally figured out. Most work is being done on balancing of individual cards and the limited enviroment as a whole. Playtesting is strongly encouraged.
+				</td>				
+			</tr>
+			<tr class='set_status_finishing <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHING) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHING ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #4: Finishing touches</h3>
+					The set is almost finished. All that remains to be done is polish - card art, card names, flavor texts etc.
+				</td>				
+			</tr>
+			<tr class='set_status_finished <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHED ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #5: Finished</h3>
+					Further changes are not expected (but not impossible).
+				</td>				
+			</tr>
+			<tr class='set_status_discontinued <?php if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DISCONTINUED ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Discontinued</h3>
+					All works on the set have ceased and it never really got anywhere. <strong>Can't be used to host events</strong>.
+				</td>				
+			</tr>
+		</table>
+	</div>
+	<div id="history_tab">
+		History.
+	</div>
+	<div id="upload_tab">
+		<p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
+		<?php
+		$form = $this->uploadForm;
+		$formLabel = $this->plugin('formLabel');
+		
+		$form->setAttribute('action', $this->url('member-area-manage-set', array('set_id' => $this->set->setId))); 
+		$form->prepare();
+		 
+		echo $this->form()->openTag($form);
+		?>
+		<div class="form_element">
+		<?php
+		    $artUrl = $form->get('art_url');
+		    echo $formLabel->openTag() . $artUrl->getOption('label');
+		    echo $this->formInput($artUrl);
+		    echo $this->formElementErrors($artUrl) . " <button class='google_drive_button'>Pick from Google Drive</button> <small>" . $artUrl->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		</div>
+		<div class="form_element">
+		<?php
+		    $artFormatUrl = $form->get('art_url_format');
+		    echo $formLabel->openTag() . $artFormatUrl->getOption('label');
+		    echo $this->formElement($artFormatUrl);
+		    echo $this->formElementErrors($artFormatUrl) . "<small>" . $artFormatUrl->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		</div>
+		<div class="form_element">
+		<?php
+		    $file = $form->get('file');
+		    echo $formLabel->openTag() . $file->getOption('label');
+		    echo $this->formFile($file);
+		    echo $this->formElementErrors($file) . "<small>" . $file->getOption('description') . "</small>";
+		    echo $formLabel->closeTag();
+		?>
+		<div class="form_element">
+		<?php
+		echo $this->formSubmit($form->get('upload'));
+		?>
+		</div>
+		<?php
+		echo $this->form()->closeTag();
+		?>
+	</div>
+</div>

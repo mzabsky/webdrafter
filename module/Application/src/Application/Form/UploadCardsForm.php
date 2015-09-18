@@ -6,8 +6,19 @@ use Zend\Form\Form;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\File;
 
-class CreateSetForm extends Form
+use Zend\InputFilter\InputFilter;
+use Zend\InputFilter\InputFilterAwareInterface;
+use Zend\InputFilter\InputFilterInterface;
+
+class UploadCardsForm extends Form
 {
+	const NAME_DOT_PNG = 1;
+	const NAME_DOT_FULL_DOT_PNG = 2;
+	const NAME_DOT_JPG = 3;
+	const NAME_DOT_FULL_DOT_JPG = 4;
+	
+	private $inputFilter;
+	
 	public function __construct($options = null)
 	{
 		parent::__construct($options);
@@ -18,40 +29,8 @@ class CreateSetForm extends Form
 
 		$factory = new \Zend\Form\Factory();	
 		
-		$this->add($factory->createElement(array(
-			'name' => 'name',
-			'options' => array(
-				'label' => 'Name: ',
-				'description' => 'Representative name of the set.'
-			)
-		)));
 		
-		$this->add($factory->createElement(array(
-			'name' => 'code',
-			'options' => array(
-				'label' => 'Code: ',
-				'description' => '3-5 uppercase letter code. Doesn\'t have to be unique.'
-			)
-		)));
 		
-		$this->add($factory->createElement(array(
-			'name' => 'about',
-			'type' => 'textarea',
-			'options' => array(
-				'label' => 'About the set: ',
-				'description' => 'Arbitrary text displayed on the set page. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
-			),
-		)));
-		
-		/*
-		$this->add($factory->createElement(array(
-			'name' => 'url',
-			'type' => 'url',
-			'options' => array(
-				'label' => 'Information URL:',
-				'description' => 'Link to a webpage containing additional information about the set (such as forum thread).'
-			),
-		)));
 		
 		$this->add($factory->createElement(array(
 			'name' => 'art_url',
@@ -72,9 +51,9 @@ class CreateSetForm extends Form
 					),
 				),
 			),
-		)));*/
+		)));
 		
-		/*$this->add($factory->createElement(array(
+		$this->add($factory->createElement(array(
 				'name' => 'art_url_format',
 				'type' => 'Zend\Form\Element\Select',
 				'required' => true,
@@ -82,23 +61,14 @@ class CreateSetForm extends Form
 						'label' => 'Art file name format:',
 						'description' => '',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
 						'value_options' => [
-								CreateSetForm::NAME_DOT_PNG => '<card name>.png',
-								CreateSetForm::NAME_DOT_FULL_DOT_PNG => '<card name>.full.png',
-								CreateSetForm::NAME_DOT_JPG => '<card name>.jpg',
-								CreateSetForm::NAME_DOT_FULL_DOT_JPG => '<card name>.full.jpg',
+								self::NAME_DOT_PNG => '<card name>.png',
+								self::NAME_DOT_FULL_DOT_PNG => '<card name>.full.png',
+								self::NAME_DOT_JPG => '<card name>.jpg',
+								self::NAME_DOT_FULL_DOT_JPG => '<card name>.full.jpg',
 						],
 				),
-		)));*/
-		
-		/*$this->add($factory->createElement(array(
-				'name' => 'download_url',
-				'type' => 'url',
-				'options' => array(
-						'label' => 'Download URL:',
-						'description' => 'URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
-				),
 		)));
-		
+
 		$this->add($factory->createElement(array(
 			'name' => 'file',
 			'type' => 'file',
@@ -118,12 +88,6 @@ class CreateSetForm extends Form
 				),
 			),
 		)));
-
-		$this->add($factory->createElement(array(
-				'name' => 'google_file_id',
-				'type' => 'hidden',
-		)));*/
-
 		
 		/*$file = new File('file');
 		$file->setLabel('Set file:')
@@ -134,14 +98,66 @@ class CreateSetForm extends Form
 			->setAttrib('enctype', 'multipart/form-data');*/
 
 		$this->add($factory->createElement(array(
-			'name' => 'submit',
+			'name' => 'upload',
             'attributes' => array(
-                'value' => 'Submit',
+                'value' => 'Upload',
             ),
 			'type' => 'submit',
 			'required' => true,
 		)));
 
 		//$this->addElements(array($name, $code, $infoUrl, $artUrl, $file));
+	}
+	
+	public function getInputFilter()
+	{
+		if (!$this->inputFilter) {
+			$inputFilter = new InputFilter();
+	
+			$inputFilter->add(array(
+				'name'     => 'art_url',
+				'required' => true,
+				'filters'  => array(
+					array('name' => 'StringTrim'),
+				),
+				'validators' => array(
+					array(
+						'name'    => 'StringLength',
+						'options' => array(
+							'encoding' => 'UTF-8',
+							'min'      => 1,
+							'max'      => 255,
+						),
+					),
+					array(
+						'name'    => 'Uri',
+					),
+				),
+			));
+	
+			$inputFilter->add(array(
+				'name'     => 'file',
+				'required' => true,
+				'filters'  => array(
+					//array('name' => 'StringTrim'),
+				),
+				'validators' => array(
+					array(
+						'name'    => 'File\Size',
+						'options' => array(
+							'max' => '1MB'
+						),
+					),
+					array(
+						'name'    => 'File\UploadFile',
+						'options' => array(),
+					),
+				),
+			));
+	
+			$this->inputFilter = $inputFilter;
+		}
+	
+		return $this->inputFilter;
 	}
 }

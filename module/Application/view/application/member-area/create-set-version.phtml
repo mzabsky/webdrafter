@@ -1,0 +1,137 @@
+<script>
+var draftStatuses = {"open":1, "running":2, "finished":3};
+
+var numRemainingImages;
+var numSucceededImages;
+var numFailedImages;
+var numImagesTotal = <?php echo count($this->cards); ?>;
+
+function updatePreviewStats()
+{
+	$("#previewSucceeded").html(numSucceededImages);
+	$("#previewFailed").html(numFailedImages);
+	$("#previewRemaining").html(numRemainingImages);
+
+	if(numSucceededImages != numImagesTotal)
+	{
+		$("[name=submit]").prop('disabled', true);
+		$("#cardImageCheckResult").show();
+	}
+	else 
+	{
+		$("[name=submit]").prop('disabled', false);
+		$("#cardImageCheckResult").hide();
+	}
+}
+
+function cardImageCheck()
+{
+	numRemainingImages = numImagesTotal;
+	numSucceededImages = 0;
+	numFailedImages = 0;
+	
+	updatePreviewStats();
+
+	$("#setPreviewFailureList").empty();
+	
+	$("#setPreview img").each(function(index) {
+		$(this).unbind();
+		$(this).attr("src", "/");
+		
+		$(this).load(function() {
+			if(this.error)
+			{
+				numFailedImages++;
+				$("#setPreviewFailureList").append("Could not load card image for \"" + $(this).attr("alt") + "\" from URL \"" + $(this).attr("url") + "\".<br />");
+				console.log("Failed: " + $(this).attr("src"));
+			}
+			else 
+			{
+				numSucceededImages++;
+				console.log("Succeeded: " + $(this).attr("src"));
+			}		
+
+			numRemainingImages--;
+			
+			updatePreviewStats();		
+	   	}).error(function() {
+			numFailedImages++;
+			console.log("Failed: " + $(this).attr("src"));
+			$("#setPreviewFailureList").append("Could not load card image for \"" + $(this).attr("alt") + "\" from URL \"" + $(this).attr("url") + "\".<br />");
+
+			numRemainingImages--;
+			
+			updatePreviewStats();		
+	   	});
+
+		$(this).attr("src", $(this).attr("url"));
+	});
+}
+
+$(document).ready(function(){
+	cardImageCheck();
+});
+</script>
+<h2 id="contentTitle">New card file for <?php echo $this->set->name ?></h2>
+<p>The card file was uploaded and parsed successfully. Please fill in a few more details which will be used to represent this version of the set on WebDrafter. During this step, WebDrafter will also test whether all card image links work correctly.</p>
+<p>Once you submit this form, this version will become the current (and default) version users will see.</p>
+
+<?php
+$form = $this->form;
+$formLabel = $this->plugin('formLabel');
+
+$form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload' => $this->uploadGuid)))); 
+$form->prepare();
+ 
+echo $this->form()->openTag($form);
+?>
+<div class="form_element">
+<?php
+    $name = $form->get('name');
+    echo $formLabel->openTag() . $name->getOption('label');
+    echo $this->formInput($name);
+    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $downloadUrl = $form->get('download_url');
+    echo $formLabel->openTag() . $downloadUrl->getOption('label');
+    echo $this->formInput($downloadUrl);
+    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+    $about = $form->get('about');
+    echo $formLabel->openTag() . $about->getOption('label');
+    echo $this->formTextarea($about);
+    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
+    echo $formLabel->closeTag();
+?>
+</div>
+<div class="form_element">
+<?php
+echo $this->formSubmit($form->get('submit')) . " <span id='cardImageCheckResult'>Card image check did not pass yet. Please make sure all images display correctly before submitting.</span>";
+?>
+</div>
+<?php
+echo $this->form()->closeTag();
+?>
+
+<div id="setPreview">
+<h3>Card image check</h3>
+<button onclick="cardImageCheck()">Try again</button>
+<div id="setPreviewStats">
+	Images succeeded: <span id="previewSucceeded">0</span><br />Images failed: <span id="previewFailed">0</span> <br />Images remaining: <span id="previewRemaining">0</span>
+</div>
+<div id="setPreviewFailureList">
+</div>
+<?php foreach($this->cards as $card)
+{
+	echo "<img url='" . $card->artUrl . "' src=''  alt='" . $card->name . "' />";
+}
+?>
+</div>

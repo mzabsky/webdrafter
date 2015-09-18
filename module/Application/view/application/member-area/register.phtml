@@ -23,10 +23,10 @@ if($form->isNameIncluded())
 </div>
 <div class="form_element">
 <?php
-    $emailPrivacy = $form->get('email_privacy');
-    echo $formLabel->openTag() . $emailPrivacy->getOption('label');
-    echo $this->formElement($emailPrivacy);
-    echo $this->formElementErrors($emailPrivacy) . "<small>" . $emailPrivacy->getOption('description') . "</small>";
+    $downloadUrl = $form->get('email_privacy');
+    echo $formLabel->openTag() . $downloadUrl->getOption('label');
+    echo $this->formElement($downloadUrl);
+    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
     echo $formLabel->closeTag();
 ?>
 </div>
