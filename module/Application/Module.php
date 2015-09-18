@@ -186,6 +186,10 @@ class Module
      					'auth' => function($sm) {
      						$helper = new \Application\View\Helper\Auth() ;
      						return $helper;
+     					},
+     					'config' => function($sm) {
+     						$helper = new \Application\View\Helper\Config() ;
+     						return $helper;
      					}
      			)
      	);
