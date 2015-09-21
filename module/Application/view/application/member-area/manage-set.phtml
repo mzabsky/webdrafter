@@ -91,15 +91,14 @@ if(count($this->setVersions) == 0)
 	<div class="warning-message"/>No card file was uploaded for this set yet, users won't see any cards!</div>
 <?php 
 }
-
 ?>
 <p>
-	<a href='<?php echo $this->url('browse-set', array('set_id' => $set->setId)) ?>'>Go to set page</a>
+	<a href='<?php echo $this->url('browse-set', array('set_id' => $this->set->setId)) ?>'>Go to set page</a>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php if($this->set->isPrivate){ ?>
-		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $set->setId)) ?>'>Make public</a>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>'>Make public</a>
 	<?php } else { ?>
-		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $set->setId), array('query' => 'private')) ?>'>Make private</a>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId), array('query' => 'private')) ?>'>Make private</a>
 	<?php } ?>
 	</a>
 </p>
@@ -158,42 +157,42 @@ if(count($this->setVersions) == 0)
 	<div id="status_tab">
 		Here you can set how far into the development your set is. You can include additional information into the set description.
 		<table class="set_status_picker">
-			<tr class='set_status_unplayable <?php if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_UNPLAYABLE ?>">
+			<tr class='set_status_unplayable <?php if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_UNPLAYABLE ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Stage #1: Unplayable prototype</h3>
 					Very incomplete prototype of the set, not playable in limited. <strong>Can't be used to host events</strong>.
 				</td>				
 			</tr>
-			<tr class='set_status_design <?php if($this->set->status == \Application\Model\Set::STATUS_DESIGN) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DESIGN ?>">
+			<tr class='set_status_design <?php if($this->set->status == \Application\Model\Set::STATUS_DESIGN) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DESIGN ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Stage #2: Design</h3>
 					Mechanics are being figured out and the set file is being filled out, but it may be missing significant chunks of the total card count. Playtesting in limited is possible.
 				</td>				
 			</tr>
-			<tr class='set_status_development <?php if($this->set->status == \Application\Model\Set::STATUS_DEVELOPMENT) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DEVELOPMENT ?>">
+			<tr class='set_status_development <?php if($this->set->status == \Application\Model\Set::STATUS_DEVELOPMENT) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DEVELOPMENT ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Stage #3: Development</h3>
 					The set file is complete or almost complete and the mechanics are generally figured out. Most work is being done on balancing of individual cards and the limited enviroment as a whole. Playtesting is strongly encouraged.
 				</td>				
 			</tr>
-			<tr class='set_status_finishing <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHING) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHING ?>">
+			<tr class='set_status_finishing <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHING) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHING ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Stage #4: Finishing touches</h3>
 					The set is almost finished. All that remains to be done is polish - card art, card names, flavor texts etc.
 				</td>				
 			</tr>
-			<tr class='set_status_finished <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHED ?>">
+			<tr class='set_status_finished <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHED ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Stage #5: Finished</h3>
 					Further changes are not expected (but not impossible).
 				</td>				
 			</tr>
-			<tr class='set_status_discontinued <?php if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $set->setId)) . '?status=' . \Application\Model\Set::STATUS_DISCONTINUED ?>">
+			<tr class='set_status_discontinued <?php if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DISCONTINUED ?>">
 				<td class='indicator'>&#9658;</td>
 				<td class='picker'>
 					<h3>Discontinued</h3>

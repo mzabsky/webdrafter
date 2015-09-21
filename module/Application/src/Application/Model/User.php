@@ -75,6 +75,11 @@ class User implements InputFilterAwareInterface
     										'field' => 'name',
     										'adapter' => $this->dbAdapter,
     								),
+    								'exclude' => array
+    								(
+    										'field' => 'user_id',
+    										'value' => $this->userId
+    								)
     						),
     				),
     		));

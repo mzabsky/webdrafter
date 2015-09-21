@@ -78,7 +78,7 @@ class Module
                 'SetTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Set());
+                    $resultSetPrototype->setArrayObjectPrototype($sm->get('Application\Model\Set'));
                     return new TableGateway('set', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\SetVersionTable' =>  function($sm) {

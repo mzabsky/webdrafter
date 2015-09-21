@@ -93,6 +93,11 @@ class Set implements InputFilterAwareInterface
     						'table' => 'set',
     						'field' => 'name',
     						'adapter' => $this->dbAdapter,
+    						'exclude' => array
+    						(
+					            'field' => 'set_id',
+					            'value' => $this->setId
+					        )
     					),
     				),
     			),

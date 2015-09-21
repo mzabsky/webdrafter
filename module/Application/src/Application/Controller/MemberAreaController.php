@@ -77,17 +77,17 @@ class MemberAreaController extends AbstractActionController
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
 		$form = new \Application\Form\RegistrationForm(false);
-		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index')));
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index'), array('fragment' => 'account_settings_tab')));
 		
 		if ($this->getRequest()->isPost())
 		{
 			$formData = $this->getRequest()->getPost()->toArray();
-		
+			
 			$userTable = $sm->get('Application\Model\UserTable');
 			$user = $auth->getUser();
 			$inputFilter = $user->getInputFilter();
 			$inputFilter->remove('name');
-			$form->setInputFilter($inputFilter);
+			$form->setInputFilter($inputFilter);			
 		
 			$form->setData($formData);
 			
@@ -764,7 +764,6 @@ class MemberAreaController extends AbstractActionController
 			if(isset($formData["submit"]))
 			{
 				// Set properties form
-				$set = $sm->get('Application\Model\Set');
 				$inputFilter = $set->getInputFilter();
 				//$inputFilter->remove('name');
 				$form->setInputFilter($inputFilter);
@@ -852,6 +851,8 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->changesSaved = isset($_GET['changes-saved']);
 		$viewModel->setVersionCreated = isset($_GET['set-version-created']);
 		$viewModel->setVersions = \Application\resultSetToArray($setVersions);
+		
+		var_dump($set->getArray());
 		
 		$viewModel->set = $set;		
 		$viewModel->form = $form;
