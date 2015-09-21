@@ -2,6 +2,13 @@
 $(function(){
 	$("#tabs").tabs();
 
+	$('#history_grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15,
+		"order": [[ 1, "desc" ]]
+	});
+	
 	$('.set_status_picker tr').click(function(){
 		window.location = $(this).attr('url');
 	})
@@ -202,7 +209,29 @@ if(count($this->setVersions) == 0)
 		</table>
 	</div>
 	<div id="history_tab">
-		History.
+		<table id="history_grid" class="display hover stripe clickableRows" >
+			<thead>
+				<tr>
+					<th>Version name</th>
+					<th>Date</th>
+					<th>Number of cards</th>
+					<th>Number of events</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->setVersions as $setVersion)
+		{
+			echo "<tr url='" . /*$this->url('member-area-manage-set-version', array('set_version_id' => $setVersion["setVersionId"])) .*/ "'><td class='nameCell'>";
+			echo $setVersion["versionName"];
+			echo "</td><td>";
+			echo $setVersion["createdOn"];
+			echo "</td><td>" . $setVersion["cardCount"] . "</td><td>" . $setVersion["draftCount"] . "</td></tr>";	
+		}
+		?>
+				</tr>
+			</tbody>
+		</table>
 	</div>
 	<div id="upload_tab">
 		<p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
