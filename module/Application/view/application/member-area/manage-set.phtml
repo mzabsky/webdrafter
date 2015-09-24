@@ -1,4 +1,9 @@
 <script>
+function makePublicDialog(){
+	$("#makePublicDialog").dialog("open");
+	return false;
+}
+
 $(function(){
 	$("#tabs").tabs();
 
@@ -11,7 +16,25 @@ $(function(){
 	
 	$('.set_status_picker tr').click(function(){
 		window.location = $(this).attr('url');
-	})
+	});
+
+	$( "#makePublicDialog" ).dialog({
+      resizable: false,
+      height:620,
+      width:800,
+      modal: true,
+      autoOpen: false,
+      closeOnEscape: true,
+      dialogClass: "no-close",
+      buttons: {
+        "Confirm": function() {
+          window.location = '<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>';
+        },
+        "Stay private": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
 });
 
 var createPicker = function() {
@@ -47,6 +70,28 @@ google.setOnLoadCallback(createPicker);
 google.load("picker", "1");
 
 </script>
+<div id="makePublicDialog" title="Terms for public sets">
+	<p>When you publish a set, it will become visible to all visitiors of WebDrafter. </p>
+	<p>Please make sure your set fulfills following terms and conditions:</p>
+	<ol>
+		<li>You allow everyone to copy and improve upon your designs.
+			<div class="explanation">We are a cooperative, not competitive community! Attribution is encouraged, but not required.</div>
+		</li>
+		<li>The set must not contain any sexually explicit material.</li>
+		<li>All art must be properly credited.</li>
+		<li>The set must not contain any art from artists who have explicitly stated they don't want their art used.
+			<div class="explanation">You are allowed to use any art from artists who did not forbid the use of their art. If an artist requires permission before using their art, please obtain it first.</div>
+		</li>
+		<li>Scans/images of any official cards are not allowed.
+			<div class="explanation">You are free to "reprint" official cards in your set, but please don't use the official art.</div>
+		</li>
+		<li>High-res card images are not allowed.
+			<div class="explanation">Users must not be reasonably able to mistake one of your cards for an official card. Upper limit for card image height is 400 px.</div>
+		</li>
+	</ol>
+	<p>Note that private sets don't have to fulfill any of these conditions - you are allowed to upload almost anything, as long as you keep it to yourself and your friends.</p>
+</div>
+
 <h2 id="contentTitle"><?php echo $this->set->name ?></h2>
 <?php 
 if($this->setCreated)
@@ -103,7 +148,7 @@ if(count($this->setVersions) == 0)
 	<a href='<?php echo $this->url('browse-set', array('set_id' => $this->set->setId)) ?>'>Go to set page</a>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php if($this->set->isPrivate){ ?>
-		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>'>Make public</a>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>' onclick="return makePublicDialog();">Make public</a>
 	<?php } else { ?>
 		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId), array('query' => 'private')) ?>'>Make private</a>
 	<?php } ?>
@@ -124,39 +169,18 @@ if(count($this->setVersions) == 0)
 		$form->prepare();
 		 
 		echo $this->form()->openTag($form);
+		
+		echo $this->fullFormInput($form->get('name'));
+		echo $this->fullFormInput($form->get('code'));
+		echo $this->fullFormInput($form->get('about'));
+
 		?>
-		<div class="form_element">
-		<?php
-		    $name = $form->get('name');
-		    echo $formLabel->openTag() . $name->getOption('label');
-		    echo $this->formInput($name);
-		    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
-		?>
-		</div>
-		<div class="form_element">
-		<?php
-		    $downloadUrl = $form->get('code');
-		    echo $formLabel->openTag() . $downloadUrl->getOption('label');
-		    echo $this->formInput($downloadUrl);
-		    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
-		?>
-		</div>
-		<div class="form_element">
-		<?php
-		    $about = $form->get('about');
-		    echo $formLabel->openTag() . $about->getOption('label');
-		    echo $this->formTextarea($about);
-		    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
-		?>
-		</div>
 		<div class="form_element">
 		<?php
 		echo $this->formSubmit($form->get('submit'));
 		?>
 		</div>
+		
 		<?php
 		echo $this->form()->closeTag();
 		?>

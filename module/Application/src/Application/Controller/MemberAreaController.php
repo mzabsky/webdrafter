@@ -910,6 +910,7 @@ class MemberAreaController extends AbstractActionController
 		$cards = unserialize($_SESSION["card_file_cards"]);
 		
 		$sm = $this->getServiceLocator();
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
 		$form = new \Application\Form\CreateSetVersionForm();
@@ -938,7 +939,6 @@ class MemberAreaController extends AbstractActionController
 					$setVersion->about = $formData["about"];
 					//$setVersion->createdOn = $formData["about"];
 						
-					$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 					$setVersionTable->saveSetVersion($setVersion);
 
 					$set->currentSetVersionId = $setVersion->setVersionId;
@@ -967,8 +967,11 @@ class MemberAreaController extends AbstractActionController
 			}
 			else
 			{
-				//var_dump($form->getMessages());
 			}
+		}
+		else 
+		{
+			$form->setData(array('name' => "Version " . (count($setVersionTable->fetchBySet($set->setId)) + 1)));
 		}
 		
 		$viewModel = new ViewModel();
@@ -976,7 +979,7 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->set = $set;
 		$viewModel->cards = $cards;
 		$viewModel->form = $form;	
-		$viewModel->uploadGuid = $_GET["upload"];	
+		$viewModel->uploadGuid = $_GET["upload"];
 		return $viewModel;
 	}
 }

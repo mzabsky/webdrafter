@@ -190,6 +190,10 @@ class Module
      					'config' => function($sm) {
      						$helper = new \Application\View\Helper\Config() ;
      						return $helper;
+     					},
+     					'fullFormInput' => function($sm) {
+     						$helper = new \Application\View\Helper\FullFormInput() ;
+     						return $helper;
      					}
      			)
      	);

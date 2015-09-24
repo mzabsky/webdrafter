@@ -22,9 +22,9 @@ class SetVersionTable
 		return $resultSet;
 	}
 	
-	public function fetchBySet($setVersionId)
+	public function fetchBySet($setId)
 	{
-		$resultSet = $this->tableGateway->select(array('set_version_id' => $setVersionId));
+		$resultSet = $this->tableGateway->select(array('set_id' => $setId));
 		return $resultSet;
 	}
 	

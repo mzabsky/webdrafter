@@ -256,3 +256,51 @@ textarea {
 #setPreviewFailureList {	
 	color: red;
 }
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+#makePublicDialog li {
+	padding-bottom: 5px;
+}
+
+#makePublicDialog .explanation {
+	font-size: 0.8em;
+	padding-left: 15px;
+}
+
+/* Forms */
+form .form-element
+{
+	margin-bottom: 15px;
+}
+
+form .form-element label
+{
+	font-weight: bold;
+	display: block;
+	margin-right: 15px;
+}
+
+form .form-element input
+{
+	width: 400px;
+}
+
+form .form-element ul
+{
+	width: 400px;
+}
+
+form .form-element span.description
+{
+	font-size: 0.8em;
+	display: block;
+}
+
+form .form-element span.description
+{
+	font-size: 0.75em;
+	display: block;
+}
