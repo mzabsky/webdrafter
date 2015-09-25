@@ -1,3 +1,8 @@
+<script>
+$(document).ready(function(){
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+});
+</script>
 <h2 id="contentTitle">Create a set</h2>
 <p>Please fill in basic information that will represent your set on WebDrafter. Once this is finished, you will be able to upload first version of your card file.</p>
 <p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
@@ -9,34 +14,10 @@ $form->setAttribute('action', $this->url('member-area', array('action' => 'creat
 $form->prepare();
  
 echo $this->form()->openTag($form);
+echo $this->fullFormInput($form->get('name'));
+echo $this->fullFormInput($form->get('code'));
+echo $this->fullFormInput($form->get('about'));
 ?>
-<div class="form_element">
-<?php
-    $name = $form->get('name');
-    echo $formLabel->openTag() . $name->getOption('label');
-    echo $this->formInput($name);
-    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $downloadUrl = $form->get('code');
-    echo $formLabel->openTag() . $downloadUrl->getOption('label');
-    echo $this->formInput($downloadUrl);
-    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $about = $form->get('about');
-    echo $formLabel->openTag() . $about->getOption('label');
-    echo $this->formTextarea($about);
-    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
 <div class="form_element">
 <?php
 echo $this->formSubmit($form->get('submit'));
