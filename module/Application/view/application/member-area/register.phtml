@@ -13,7 +13,9 @@ $formLabel = $this->plugin('formLabel');
 $form->prepare();
 
 echo $this->form()->openTag($form);
-echo $this->fullFormInput($form->get('name'));
+if($this->registrationMode){
+	echo $this->fullFormInput($form->get('name'));
+}
 echo $this->fullFormInput($form->get('email_privacy'));
 echo $this->fullFormInput($form->get('about'));
 ?>
