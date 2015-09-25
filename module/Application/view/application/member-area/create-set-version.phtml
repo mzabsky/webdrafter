@@ -70,6 +70,8 @@ function cardImageCheck()
 
 $(document).ready(function(){
 	cardImageCheck();
+
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
 });
 </script>
 <h2 id="contentTitle">New card file for <?php echo $this->set->name ?></h2>
