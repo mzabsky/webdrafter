@@ -69,7 +69,6 @@ if($this->accountUpdated)
 					<th>Set name</th>
 					<th>Number of cards</th>
 					<th>Number of events</th>
-					<th>&nbsp;</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -78,7 +77,7 @@ if($this->accountUpdated)
 		{
 			echo "<tr url='" . $this->url('member-area-manage-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
 			echo $set["setName"];
-			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td><td><a href='" . $this->url('member-area', array('action' => 'retire-set')) . "?set_id=" . $set["setId"] . "' onclick=\"return confirm('This set will be archived, but people will not be able to browse contents of this set and host drafts with it. You will not be able to undo this. \\n\\nDo you wish to continue?');\">Retire</a></td></tr>";	
+			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
 		}
 		?>
 				</tr>
