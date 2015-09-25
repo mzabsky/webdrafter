@@ -78,40 +78,15 @@ $(document).ready(function(){
 
 <?php
 $form = $this->form;
-$formLabel = $this->plugin('formLabel');
 
 $form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload' => $this->uploadGuid)))); 
 $form->prepare();
  
 echo $this->form()->openTag($form);
+echo $this->fullFormInput($form->get('name'));
+echo $this->fullFormInput($form->get('download_url'));
+echo $this->fullFormInput($form->get('about'));
 ?>
-<div class="form_element">
-<?php
-    $name = $form->get('name');
-    echo $formLabel->openTag() . $name->getOption('label');
-    echo $this->formInput($name);
-    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $downloadUrl = $form->get('download_url');
-    echo $formLabel->openTag() . $downloadUrl->getOption('label');
-    echo $this->formInput($downloadUrl);
-    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $about = $form->get('about');
-    echo $formLabel->openTag() . $about->getOption('label');
-    echo $this->formTextarea($about);
-    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
 <div class="form_element">
 <?php
 echo $this->formSubmit($form->get('submit')) . " <span id='cardImageCheckResult'>Card image check did not pass yet. Please make sure all images display correctly before submitting.</span>";

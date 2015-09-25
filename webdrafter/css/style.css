@@ -238,7 +238,7 @@ textarea {
 }
 
 #setPreview {
-	margin: 5px;
+	margin-top: 20px;
 	padding: 5px;
 	border: 1px gray solid;
 	width:90%;
@@ -318,6 +318,11 @@ form .form-element ul
 	color: red;
 }
 
+form input[type=radio]
+{
+	width: 15px;
+}
+
 form input[type=submit]
 {
 	padding: 5px;
@@ -326,11 +331,6 @@ form input[type=submit]
 	background: lightgreen;
 	cursor: pointer;
 	width: 150px;
-}
-
-form input[type=radio]
-{
-	width: 15px;
 }
 
 form input[type=submit]:hover 

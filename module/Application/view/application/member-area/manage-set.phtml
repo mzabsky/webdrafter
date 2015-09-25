@@ -166,7 +166,6 @@ if(count($this->setVersions) == 0)
 	<div id="details_tab">
 		<?php
 		$form = $this->form;
-		$formLabel = $this->plugin('formLabel');
 		 
 		$form->prepare();
 		 
@@ -263,7 +262,6 @@ if(count($this->setVersions) == 0)
 		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
 		<?php
 		$form = $this->uploadForm;
-		$formLabel = $this->plugin('formLabel');
 		
 		$form->setAttribute('action', $this->url('member-area-manage-set', array('set_id' => $this->set->setId))); 
 		$form->prepare();
