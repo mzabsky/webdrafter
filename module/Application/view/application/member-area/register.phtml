@@ -1,3 +1,8 @@
+<script>
+$(document).ready(function(){
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+});
+</script>
 <?php if($this->registrationMode){?>
 	<h2 id="contentTitle">User registration</h2>
 	<p>This is the first time you are logging into WebDrafter. We need you to fill in a few things before you can continue to use the app.</p>
@@ -8,37 +13,10 @@ $formLabel = $this->plugin('formLabel');
 $form->prepare();
 
 echo $this->form()->openTag($form);
+echo $this->fullFormInput($form->get('name'));
+echo $this->fullFormInput($form->get('email_privacy'));
+echo $this->fullFormInput($form->get('about'));
 ?>
-<div class="form_element">
-<?php
-if($form->isNameIncluded())
-{
-    $name = $form->get('name');
-    echo $formLabel->openTag() . $name->getOption('label');
-    echo $this->formInput($name);
-    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-}
-?>
-</div>
-<div class="form_element">
-<?php
-    $downloadUrl = $form->get('email_privacy');
-    echo $formLabel->openTag() . $downloadUrl->getOption('label');
-    echo $this->formElement($downloadUrl);
-    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $about = $form->get('about');
-    echo $formLabel->openTag() . $about->getOption('label');
-    echo $this->formTextarea($about);
-    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
 <div class="form_element">
 <?php
 echo $this->formSubmit($form->get('submit'));
