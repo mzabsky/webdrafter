@@ -283,6 +283,11 @@ form .form-element label
 	margin-right: 15px;
 }
 
+form .has-error label
+{
+	color: red;
+}
+
 form .form-element input
 {
 	width: 400px;
@@ -303,4 +308,32 @@ form .form-element span.description
 {
 	font-size: 0.75em;
 	display: block;
+}
+
+form .form-element ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	color: red;
+}
+
+form input[type=submit]
+{
+	padding: 5px;
+	font-size: 1.2em;
+	border: 1px black solid;
+	background: lightgreen;
+	cursor: pointer;
+	width: 150px;
+}
+
+form input[type=radio]
+{
+	width: 15px;
+}
+
+form input[type=submit]:hover 
+{
+	background: palegreen;
 }

@@ -13,12 +13,15 @@
         <!-- Le styles -->
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
        					->prependStylesheet($this->basePath('css/jquery.dataTables.min.css'))
+                        ->prependStylesheet($this->basePath('css/simplemde.min.css'))
                         ->prependStylesheet($this->basePath('css/style.css'))
+                        ->prependStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
         				->prependStylesheet($this->basePath('css/jquery-ui.css')) ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
             ->prependFile($this->basePath('js/webdrafter.js'))
+            ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
             //->prependFile($this->basePath('js/jquery.min.js'))
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')

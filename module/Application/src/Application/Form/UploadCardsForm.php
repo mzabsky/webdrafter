@@ -59,7 +59,7 @@ class UploadCardsForm extends Form
 				'required' => true,
 				'options' => array(
 						'label' => 'Art file name format:',
-						'description' => '',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
+						'description' => 'Scheme used for names of individual card image files.',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
 						'value_options' => [
 								self::NAME_DOT_PNG => '<card name>.png',
 								self::NAME_DOT_FULL_DOT_PNG => '<card name>.full.png',

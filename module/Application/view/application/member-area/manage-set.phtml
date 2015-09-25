@@ -35,6 +35,8 @@ $(function(){
         }
       }
     });
+
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
 });
 
 var createPicker = function() {
@@ -258,7 +260,7 @@ if(count($this->setVersions) == 0)
 		</table>
 	</div>
 	<div id="upload_tab">
-		<p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
+		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
 		<?php
 		$form = $this->uploadForm;
 		$formLabel = $this->plugin('formLabel');
@@ -267,32 +269,10 @@ if(count($this->setVersions) == 0)
 		$form->prepare();
 		 
 		echo $this->form()->openTag($form);
-		?>
-		<div class="form_element">
-		<?php
-		    $artUrl = $form->get('art_url');
-		    echo $formLabel->openTag() . $artUrl->getOption('label');
-		    echo $this->formInput($artUrl);
-		    echo $this->formElementErrors($artUrl) . " <button class='google_drive_button'>Pick from Google Drive</button> <small>" . $artUrl->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
-		?>
-		</div>
-		<div class="form_element">
-		<?php
-		    $artFormatUrl = $form->get('art_url_format');
-		    echo $formLabel->openTag() . $artFormatUrl->getOption('label');
-		    echo $this->formElement($artFormatUrl);
-		    echo $this->formElementErrors($artFormatUrl) . "<small>" . $artFormatUrl->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
-		?>
-		</div>
-		<div class="form_element">
-		<?php
-		    $file = $form->get('file');
-		    echo $formLabel->openTag() . $file->getOption('label');
-		    echo $this->formFile($file);
-		    echo $this->formElementErrors($file) . "<small>" . $file->getOption('description') . "</small>";
-		    echo $formLabel->closeTag();
+		echo $this->fullFormInput($form->get('art_url'), null, " <button class='google_drive_button'>Pick from Google Drive</button>");
+		echo $this->fullFormInput($form->get('art_url_format'));
+		echo $this->fullFormInput($form->get('file'));
+		
 		?>
 		<div class="form_element">
 		<?php

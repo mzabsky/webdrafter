@@ -22,7 +22,7 @@ class CreateSetForm extends Form
 			'name' => 'name',
 			'options' => array(
 				'label' => 'Name: ',
-				'description' => 'Representative name of the set.'
+				'description' => 'Representative name of the set. Must be unique.'
 			)
 		)));
 		
@@ -39,7 +39,7 @@ class CreateSetForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About the set: ',
-				'description' => 'Arbitrary text displayed on the set page. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
+				'description' => 'Arbitrary text displayed on the set page. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Up to 5000 characters.'
 			),
 		)));
 		
@@ -136,7 +136,7 @@ class CreateSetForm extends Form
 		$this->add($factory->createElement(array(
 			'name' => 'submit',
             'attributes' => array(
-                'value' => 'Submit',
+                'value' => 'Save',
             ),
 			'type' => 'submit',
 			'required' => true,
