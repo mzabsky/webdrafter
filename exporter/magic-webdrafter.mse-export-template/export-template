@@ -1,4 +1,4 @@
-﻿mse version: 0.3.8
+mse version: 0.3.8
 short name: WebDrafter
 full name: WebDrafter Exporter
 position hint: 006
@@ -16,15 +16,40 @@ file type: *.txt|*.txt|*.*|*.*
 # Written by modifying thequinn's IsochronDrafter exporter ()
 
 script:
+	escape_linebreaks := replace@(match: "\n", replace: "///br///")
+	determine_shape := {
+		if contains(card.shape, match:"normal") and card.name_2 != "" then "double"
+		else card.shape
+	}
+	
 	write_card := {
 		"\n"+card.name
+		+"\n"+determine_shape()
+		+"\n"+card.card_number
 		+"\n"+card.rarity
 		+"\n"+card.card_color
+		+"\n"+card.casting_cost
 		+"\n"+card.type
 		+"\n"+cmc(card.casting_cost)
+		+"\n"+card.power
+		+"\n"+card.toughness
+		+"\n"+escape_linebreaks(card.rule_text)
+		+"\n"+escape_linebreaks(card.flavor_text)
+		+"\n"+card.illustrator
+		+"\n"+card.name_2
+		+"\n"+card.card_color_2
+		+"\n"+card.casting_cost_2
+		+"\n"+card.type_2
+		+"\n"+card.power_2
+		+"\n"+card.toughness_2
+		+"\n"+escape_linebreaks(card.rule_text_2)
+		+"\n"+escape_linebreaks(card.flavor_text_2)
+		+"\n"+card.illustrator_2
 		+"\n"
 		}
 	write_cards := to_text(for each card in sort_list(cards, order_by: {input.card_number}) do write_card())
 	to_string(
 		 set.title+"\n"
+		 +"3\n"
 		 +write_cards)
+
