@@ -67,12 +67,33 @@ class CardTable
 		$data = array(
 			'card_id' => $card->cardId,
 			'set_version_id' => $card->setVersionId,
-			'name'  => $card->name,
-			'colors'  => $card->colors,
+			'shape' => $card->shape,
+			'card_number' => $card->cardNumber,
+			'cmc'  => $card->cmc,
 			'rarity'  => $card->rarity,
 			'art_url'  => $card->artUrl,
+
+			'name'  => $card->name,
+			'colors'  => $card->colors,
+			'mana_cost'  => $card->manaCost,
 			'types'  => $card->types,
-			'cmc'  => $card->cmc,
+			'rules_text'  => $card->rulesText,
+			'flavor_text'  => $card->flavorText,
+			'power'  => $card->power,
+			'toughness'  => $card->toughness,
+			'pt_string'  => $card->ptString,
+			'illustrator'  => $card->illustrator,
+
+			'name_2'  => $card->name2,
+			'colors_2'  => $card->colors2,
+			'mana_cost_2'  => $card->manaCost2,
+			'types_2'  => $card->types2,
+			'rules_text_2'  => $card->rulesText2,
+			'flavor_text_2'  => $card->flavorText2,
+			'power_2'  => $card->power2,
+			'toughness_2'  => $card->toughness2,
+			'pt_string_2'  => $card->ptString2,
+			'illustrator_2'  => $card->illustrator2
 		);
 	
 		$id = (int) $card->cardId;

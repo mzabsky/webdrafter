@@ -752,7 +752,7 @@ class MemberAreaController extends AbstractActionController
 		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));		
 		
 		$uploadForm = new \Application\Form\UploadCardsForm();
-		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));
+		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId), array('fragment' => 'upload_tab')));
 		
 		if ($this->getRequest()->isPost())
 		{
@@ -798,37 +798,44 @@ class MemberAreaController extends AbstractActionController
 					
 					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
 					
-					$parser = new \Application\SetParser\IsochronDrafterSetParser();
-					$cards = $parser->Parse($fileContents);
-					
-					foreach($cards as $card)
+					try 
 					{
-						$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
-						switch($formData["art_url_format"])
+						$parser = new \Application\SetParser\IsochronDrafterSetParser();
+						$cards = $parser->Parse($fileContents);
+						
+						foreach($cards as $card)
 						{
-							case UploadCardsForm::NAME_DOT_PNG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".png";
-								break;
-							case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
-								break;
-							case UploadCardsForm::NAME_DOT_JPG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
-								break;
-							case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
-								break;
-							default:
-								throw new \Exception("Invalid art URL format.");
+							$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
+							switch($formData["art_url_format"])
+							{
+								case UploadCardsForm::NAME_DOT_PNG:
+									$card->artUrl = $artUrl . "/" . $cardName . ".png";
+									break;
+								case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
+									$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
+									break;
+								case UploadCardsForm::NAME_DOT_JPG:
+									$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
+									break;
+								case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
+									$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
+									break;
+								default:
+									throw new \Exception("Invalid art URL format.");
+							}
 						}
+	
+						$guid = \uniqid();
+						
+						$_SESSION["card_file_cards"] = serialize($cards);
+						$_SESSION["card_file_guid"] = $guid;
+				
+						return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload' => $guid)));
 					}
-
-					$guid = \uniqid();
-					
-					$_SESSION["card_file_cards"] = serialize($cards);
-					$_SESSION["card_file_guid"] = $guid;
-			
-					return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload' => $guid)));
+					catch (\Exception $e)
+					{
+						$uploadForm->get("file")->setMessages(array($e->getMessage()));
+					}
 				} 
 				else 
 				{

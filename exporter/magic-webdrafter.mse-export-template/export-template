@@ -23,19 +23,21 @@ script:
 	}
 	
 	write_card := {
-		"\n"+card.name
-		+"\n"+determine_shape()
+		"\n"+determine_shape()
 		+"\n"+card.card_number
+		+"\n"+cmc(card.casting_cost)
 		+"\n"+card.rarity
+		
+		+"\n"+card.name
 		+"\n"+card.card_color
 		+"\n"+card.casting_cost
 		+"\n"+card.type
-		+"\n"+cmc(card.casting_cost)
 		+"\n"+card.power
 		+"\n"+card.toughness
 		+"\n"+escape_linebreaks(card.rule_text)
 		+"\n"+escape_linebreaks(card.flavor_text)
 		+"\n"+card.illustrator
+		
 		+"\n"+card.name_2
 		+"\n"+card.card_color_2
 		+"\n"+card.casting_cost_2

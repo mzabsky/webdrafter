@@ -168,7 +168,7 @@ if(count($this->setVersions) == 0)
 		$form = $this->form;
 		 
 		$form->prepare();
-		 
+		
 		echo $this->form()->openTag($form);
 		
 		echo $this->fullFormInput($form->get('name'));
@@ -263,7 +263,6 @@ if(count($this->setVersions) == 0)
 		<?php
 		$form = $this->uploadForm;
 		
-		$form->setAttribute('action', $this->url('member-area-manage-set', array('set_id' => $this->set->setId))); 
 		$form->prepare();
 		 
 		echo $this->form()->openTag($form);
