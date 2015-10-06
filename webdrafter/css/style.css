@@ -290,7 +290,7 @@ form input[type=submit]:hover {
   font-weight: bold;
   background: lightgray; }
 
-#set-page #set-info-bar {
+#set-page .set-info-bar {
   border-top: 1px lightgray solid;
   border-bottom: 1px lightgray solid;
   margin-bottom: 10px;

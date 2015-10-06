@@ -39,6 +39,7 @@ class BrowseController extends AbstractActionController
     	$viewModel = new ViewModel();
     	$viewModel->set = $setTable->getSet($setId);
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
+    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($setId);
     	$viewModel->cards = $cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId);
     	 
     	return $viewModel;

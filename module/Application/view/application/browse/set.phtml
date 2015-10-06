@@ -5,7 +5,7 @@ $(function(){
 </script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
 <div id="set-page">
-	<div id="set-info-bar">
+	<div class="set-info-bar">
 		<span class="set-info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
 		<span class="set-info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
 		<span class="set-info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
@@ -36,7 +36,15 @@ $(function(){
 		?>
 		</div>
 		<div id="history_tab">
-		WIP
+		<?php foreach($this->setVersions as $setVersion){?>
+		<div class="set-version">
+			<h2><?php echo $setVersion["name"] ?></h2>
+			<div class="set-info-bar">
+				<span class="set-info-bar-item">Date: <?php echo $setVersion["createdOn"] ?></span>
+			</div>
+			<?php echo $this->markdown($setVersion["about"]); ?>
+		</div>
+		<?php } ?>
 		</div>	
 	</div>
 
