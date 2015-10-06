@@ -39,7 +39,7 @@ class CreateSetForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About the set: ',
-				'description' => 'Arbitrary text displayed on the set page. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Up to 5000 characters.'
+				'description' => 'Arbitrary text displayed on the set page. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Up to 50000 characters.'
 			),
 		)));
 		
