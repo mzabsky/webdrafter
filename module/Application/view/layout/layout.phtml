@@ -44,6 +44,11 @@
     <body>
         <div class="container">
         	<div id="header">
+        		<?php if($this->config('devRealm')){?>
+        			<div style="position: absolute; left: 50%; font-weight: bold; color: red;">
+        				<div style="position: relative; left: -50%;"/>This instance is a development realm. It is work in progress. No data are shared with the production realm.</div>
+        			</div>
+        		<?php } ?>
 	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
 	        	<div id="menuBar">
 		        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
