@@ -89,7 +89,7 @@ class Module
                 'SetVersionTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Set());
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\SetVersion());
                     return new TableGateway('set_version', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\CardTable' =>  function($sm) {

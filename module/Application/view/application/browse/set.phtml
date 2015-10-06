@@ -1,11 +1,22 @@
-<h2 id="contentTitle"><?php echo "[" . $this->set->code . "] " . $this->set->name; ?></h2>
-<?php if($this->set->isRetired){ ?><p><b>This set is retired and is only stored for archiving purposes.</b></p><?php } ?>
-<p><a href="<?php echo $this->set->url ?>" target="_blank">Set information</a></p>
-<?php if($this->set->downloadUrl != null) { ?><p><a href="<?php echo $this->set->downloadUrl ?>">Set download</a></p><?php } ?>
-<p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></p>
-<p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></p>
-<?php
-foreach($this->cards as $card)
-{
-	echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
-}
+<h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
+<div id="set-page">
+	<div id="set-info-bar">
+		<span class="set-info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
+		<span class="set-info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
+		<?php if($this->currentSetVersion != null) { ?>
+			<span class="set-info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
+			<?php if($this->currentSetVersion->downloadUrl != null){?>
+				<span class="set-info-bar-item"><a href="<?php echo $this->currentSetVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
+			<?php }?>
+			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></span>
+			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span>
+		<?php } ?>
+	</div>	
+
+	<?php
+	foreach($this->cards as $card)
+	{
+		echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
+	}
+	?>
+</div>

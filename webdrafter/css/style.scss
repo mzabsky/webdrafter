@@ -1,0 +1,368 @@
+$set-status-unplayable-color: salmon;
+$set-status-design-color: orange;
+$set-status-development-color: yellow;
+$set-status-finishing-color: yellowgreen;
+$set-status-finished-color: lightgreen;
+$set-status-discontinued-color: lightgray;
+
+body {
+    padding-bottom: 40px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    margin: 0;
+}
+
+a {
+	color: black;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:active {
+	color: blue;
+}
+
+a:visited {
+	color: black;
+}
+
+#header {
+	background: #eeeeee;
+	border-bottom: 1px black solid;
+	height: 42px;
+	padding: 5px;
+	margin-bottom: 8px;
+}
+
+#header a {
+	display: inline-block;
+	padding-right: 8px;
+}
+
+#header a:hover {
+	text-decoration: underline;
+}
+
+#header a:active {
+	color: blue;
+}
+
+#header a:visited {
+	color: black;
+}
+
+#mainHeader {
+	display: block;
+	float: left;
+	margin: 0px;
+	font-weight: stronger;
+}
+
+#mainHeader h1 {
+	padding: 5px;
+	margin: 0;
+}
+
+#menuBar {
+	float: left;
+	padding: 22px 3px 0 30px;
+}
+
+#userPanel {
+	margin-top: 3px;
+	float: right;
+	height: 100%;
+}
+
+.clear {
+	clear: both;
+}
+
+#body {
+	margin: 0 15px 50px 15px;
+}
+
+#contentTitle {
+	font-size: 2.5em;
+	margin: 5px 0 10px 0;
+	font-weight: normal;
+}
+
+footer {
+	border-top: 1px black solid;
+	text-align: center;
+}
+
+#tabs {
+	border: none !important;
+	margin: 0 -20px 0 -20px;
+}
+
+#tabs .ui-widget-header {
+	border-left: none !important;
+	border-top: none !important;
+	border-right: none !important;
+}
+
+.success-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px limegreen solid;
+	background: lightgreen;
+	font-size: 1.1em;
+}
+
+.warning-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px goldenrod solid;
+	background: yellow;
+	font-size: 1.1em;
+}
+
+.error-message {
+	padding: 15px;
+	margin: 5px;
+	border: 3px red solid;
+	background: salmon;
+	font-size: 1.1em;
+}
+
+
+#deckbuilder td
+{
+	width: 230px;
+}
+
+#deckbuilder tbody td
+{
+	padding: 6px 6px 280px 6px;
+	vertical-align: top;
+}
+
+#deckbuilder img
+{
+	margin-bottom: -250px;
+}
+
+.card
+{
+	height: 300px;
+	/*padding:6px;*/
+	min-width:50px;
+	vertical-align:middle
+}
+
+.selectedCard
+{
+	border: 2px red solid;
+	margin: -2px;
+	box-shadow: 0px 0px 8px #f00;
+	border-radius: 12px;
+}
+
+.linkBox {
+	font-family:monospace;
+	width: 400px;
+}
+
+.tutorials img {
+	display: block;
+}
+
+textarea {
+	width: 500px;
+	height: 250px;
+}
+
+.set_status_picker td
+{
+	padding: 5px;
+}
+
+.set_status_picker td.picker
+{
+	border: 1px black solid;
+	cursor: pointer;
+    *cursor: hand;
+}
+
+.set_status_picker .current td.picker
+{
+	border-width: 4px;
+}
+
+.set_status_picker h3
+{
+	font-size: 0.92em;
+	margin: 0;
+}
+
+
+.set_status_picker td.indicator 
+{
+	color: white;
+	background: none;
+	border: 0;
+}
+
+.set_status_picker .current td.indicator 
+{
+	color: black;
+}
+
+.set_status_picker .set_status_unplayable td.picker
+{
+	background: salmon;
+}
+
+.set_status_picker .set_status_design td.picker
+{
+	background: orange;
+}
+
+.set_status_picker .set_status_development td.picker
+{
+	background: yellow;
+}
+
+.set_status_picker .set_status_finishing td.picker
+{
+	background: yellowgreen;
+}
+
+.set_status_picker .set_status_finished td.picker
+{
+	background: lightgreen;
+}
+
+.set_status_picker .set_status_discontinued td.picker
+{
+	background: lightgray;
+}
+
+#setPreview {
+	margin-top: 20px;
+	padding: 5px;
+	border: 1px gray solid;
+	width:90%;
+}
+
+#setPreview h3 {
+	margin: 3px;
+}
+
+#cardImageCheckResult {
+	font-weight: bold;
+	color: red;
+}
+
+#setPreviewFailureList {	
+	color: red;
+}
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+#makePublicDialog li {
+	padding-bottom: 5px;
+}
+
+#makePublicDialog .explanation {
+	font-size: 0.8em;
+	padding-left: 15px;
+}
+
+/* Forms */
+form .form-element
+{
+	margin-bottom: 15px;
+}
+
+form .form-element label
+{
+	font-weight: bold;
+	display: block;
+	margin-right: 15px;
+}
+
+form .has-error label
+{
+	color: red;
+}
+
+form .form-element input
+{
+	width: 400px;
+}
+
+/*form .form-element ul
+{
+	width: 400px;
+}*/
+
+form .form-element span.description
+{
+	font-size: 0.8em;
+	display: block;
+}
+
+form .form-element span.description
+{
+	font-size: 0.75em;
+	display: block;
+}
+
+form .form-element ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	color: red;
+}
+
+form input[type=radio]
+{
+	width: 15px;
+}
+
+form input[type=submit]
+{
+	padding: 5px;
+	font-size: 1.2em;
+	border: 1px black solid;
+	background: lightgreen;
+	cursor: pointer;
+	width: 150px;
+}
+
+form input[type=submit]:hover 
+{
+	background: palegreen;
+}
+
+@mixin set-status($color){
+	display: inline-block;
+	padding: 2px;
+	border: 1px black solid;
+	font-weight: bold;
+	background: $color;
+}
+	
+.set-status-label-1 { @include set-status($set-status-unplayable-color);}
+.set-status-label-2 { @include set-status($set-status-design-color);}
+.set-status-label-3 { @include set-status($set-status-development-color);}
+.set-status-label-4 { @include set-status($set-status-finishing-color);}
+.set-status-label-5 { @include set-status($set-status-finished-color);}
+.set-status-label-6 { @include set-status($set-status-discontinued-color);}
+
+#set-page {
+	.set-info-bar-item {
+		display: inline-block;
+		margin-right: 20px;
+	}
+}

@@ -43,6 +43,19 @@ class Set implements InputFilterAwareInterface
 		);
 	}
 	
+	public function getStatusName()
+	{
+		switch($this->status)
+		{
+			case self::STATUS_UNPLAYABLE: return "Unplayable";
+			case self::STATUS_DESIGN: return "Design";
+			case self::STATUS_DEVELOPMENT: return "Development";
+			case self::STATUS_FINISHING: return "Finishing";
+			case self::STATUS_FINISHED: return "Finished";
+			case self::STATUS_DISCONTINUED: return "Discontinued";
+		}
+	}
+	
     public function exchangeArray($data)
     {
         $this->setId     = (!empty($data['set_id'])) ? $data['set_id'] : null;
