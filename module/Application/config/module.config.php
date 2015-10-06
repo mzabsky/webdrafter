@@ -119,10 +119,10 @@ return array(
         	'browse-set' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/set/:set_id',
+        			'route' => '/set/:url_name',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    	'set_id' => '[0-9]+'
+                    	'set_name' => '[a-zA-Z][a-z0-9-]*'
                     ),
        				'defaults' => array(
       					'controller' => 'Application\Controller\Browse',

@@ -11,6 +11,7 @@ class Set implements InputFilterAwareInterface
 {
 	public $setId;
 	public $name;
+	public $urlName;
 	public $code;
 	public $userId;
 	public $about;
@@ -33,6 +34,7 @@ class Set implements InputFilterAwareInterface
 		return array(
 			'set_id' => $this->setId,
 			'name' => $this->name,
+			'url_name' => $this->urlName,
 			'code' => $this->code,
 			'user_id' => $this->userId,
 			'about' => $this->about,
@@ -60,6 +62,7 @@ class Set implements InputFilterAwareInterface
     {
         $this->setId     = (!empty($data['set_id'])) ? $data['set_id'] : null;
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
+        $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
         $this->code = (!empty($data['code'])) ? $data['code'] : null;
         $this->userId = (!empty($data['user_id'])) ? $data['user_id'] : null;
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
@@ -105,6 +108,47 @@ class Set implements InputFilterAwareInterface
     					'options' => array(
     						'table' => 'set',
     						'field' => 'name',
+    						'adapter' => $this->dbAdapter,
+    						'exclude' => array
+    						(
+					            'field' => 'set_id',
+					            'value' => $this->setId
+					        )
+    					),
+    				),
+    			),
+    		));
+    
+    		$inputFilter->add(array(
+    			'name'     => 'url_name',
+    			'required' => true,
+    			'filters'  => array(
+    				array('name' => 'StripTags'),
+    				array('name' => 'StringTrim'),
+    			),
+    			'validators' => array(
+    				array(
+    					'name'    => 'StringLength',
+   						'options' => array(
+	    					'encoding' => 'UTF-8',
+							'min'      => 1,
+ 							'max'      => 40,
+    					),
+    				),
+    				array(
+    					'name'    => 'Regex',
+   						'options' => array(
+	    					'pattern' => '/^[a-z][a-z0-9\-]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => 'URL name must start with a lower case english alphabet letter, and can only contain lower case english alphabet letters, numbers and minus sign' 
+                            ), 
+    					),
+    				),
+					array(
+    					'name'    => 'Db\NoRecordExists',
+    					'options' => array(
+    						'table' => 'set',
+    						'field' => 'url_name',
     						'adapter' => $this->dbAdapter,
     						'exclude' => array
     						(

@@ -277,6 +277,7 @@ class MemberAreaController extends AbstractActionController
 				try
 				{
 					$set->name = $formData["name"];
+					$set->urlName = $formData["url_name"];
 					$set->code = $formData["code"];
 					$set->about = $formData["about"];
 					//$set->url = $formData["url"];
@@ -773,6 +774,7 @@ class MemberAreaController extends AbstractActionController
 				if ($form->isValid($formData))
 				{
 					$set->name = $formData["name"];
+					$set->urlName = $formData["url_name"];
 					$set->code = $formData["code"];
 					$set->about = $formData["about"];
 						

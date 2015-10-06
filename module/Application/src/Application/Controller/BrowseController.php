@@ -37,9 +37,9 @@ class BrowseController extends AbstractActionController
     	$cardTable = $sm->get('Application\Model\CardTable');
     	 
     	$viewModel = new ViewModel();
-    	$viewModel->set = $setTable->getSet($setId);
+    	$viewModel->set = $setTable->getSetByUrlName($setId);
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
-    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($setId);
+    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
     	$viewModel->cards = $cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId);
     	 
     	return $viewModel;

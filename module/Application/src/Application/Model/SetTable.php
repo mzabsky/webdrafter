@@ -77,7 +77,7 @@ class SetTable
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('set');
 		//$select->forUpdate();
-		$select->columns(array('set_name' => 'name', 'set_id', 'created_on'));
+		$select->columns(array('set_name' => 'name', 'set_id', 'url_name', 'created_on'));
 		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array(), 'left');
 		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
 		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
@@ -95,6 +95,7 @@ class SetTable
 			$resultArray[] = array(
 					'setId' => $result->set_id,
 					'setName' => $result->set_name,
+					'urlName' => $result->url_name,
 					'draftCount' => $result->draft_count,
 					'cardCount' => $result->card_count,
 					'userName' => $result->user_name,
@@ -116,11 +117,23 @@ class SetTable
 		return $row;
 	}
 	
+	public function getSetByUrlName($urlName)
+	{
+		$urlName  = (int) $urlName;
+		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
+		$row = $rowset->current();
+		if (!$row) {
+			throw new \Exception("Could not find set $urlName");
+		}
+		return $row;
+	}
+	
 	public function saveSet(Set $set)
 	{
 		$data = array(
 			'set_id' => $set->setId,
 			'name'  => $set->name,
+			'url_name'  => $set->urlName,
 			'code'  => $set->code,
 			'user_id'  => $set->userId,
 			'about'  => $set->about,
