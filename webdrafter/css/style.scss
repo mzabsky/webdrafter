@@ -373,3 +373,18 @@ form input[type=submit]:hover
 		margin-right: 20px;
 	}
 }
+
+.markdown-content {
+	table {
+		border-collapse: collapse;
+	}
+	
+	td, th {
+    	border: 1px solid lightgray;
+    	padding: 3px;
+	}
+	
+	th {
+		background: #eeeeee;
+	}
+}

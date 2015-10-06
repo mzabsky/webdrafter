@@ -299,4 +299,12 @@ form input[type=submit]:hover {
   display: inline-block;
   margin-right: 20px; }
 
+.markdown-content table {
+  border-collapse: collapse; }
+.markdown-content td, .markdown-content th {
+  border: 1px solid lightgray;
+  padding: 3px; }
+.markdown-content th {
+  background: #eeeeee; }
+
 /*# sourceMappingURL=style.css.map */

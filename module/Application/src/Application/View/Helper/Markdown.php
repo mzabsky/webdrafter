@@ -11,7 +11,7 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
 {
     public function __invoke($text)
     {
-    	$str = '<div class="markdown-content">' . \Michelf\Markdown::defaultTransform($text) . '</div>';
+    	$str = '<div class="markdown-content">' . \Michelf\MarkdownExtra::defaultTransform($text) . '</div>';
     	
     	$str = str_replace('[W]', '<span class="icon-wrapper"><i class="mtg white"></i></span>', $str);
     	$str = str_replace('[U]', '<span class="icon-wrapper"><i class="mtg blue"></i></span>', $str);
