@@ -80,7 +80,7 @@ class SetTable
 		$select->columns(array('set_name' => 'name', 'set_id', 'created_on'));
 		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array(), 'left');
 		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
-		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_id FROM card GROUP BY set_id)')), 'set.set_id = card_set_count.set_id', array('card_count' => 'count'), 'left');
+		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
 		$select->join('user', 'set.user_id = user.user_id', array('user_name' => 'name'));
 		$select->where(array('set.is_private' => 0));
 		//$select->order('draft.created_on DESC');
