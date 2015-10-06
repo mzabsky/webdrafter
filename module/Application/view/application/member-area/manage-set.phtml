@@ -147,7 +147,7 @@ if(count($this->setVersions) == 0)
 }
 ?>
 <p>
-	<a href='<?php echo $this->url('browse-set', array('set_id' => $this->set->setId)) ?>'>Go to set page</a>
+	<a href='<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>'>Go to set page</a>
 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<?php if($this->set->isPrivate){ ?>
 		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>' onclick="return makePublicDialog();">Make public</a>
