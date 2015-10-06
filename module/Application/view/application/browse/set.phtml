@@ -1,6 +1,12 @@
+<script>
+$(function(){
+	$("#tabs").tabs();
+});
+</script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
 <div id="set-page">
 	<div id="set-info-bar">
+		<span class="set-info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
 		<span class="set-info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
 		<span class="set-info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
 		<?php if($this->currentSetVersion != null) { ?>
@@ -11,13 +17,27 @@
 			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></span>
 			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span>
 		<?php } ?>
-	</div>	
-	<?php
-	echo $this->markdown($set->about);
-	
-	foreach($this->cards as $card)
-	{
-		echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
-	}
-	?>
+	</div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#details_tab">Set details</a></li>
+			<li><a href="#cards_tab">Cards</a></li>
+			<li><a href="#history_tab">Version history</a></li>
+		</ul>
+		<div id="details_tab">
+		<?php echo $this->markdown($set->about); ?>
+		</div>
+		<div id="cards_tab">
+		<?php
+		foreach($this->cards as $card)
+		{
+			echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
+		}
+		?>
+		</div>
+		<div id="history_tab">
+		WIP
+		</div>	
+	</div>
+
 </div>
