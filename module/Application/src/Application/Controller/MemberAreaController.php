@@ -857,7 +857,7 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->setCreated = isset($_GET['set-created']);
 		$viewModel->changesSaved = isset($_GET['changes-saved']);
 		$viewModel->setVersionCreated = isset($_GET['set-version-created']);
-		$viewModel->setVersions = $setVersionTable->getSetsVersionsBySet($set->setId);
+		$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($set->setId);
 		
 		$viewModel->set = $set;		
 		$viewModel->form = $form;
