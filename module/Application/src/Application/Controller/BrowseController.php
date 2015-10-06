@@ -33,11 +33,13 @@ class BrowseController extends AbstractActionController
     	
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
+    	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
     	 
     	$viewModel = new ViewModel();
     	$viewModel->set = $setTable->getSet($setId);
-    	$viewModel->cards = $cardTable->fetchBySet($setId);
+    	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
+    	$viewModel->cards = $cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId);
     	 
     	return $viewModel;
     }

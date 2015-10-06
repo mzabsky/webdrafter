@@ -19,9 +19,9 @@ class CardTable
 		return $resultSet;
 	}
 	
-	public function fetchBySet($setId)
+	public function fetchBySetVersion($setVersionId)
 	{
-		$resultSet = $this->tableGateway->select(array('set_id' => $setId));
+		$resultSet = $this->tableGateway->select(array('set_version_id' => $setVersionId));
 		return $resultSet;
 	}
 	
