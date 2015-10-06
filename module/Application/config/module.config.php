@@ -100,7 +100,22 @@ return array(
      					'action'     => 'index',
         			),
         		),
-        	),        
+        	),   
+
+       		'autocard' => array(
+   				'type' => 'Segment',
+  				'options' => array(
+  					'route' => '/autocard/:card_id',
+  					'constraints' => array(
+    					'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+    					'set_id' => '[0-9]+'
+    				),
+    				'defaults' => array(
+    					'controller' => 'Application\Controller\Browse',
+    					'action'     => 'autocard',
+    				),
+    			),
+      		),
         	'browse-set' => array(
         		'type' => 'Segment',
         		'options' => array(

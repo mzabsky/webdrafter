@@ -74,6 +74,17 @@ class Card
         
     }
     
+    public function getShapeName()
+    {
+    	switch($this->shape)
+    	{
+    		case self::SHAPE_NORMAL: return "normal";
+    		case self::SHAPE_SPLIT: return "split";
+    		case self::SHAPE_FLIP: return "flip";
+    		case self::SHAPE_DOUBLE: return "double";
+    	}
+    }
+    
     public function __toString ()
     {
     	return $this->name;

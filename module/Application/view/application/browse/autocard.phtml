@@ -1,0 +1,39 @@
+<div class="autocard shape-<?php echo $this->card->getShapeName() ?>>">
+	<div class="card primary">
+		<div class="title-line">
+			<span class="name"><?php echo $this->card->name ?></span>
+			<span class="mana-cost"><?php echo $this->card->manaCost ?></span>
+		</div>
+		<div class="type-line">
+			<span class="types"><?php echo $this->card->types ?></span>
+			<span class="rarity"><?php echo $this->card->rarity ?></span>
+		</div>
+		<div class="rules-box">
+			<span class="rules-text"><?php echo $this->card->rulesText ?></span>
+			<span class="flavor-text"><?php echo $this->card->flavorText ?></span>
+		</div>
+		<div class="info-line">
+			<span class="illustrator"><?php echo $this->card->illustrator ?></span>
+			<span class="power-toughness"><?php echo $this->card->ptString ?></span>
+		</div>
+	</div>
+	
+	<div class="card secondary">
+		<div class="title-line">
+			<span class="name"><?php echo $this->card->name2 ?></span>
+			<span class="mana-cost"><?php echo $this->card->manaCost2 ?></span>
+		</div>
+		<div class="type-line">
+			<span class="types"><?php echo $this->card->types2 ?></span>
+			<span class="rarity"><?php echo $this->card->rarity ?></span>
+		</div>
+		<div class="rules-box">
+			<span class="rules-text"><?php echo $this->card->rulesText2 ?></span>
+			<span class="flavor-text"><?php echo $this->card->flavorText2 ?></span>
+		</div>
+		<div class="info-line">
+			<span class="illustrator"><?php echo $this->card->illustrator2 ?></span>
+			<span class="power-toughness"><?php echo $this->card->ptString2 ?></span>
+		</div>	
+	</div>
+</div>

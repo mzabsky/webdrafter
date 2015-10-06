@@ -56,4 +56,20 @@ class BrowseController extends AbstractActionController
     
     	return $viewModel;
     }
+    
+    public function autocardAction()
+    {
+    	$cardId = $this->getEvent()->getRouteMatch()->getParam('card_id');
+    	 
+    	$sm = $this->getServiceLocator();
+    	$setTable = $sm->get('Application\Model\SetTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+    	$cardTable = $sm->get('Application\Model\CardTable');
+    	
+    	$viewModel = new ViewModel();
+    	$viewModel->card = $cardTable->getCard($cardId);
+    	//$viewModel->sets = $setTable->getSetsByUser($userId);
+    	$viewModel->setTerminal(true);
+    	return $viewModel;
+    }
 }
