@@ -194,6 +194,10 @@ class Module
      					'fullFormInput' => function($sm) {
      						$helper = new \Application\View\Helper\FullFormInput() ;
      						return $helper;
+     					},
+     					'markdown' => function($sm) {
+     						$helper = new \Application\View\Helper\Markdown() ;
+     						return $helper;
      					}
      			)
      	);

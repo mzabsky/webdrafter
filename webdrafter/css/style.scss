@@ -361,6 +361,13 @@ form input[type=submit]:hover
 .set-status-label-6 { @include set-status($set-status-discontinued-color);}
 
 #set-page {
+	#set-info-bar {
+		border-top: 1px lightgray solid;
+		border-bottom: 1px lightgray solid;
+		margin-bottom: 10px;
+		padding: 5px;
+	}
+	
 	.set-info-bar-item {
 		display: inline-block;
 		margin-right: 20px;

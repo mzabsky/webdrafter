@@ -12,8 +12,9 @@
 			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span>
 		<?php } ?>
 	</div>	
-
 	<?php
+	echo $this->markdown($set->about);
+	
 	foreach($this->cards as $card)
 	{
 		echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
