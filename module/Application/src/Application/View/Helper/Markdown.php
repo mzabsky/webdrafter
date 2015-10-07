@@ -21,7 +21,7 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace('[bW]', '<span class="icon-wrapper"><i class="mtg plains"></i></span>', $str);
     	$str = str_replace('[bU]', '<span class="icon-wrapper"><i class="mtg island"></i></span>', $str);
     	$str = str_replace('[bB]', '<span class="icon-wrapper"><i class="mtg swamp"></i></span>', $str);
-    	$str = str_replace('[bR]', '<span class="icon-wrapper"><i class="mtg red"></i></span>', $str);
+    	$str = str_replace('[bR]', '<span class="icon-wrapper"><i class="mtg mountain"></i></span>', $str);
     	$str = str_replace('[bG]', '<span class="icon-wrapper"><i class="mtg forest"></i></span>', $str);
     	
     	$str = str_replace('[0]', '<span class="icon-wrapper"><i class="mtg mana-0"></i></span>', $str);
