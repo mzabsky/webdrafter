@@ -88,6 +88,9 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	
     	$str = preg_replace("/\[fa-([a-z0-9-]+)\]/", '<i class="fa fa-$1"></i>', $str);
     	
+    	$str = str_replace(':)', '<i class="fa fa-smile-o"></i>', $str);
+    	$str = str_replace(':(', '<i class="fa fa-frown-o"></i>', $str);
+    	
     	// \[\[(.+?)(\|(.+))?\]\] // [[Name]]
     	// \[\[([0-9]+)(\|(.+))?\]\] // [[ID]]
     	// \[\[([0-9]+):(.+?)(\|(.+))?\]\] // [[setId:Name]]
