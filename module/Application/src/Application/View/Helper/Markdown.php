@@ -9,7 +9,7 @@ use Zend\View\Exception;
 
 class Markdown extends \Zend\View\Helper\AbstractHelper
 {
-    public function __invoke($text)
+    public function __invoke($text, $contextSetUrlName = null)
     {
     	$str = '<div class="markdown-content">' . \Michelf\MarkdownExtra::defaultTransform($text) . '</div>';
     	
@@ -85,6 +85,14 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace('[PG]', '<span class="icon-wrapper"><i class="mtg phyrexian-g"></i></span>', $str);
     	$str = str_replace('[P]', '<span class="icon-wrapper"><i class="mtg phyrexian"></i></span>', $str);
     	$str = str_replace('[S]', '<span class="icon-wrapper"><i class="mtg snow"></i></span>', $str);
+    	
+    	$str = preg_replace("/\[fa-([a-z0-9-]+)\]/", '<i class="fa fa-$1"></i>', $str);
+    	
+    	// \[\[(.+?)(\|(.+))?\]\] // [[Name]]
+    	// \[\[([0-9]+)(\|(.+))?\]\] // [[ID]]
+    	// \[\[([0-9]+):(.+?)(\|(.+))?\]\] // [[setId:Name]]
+    	// \[\[([a-z][a-z0-9-]+):(.+?)(\|(.+))?\]\] // [[setUrl:Name]]
+    	
     	return $str;
     }
 }
