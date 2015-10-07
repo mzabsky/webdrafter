@@ -27,6 +27,14 @@ class CreateSetVersionForm extends Form
 		)));
 		
 		$this->add($factory->createElement(array(
+			'name' => 'url_name',
+			'options' => array(
+				'label' => 'URL name: ',
+				'description' => 'Name used in URLs to this set version. Can only contain lower case english alphabet letters, numbers and minus sign. Must be unique.'
+			)
+		)));
+		
+		$this->add($factory->createElement(array(
 				'name' => 'download_url',
 				'type' => 'url',
 				'options' => array(

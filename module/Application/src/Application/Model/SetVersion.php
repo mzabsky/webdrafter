@@ -11,6 +11,7 @@ class SetVersion implements InputFilterAwareInterface
 {
 	public $setVersionId;
 	public $name;
+	public $urlName;
 	public $setId;
 	public $about;
 	public $createdOn;
@@ -23,6 +24,7 @@ class SetVersion implements InputFilterAwareInterface
     {
         $this->setVersionId     = (!empty($data['set_version_id'])) ? $data['set_version_id'] : null;
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
+        $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
         $this->setId = (!empty($data['set_id'])) ? $data['set_id'] : null;
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
         $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
@@ -74,6 +76,47 @@ class SetVersion implements InputFilterAwareInterface
 						)
     				),
     			),
+    		));
+    		
+    		$inputFilter->add(array(
+    				'name'     => 'url_name',
+    				'required' => true,
+    				'filters'  => array(
+    						array('name' => 'StripTags'),
+    						array('name' => 'StringTrim'),
+    				),
+    				'validators' => array(
+    						array(
+    								'name'    => 'StringLength',
+    								'options' => array(
+    										'encoding' => 'UTF-8',
+    										'min'      => 1,
+    										'max'      => 40,
+    								),
+    						),
+    						array(
+    								'name'    => 'Regex',
+    								'options' => array(
+    										'pattern' => '/^[a-z][a-z0-9\-]+$/',
+    										'messages' => array(
+    												'regexNotMatch' => 'URL name must start with a lower case english alphabet letter, and can only contain lower case english alphabet letters, numbers and minus sign'
+    										),
+    								),
+    						),
+    						array(
+    								'name'    => 'Db\NoRecordExists',
+    								'options' => array(
+    										'table' => 'set_version',
+    										'field' => 'url_name',
+    										'adapter' => $this->dbAdapter,
+    										'exclude' => array
+    										(
+    												'field' => 'set_version_id',
+    												'value' => $this->setVersionId
+    										)
+    								),
+    						),
+    				),
     		));
     
     		$inputFilter->add(array(

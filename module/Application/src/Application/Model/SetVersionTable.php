@@ -33,7 +33,7 @@ class SetVersionTable
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('set_version');
 		//$select->forUpdate();
-		$select->columns(array('version_name' => 'name', 'set_version_id', 'created_on', 'about'));
+		$select->columns(array('version_name' => 'name', 'url_name','set_version_id', 'created_on', 'about'));
 		//$select->join('user', 'user.user_id = set.user_id', array('user_name' => 'name', 'user_id'));
 		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
 		$select->join(array('card_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_version_count.set_version_id', array('card_count' => 'count'), 'left');		
@@ -76,6 +76,7 @@ class SetVersionTable
 		$data = array(
 			'set_version_id' => $setVersion->setVersionId,
 			'name'  => $setVersion->name,
+			'url_name'  => $setVersion->urlName,
 			'download_url'  => $setVersion->downloadUrl,
 			'about'  => $setVersion->about,
 			'set_id'  => $setVersion->setId,

@@ -108,7 +108,7 @@ class BrowseController extends AbstractActionController
     	
     	if(!isset($_GET["ajax"]))
     	{
-    		return $this->redirect()->toRoute('browse-card', array('url_name' => $set->urlName, 'version_url_name' => $setVersion->name, 'card_name' => $card->name));
+    		return $this->redirect()->toRoute('browse-card', array('url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_name' => $card->name));
     	}
     	
     	$viewModel = new ViewModel();
