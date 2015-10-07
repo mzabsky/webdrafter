@@ -16,14 +16,17 @@
                         ->prependStylesheet($this->basePath('css/simplemde.min.css'))
                         ->prependStylesheet($this->basePath('css/style.css'))
                         ->prependStylesheet($this->basePath('css/mtgicons.css'))
+                        ->prependStylesheet($this->basePath('css/tooltipster.css'))
                         ->prependStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
         				->prependStylesheet($this->basePath('css/jquery-ui.css')) ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/autocard.js'))
             ->prependFile($this->basePath('js/webdrafter.js'))
             ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
+            ->prependFile($this->basePath('js/jquery.tooltipster.min.js'))
             //->prependFile($this->basePath('js/jquery.min.js'))
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')

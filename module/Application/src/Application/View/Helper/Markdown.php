@@ -92,7 +92,7 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace(':)', '<i class="fa fa-smile-o"></i>', $str);
     	$str = str_replace(':(', '<i class="fa fa-frown-o"></i>', $str);
     	
-    	$str = preg_replace_callback('/\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<a href="/autocard?set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '">' . (count($matches) > 7 ? $matches[7] : $matches[5]) . '</a>';}, $str);
+    	$str = preg_replace_callback('/\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<a href="/autocard?set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '" class="autocard">' . (count($matches) > 7 ? $matches[7] : $matches[5]) . '</a>';}, $str);
     	
     	return $str;
     }
