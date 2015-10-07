@@ -86,15 +86,13 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace('[P]', '<span class="icon-wrapper"><i class="mtg phyrexian"></i></span>', $str);
     	$str = str_replace('[S]', '<span class="icon-wrapper"><i class="mtg snow"></i></span>', $str);
     	
+    	// https://fortawesome.github.io/Font-Awesome/cheatsheet/
     	$str = preg_replace("/\[fa-([a-z0-9-]+)\]/", '<i class="fa fa-$1"></i>', $str);
     	
     	$str = str_replace(':)', '<i class="fa fa-smile-o"></i>', $str);
     	$str = str_replace(':(', '<i class="fa fa-frown-o"></i>', $str);
     	
-    	// \[\[(.+?)(\|(.+))?\]\] // [[Name]]
-    	// \[\[([0-9]+)(\|(.+))?\]\] // [[ID]]
-    	// \[\[([0-9]+):(.+?)(\|(.+))?\]\] // [[setId:Name]]
-    	// \[\[([a-z][a-z0-9-]+):(.+?)(\|(.+))?\]\] // [[setUrl:Name]]
+    	$str = preg_replace_callback('/\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<a href="/autocard?set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '">' . (count($matches) > 7 ? $matches[7] : $matches[5]) . '</a>';}, $str);
     	
     	return $str;
     }
