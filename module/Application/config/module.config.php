@@ -105,10 +105,9 @@ return array(
        		'autocard' => array(
    				'type' => 'Segment',
   				'options' => array(
-  					'route' => '/autocard/:card_id',
+  					'route' => '/autocard',
   					'constraints' => array(
     					'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-    					'set_id' => '[0-9]+'
     				),
     				'defaults' => array(
     					'controller' => 'Application\Controller\Browse',
@@ -130,6 +129,36 @@ return array(
         			),
         		),
         	),       
+        	'browse-version' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/set/:url_name/:version_url_name',
+        			'constraints' => array(
+        				'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+        				'set_version_name' => '[a-zA-Z][a-z0-9-]*',
+        				'card_name' => '.*'
+        			),
+        			'defaults' => array(
+        				'controller' => 'Application\Controller\Browse',
+        				'action'     => 'setVersion',
+        			),
+        		),
+        	),        		
+        	'browse-card' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/set/:url_name/:version_url_name/:card_name',
+        			'constraints' => array(
+        				'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+        				'set_version_name' => '[a-zA-Z][a-z0-9-]*',
+        				'card_name' => '.*'
+        			),
+        			'defaults' => array(
+        				'controller' => 'Application\Controller\Browse',
+        				'action'     => 'card',
+        			),
+        		),
+        	),
         	'browse-user' => array(
         		'type' => 'Segment',
         		'options' => array(

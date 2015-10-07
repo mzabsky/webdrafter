@@ -388,3 +388,46 @@ form input[type=submit]:hover
 		background: #eeeeee;
 	}
 }
+
+$shape-normal-width: 375px;
+$shape-normal-height: 523px;
+$shape-split-width: 523px;
+$shape-split-height: 375px;
+$shape-double-width: 752px;
+$shape-double-height: 523px;
+
+.shape-normal, .shape-flip {
+	background: red;
+	width: $shape-normal-width;
+	height: $shape-normal-height;
+}
+
+.shape-normal div.card-image, .shape-flip div.card-image{
+	position: absolute;
+	width: $shape-normal-width;
+	height: $shape-normal-height;
+}
+
+.shape-split {
+	background: red;
+	width: $shape-split-width;
+	height: $shape-split-height;
+}
+
+.shape-split div.card-image {
+	position: absolute;
+	width: $shape-split-width;
+	height: $shape-split-height;
+}
+
+.shape-double {
+	background: red;
+	width: $shape-double-width;
+	height: $shape-double-height;
+}
+
+.shape-double div.card-image {
+	position: absolute;
+	width: $shape-double-width;
+	height: $shape-double-height;
+}

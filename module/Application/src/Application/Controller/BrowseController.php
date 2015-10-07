@@ -62,15 +62,59 @@ class BrowseController extends AbstractActionController
     
     public function autocardAction()
     {
-    	$cardId = $this->getEvent()->getRouteMatch()->getParam('card_id');
-    	 
+
+    	$contextIdentifier = isset($_GET['context']) ? $_GET['context'] : "";
+    	$cardIdentifier = isset($_GET['card']) ? $_GET['card'] : "";
+    	$setIdentifier = isset($_GET['set']) ? $_GET['set'] : "";
+    	$setVersionIdentifier = isset($_GET['setVersion']) ? $_GET['setVersion'] : "";
+    	
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
+    	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
     	$userTable = $sm->get('Application\Model\UserTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
     	
+    	if(is_numeric($cardIdentifier))
+    	{
+    		$card = $cardTable->getCard((int)$cardIdentifier);
+    		$setVersion = $setVersionTable->getSetVersion($card->setVersionId);
+    		$set = $setTable->getSet($setVersion->setId);
+    	}
+    	else {
+    		if(is_numeric($setIdentifier))
+    		{
+    			$set = $setTable->getSet((int)$setIdentifier);
+    		}
+    		else if($setIdentifier != null && $setIdentifier  != "") {
+    			$set = $setTable->getSetByUrlName($setIdentifier);
+    		}
+    		else {
+    			$set = $setTable->getSetByUrlName($contextIdentifier);
+    		}
+    		 
+    		if(is_numeric($setVersionIdentifier))
+    		{
+    			$setVersion = $setVersionTable->getSetVersion((int)$setVersionIdentifier);
+    		}
+    		else if($setVersionIdentifier != null && $setVersionIdentifier != ""){
+    			$setVersion = $setVersionTable->getSetVersionByUrlName($set->setId, $setVersionIdentifier);
+    		}
+    		else {
+    			$setVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
+    		}
+    		
+    		$card = $cardTable->getCardByName($setVersion->setVersionId, $cardIdentifier);
+    	}
+    	
+    	if(!isset($_GET["ajax"]))
+    	{
+    		return $this->redirect()->toRoute('browse-card', array('url_name' => $set->urlName, 'version_url_name' => $setVersion->name, 'card_name' => $card->name));
+    	}
+    	
     	$viewModel = new ViewModel();
-    	$viewModel->card = $cardTable->getCard($cardId);
+    	$viewModel->setVersion = $setVersion;
+    	$viewModel->set = $set;
+    	$viewModel->card = $card;
     	//$viewModel->sets = $setTable->getSetsByUser($userId);
     	$viewModel->setTerminal(true);
     	return $viewModel;

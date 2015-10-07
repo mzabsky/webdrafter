@@ -62,6 +62,17 @@ class CardTable
 		return $row;
 	}
 	
+	public function getCardbyName($setVersionId, $name)
+	{
+		$setVersionId  = (int) $setVersionId;
+		$rowset = $this->tableGateway->select(array('set_version_id' => $setVersionId, 'name' => $name));
+		$row = $rowset->current();
+		if (!$row) {
+			throw new \Exception("Could not find card $name");
+		}
+		return $row;
+	}
+	
 	public function saveCard(Card $card)
 	{
 		$data = array(

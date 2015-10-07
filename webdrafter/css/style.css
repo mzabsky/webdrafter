@@ -307,4 +307,34 @@ form input[type=submit]:hover {
 .markdown-content th {
   background: #eeeeee; }
 
+.shape-normal, .shape-flip {
+  background: red;
+  width: 375px;
+  height: 523px; }
+
+.shape-normal div.card-image, .shape-flip div.card-image {
+  position: absolute;
+  width: 375px;
+  height: 523px; }
+
+.shape-split {
+  background: red;
+  width: 523px;
+  height: 375px; }
+
+.shape-split div.card-image {
+  position: absolute;
+  width: 523px;
+  height: 375px; }
+
+.shape-double {
+  background: red;
+  width: 752px;
+  height: 523px; }
+
+.shape-double div.card-image {
+  position: absolute;
+  width: 752px;
+  height: 523px; }
+
 /*# sourceMappingURL=style.css.map */
