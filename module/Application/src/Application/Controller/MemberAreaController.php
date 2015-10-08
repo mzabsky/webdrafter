@@ -981,6 +981,11 @@ class MemberAreaController extends AbstractActionController
 		}
 		else 
 		{
+			$previousSetVersionCount = count($setVersionTable->fetchBySet($set->setId));
+			$form->setData(array(
+					'name' => "Version " . ($previousSetVersionCount + 1),
+					'url_name' => "version-" . ($previousSetVersionCount + 1)
+			));
 			$form->setData(array('name' => "Version " . (count($setVersionTable->fetchBySet($set->setId)) + 1)));
 		}
 		
