@@ -37,6 +37,10 @@ $(function(){
     });
 
 	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
 });
 
 var createPicker = function() {
@@ -171,8 +175,12 @@ if(count($this->setVersions) == 0)
 		
 		echo $this->form()->openTag($form);
 		
+		$replacementToken = 'XYZ1234';
+		$url = $this->url('browse-set', array('url_name' => $replacementToken), array('force_canonical' => true));
+		$url = substr($url, 0, strpos($url, $replacementToken));
+		
 		echo $this->fullFormInput($form->get('name'));
-		echo $this->fullFormInput($form->get('url_name'));
+		echo $this->fullFormInput($form->get('url_name'), $url);
 		echo $this->fullFormInput($form->get('code'));
 		echo $this->fullFormInput($form->get('about'));
 
