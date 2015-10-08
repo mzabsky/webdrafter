@@ -944,6 +944,7 @@ class MemberAreaController extends AbstractActionController
 				{
 					$setVersion->setId = $set->setId;
 					$setVersion->name = $formData["name"];
+					$setVersion->urlName = $formData["url_name"];
 					$setVersion->downloadUrl = $formData["download_url"];
 					$setVersion->about = $formData["about"];
 					//$setVersion->createdOn = $formData["about"];
