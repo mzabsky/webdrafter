@@ -29,6 +29,7 @@ class GoogleAuthentication
 		$this->googleClient->setAccessToken($_SESSION["access_token"]);
 	
 		if ($this->googleClient->isAccessTokenExpired()) {
+			
 			$refreshToken = $this->googleClient->getRefreshToken();
 			if($refreshToken == null){
 				session_destroy();
@@ -47,6 +48,9 @@ class GoogleAuthentication
 			$this->authStatus = GoogleAuthentication::STATUS_NOT_REGISTERED;
 			return;
 		}
+		
+		// Keep alive
+		$_SESSION["user_id"] = $_SESSION["user_id"];
 		
 		$this->authStatus = GoogleAuthentication::STATUS_LOGGED_IN;
 	}
