@@ -83,10 +83,14 @@ $form = $this->form;
 
 $form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload' => $this->uploadGuid)))); 
 $form->prepare();
- 
+
+$replacementToken = 'XYZ1234';
+$url = $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $replacementToken), array('force_canonical' => true));
+$url = substr($url, 0, strpos($url, $replacementToken));
+
 echo $this->form()->openTag($form);
 echo $this->fullFormInput($form->get('name'));
-echo $this->fullFormInput($form->get('url_name'));
+echo $this->fullFormInput($form->get('url_name'), '<span class="url">' . $url . '</span>');
 echo $this->fullFormInput($form->get('download_url'));
 echo $this->fullFormInput($form->get('about'));
 ?>

@@ -345,6 +345,12 @@ form input[type=submit]:hover
 	background: palegreen;
 }
 
+form input.url-name-input {
+	border-width: 0 0 1px 0;
+	border-color: black;
+	width: 200px;
+}
+
 @mixin set-status($color){
 	display: inline-block;
 	padding: 2px;

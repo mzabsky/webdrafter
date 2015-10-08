@@ -39,7 +39,7 @@ class UploadCardsForm extends Form
 			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Art source URL:',
-				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed as <base URL>/<file name> (as chosen below).'
+				'description' => 'Base URL of a location where the art for individual cards is hosted, without the tailing slash. The final image URL will be composed as &lt;base URL&gt;/&lt;file name&gt; (as chosen below).'
 			),
 			'validators' => array(
 				array(
