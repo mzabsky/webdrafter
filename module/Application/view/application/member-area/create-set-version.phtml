@@ -72,6 +72,10 @@ $(document).ready(function(){
 	cardImageCheck();
 
 	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
 });
 </script>
 <h2 id="contentTitle">New card file for <?php echo $this->set->name ?></h2>
