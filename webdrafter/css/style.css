@@ -253,6 +253,9 @@ form input.url-name-input {
   border-color: black;
   width: 200px; }
 
+form input.code-input {
+  width: 50px; }
+
 .set-status-label-1 {
   display: inline-block;
   padding: 2px;

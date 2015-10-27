@@ -351,6 +351,10 @@ form input.url-name-input {
 	width: 200px;
 }
 
+form input.code-input {
+	width: 50px;
+}
+
 @mixin set-status($color){
 	display: inline-block;
 	padding: 2px;

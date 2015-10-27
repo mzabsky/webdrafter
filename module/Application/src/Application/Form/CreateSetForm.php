@@ -39,6 +39,9 @@ class CreateSetForm extends Form
 		
 		$this->add($factory->createElement(array(
 			'name' => 'code',
+			'attributes' => array(
+					'class' => 'code-input',
+			),
 			'options' => array(
 				'label' => 'Code: ',
 				'description' => '3-5 uppercase letter code. Doesn\'t have to be unique.'
