@@ -83,6 +83,7 @@ class CardTable
 			'cmc'  => $card->cmc,
 			'rarity'  => $card->rarity,
 			'art_url'  => $card->artUrl,
+			'url_name'  => $card->urlName,
 
 			'name'  => $card->name,
 			'colors'  => $card->colors,

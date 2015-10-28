@@ -4,6 +4,7 @@ namespace Application\SetParser;
 
 use Application\Model\Set;
 use Application\Model\Card;
+use function Application\toUrlName;
 
 class IsochronDrafterSetParser
 {
@@ -11,6 +12,7 @@ class IsochronDrafterSetParser
 	{
 		$cards = array();
 		$usedNames = array();
+		$usedUrlNames = array();
 		
 		$rows = explode("\n", $string);
 		array_shift($rows); // Three meaningless lines in the start
@@ -166,9 +168,18 @@ class IsochronDrafterSetParser
 					$state = "empty";
 					break;
 
-				case "empty":
+				case "empty":					
 					if(strpos($currentCard->types, 'Token') === false)
 					{
+						$originalUrlName = toUrlName($currentCard->name);
+						$urlName = $originalUrlName;
+						$i = 0;
+						while(isset($usedUrlNames[$urlName])){
+							$i++;
+							$urlName = $originalUrlName . $i;
+						}
+						$currentCard->urlName = $urlName;
+						
 						$cards[] = $currentCard;
 					}
 					

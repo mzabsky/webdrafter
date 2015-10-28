@@ -17,6 +17,7 @@ class Card
 	public $cmc;
 	public $rarity;
 	public $artUrl;
+	public $urlName;
 	
 	public $name;	
 	public $colors;
@@ -49,6 +50,7 @@ class Card
         $this->cmc = $data['cmc'];
         $this->rarity = (!empty($data['rarity'])) ? $data['rarity'] : null;
         $this->artUrl = (!empty($data['art_url'])) ? $data['art_url'] : null;
+        $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
         
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
         $this->colors = (!empty($data['colors'])) ? $data['colors'] : null;
