@@ -4,7 +4,6 @@ namespace Application\SetParser;
 
 use Application\Model\Set;
 use Application\Model\Card;
-use function Application\toUrlName;
 
 class IsochronDrafterSetParser
 {
@@ -40,6 +39,7 @@ class IsochronDrafterSetParser
 					else if($data == "split") $currentCard->shape = Card::SHAPE_SPLIT;
 					else if($data == "flip") $currentCard->shape = Card::SHAPE_FLIP;
 					else if($data == "double") $currentCard->shape = Card::SHAPE_DOUBLE;
+					else if($data == "token") $currentCard->shape = Card::SHAPE_NORMAL;
 					else throw new \Exception("Invalid shape \"" . $data . "\" on line " . $line . ".");
 					$state = "cardNumber";
 					break;
@@ -171,7 +171,7 @@ class IsochronDrafterSetParser
 				case "empty":					
 					if(strpos($currentCard->types, 'Token') === false)
 					{
-						$originalUrlName = toUrlName($currentCard->name);
+						$originalUrlName = \Application\toUrlName($currentCard->name);
 						$urlName = $originalUrlName;
 						$i = 0;
 						while(isset($usedUrlNames[$urlName])){
