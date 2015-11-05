@@ -119,7 +119,6 @@ class SetTable
 	
 	public function getSetByUrlName($urlName)
 	{
-		$urlName  = (int) $urlName;
 		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
 		$row = $rowset->current();
 		if (!$row) {

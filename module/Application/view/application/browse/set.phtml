@@ -5,17 +5,18 @@ $(function(){
 </script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
 <div id="set-page">
-	<div class="set-info-bar">
-		<span class="set-info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
-		<span class="set-info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
-		<span class="set-info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
+	<div class="info-bar">
+		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
+		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
+		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('user_id' => $this->user->userId)) ?>"><?php echo $this->user->name ?></a></span>
+		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
 		<?php if($this->currentSetVersion != null) { ?>
-			<span class="set-info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
+			<span class="info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
 			<?php if($this->currentSetVersion->downloadUrl != null){?>
-				<span class="set-info-bar-item"><a href="<?php echo $this->currentSetVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
+				<span class="info-bar-item"><a href="<?php echo $this->currentSetVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
 			<?php }?>
-			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></span>
-			<span class="set-info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span>
+			<span class="info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></span>
+			<span class="info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span>
 		<?php } ?>
 	</div>
 	<div id="tabs">

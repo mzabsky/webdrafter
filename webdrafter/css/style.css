@@ -298,14 +298,14 @@ form input.code-input {
   font-weight: bold;
   background: lightgray; }
 
-#set-page .set-info-bar {
+.info-bar {
   border-top: 1px lightgray solid;
   border-bottom: 1px lightgray solid;
   margin-bottom: 10px;
   padding: 5px; }
-#set-page .set-info-bar-item {
-  display: inline-block;
-  margin-right: 20px; }
+  .info-bar .info-bar-item {
+    display: inline-block;
+    margin-right: 20px; }
 
 .markdown-content table {
   border-collapse: collapse; }
@@ -315,34 +315,146 @@ form input.code-input {
 .markdown-content th {
   background: #eeeeee; }
 
+/*
 .shape-normal, .shape-flip {
-  background: red;
-  width: 375px;
-  height: 523px; }
+	background: red;
+	width: $shape-normal-width;
+	height: $shape-normal-height;
+}
 
-.shape-normal div.card-image, .shape-flip div.card-image {
-  position: absolute;
-  width: 375px;
-  height: 523px; }
+.shape-normal div.card-image, .shape-flip div.card-image{
+	position: absolute;
+	width: $shape-normal-width;
+	height: $shape-normal-height;
+}
 
 .shape-split {
-  background: red;
-  width: 523px;
-  height: 375px; }
+	background: red;
+	width: $shape-split-width;
+	height: $shape-split-height;
+}
 
 .shape-split div.card-image {
-  position: absolute;
-  width: 523px;
-  height: 375px; }
+	position: absolute;
+	width: $shape-split-width;
+	height: $shape-split-height;
+}
 
 .shape-double {
-  background: red;
-  width: 752px;
-  height: 523px; }
+	background: red;
+	width: $shape-double-width;
+	height: $shape-double-height;
+}
 
 .shape-double div.card-image {
-  position: absolute;
-  width: 752px;
-  height: 523px; }
+	position: absolute;
+	width: $shape-double-width;
+	height: $shape-double-height;
+}
+*/
+.card-detail.shape-normal .card-image-day div, .card-detail.shape-double .card-image-day div {
+  width: 351px;
+  height: 499px;
+  background-repeat: no-repeat;
+  background-position: -12px -12px;
+  margin-right: 20px; }
+.card-detail.shape-normal .card-image-night div, .card-detail.shape-double .card-image-night div {
+  width: 351px;
+  height: 499px;
+  background-repeat: no-repeat;
+  background-position: -389px -12px;
+  margin-left: 20px; }
+
+.card-detail.shape-flip .card-image-day div {
+  width: 351px;
+  height: 499px;
+  background-repeat: no-repeat;
+  background-position: -12px -12px;
+  margin-right: 20px; }
+.card-detail.shape-flip .card-image-night div {
+  width: 351px;
+  height: 499px;
+  background-repeat: no-repeat;
+  background-position: -12px -12px;
+  margin-left: 20px;
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); }
+
+.card-detail.shape-split .card-image-day div {
+  width: 499px;
+  height: 351px;
+  background-repeat: no-repeat;
+  background-position: -12px -12px;
+  margin-right: 20px; }
+
+.card-detail {
+  width: 100%;
+  /*.card-image-day {
+      width: 351px;
+      height: 499px;
+  }*/
+  /*.card-image-day div {
+      width: 351px;
+      height: 499px;
+      background-repeat: no-repeat;
+      background-position: -12px -12px;     
+      margin-right: 20px;
+  }
+  
+  .card-image-night div {
+      width: 351px;
+      height: 499px;
+      background-repeat: no-repeat;
+      background-position: -389px -12px;
+      margin-left: 20px;    
+  }
+  */ }
+  .card-detail td {
+    vertical-align: top;
+    /*border: 1px black solid;*/ }
+  .card-detail .card-main-row {
+    font-weight: bold;
+    font-size: 1.5em;
+    /*width: 500px;*/
+    height: 30px;
+    width: 99%; }
+  .card-detail .card-type-row {
+    height: 30px; }
+  .card-detail .card-name {
+    float: left; }
+  .card-detail .card-cost {
+    float: right; }
+  .card-detail .card-cost .mana-symbol {
+    width: 25px;
+    height: 25px; }
+  .card-detail .card-types {
+    float: left; }
+  .card-detail .card-rarity {
+    float: right; }
+  .card-detail .card-pt-row {
+    height: 30px; }
+  .card-detail .card-pt {
+    font-size: 1.6em;
+    float: right; }
+  .card-detail .card-rules .mana-symbol {
+    width: 16px;
+    height: 16px; }
+  .card-detail .card-flavor {
+    margin-top: 10px;
+    font-style: italic; }
+  .card-detail .card-spoilingDate {
+    margin-top: 10px; }
+  .card-detail .card-art {
+    margin-top: 10px; }
+  .card-detail .card-separator hr {
+    border: none;
+    height: 1px;
+    color: lightgray;
+    /* old IE */
+    background-color: lightgray;
+    /* Modern Browsers */ }
 
 /*# sourceMappingURL=style.css.map */

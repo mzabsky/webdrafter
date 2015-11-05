@@ -932,6 +932,7 @@ class MemberAreaController extends AbstractActionController
 			);
 				
 			$setVersion = $sm->get('Application\Model\SetVersion');
+			$setVersion->setId = $set->setId;
 			$form->setInputFilter($setVersion->getInputFilter());
 				
 			$form->setData($formData);
@@ -942,7 +943,6 @@ class MemberAreaController extends AbstractActionController
 		
 				try
 				{
-					$setVersion->setId = $set->setId;
 					$setVersion->name = $formData["name"];
 					$setVersion->urlName = $formData["url_name"];
 					$setVersion->downloadUrl = $formData["download_url"];

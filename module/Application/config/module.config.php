@@ -147,11 +147,12 @@ return array(
         	'browse-card' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/set/:url_name/:version_url_name/:card_name',
+        			'route' => '/set/:set_url_name/:version_url_name/:card_url_name',
         			'constraints' => array(
         				'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-        				'set_version_name' => '[a-zA-Z][a-z0-9-]*',
-        				'card_name' => '.*'
+        				'set_url_name' => '[a-zA-Z][a-z0-9-]*',
+        				'version_url_name' => '[a-zA-Z][a-z0-9-]*',
+        				'card_url_name' => '[a-zA-Z][a-z0-9-]*'
         			),
         			'defaults' => array(
         				'controller' => 'Application\Controller\Browse',

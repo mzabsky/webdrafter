@@ -35,9 +35,11 @@ class BrowseController extends AbstractActionController
     	$setTable = $sm->get('Application\Model\SetTable');
     	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
-    	 
+    	$userTable = $sm->get('Application\Model\UserTable');
+    	
     	$viewModel = new ViewModel();
     	$viewModel->set = $setTable->getSetByUrlName($setId);
+    	$viewModel->user = $userTable->getUser($viewModel->set->userId);
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
     	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
     	$viewModel->cards = $cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId);
@@ -108,7 +110,7 @@ class BrowseController extends AbstractActionController
     	
     	if(!isset($_GET["ajax"]))
     	{
-    		return $this->redirect()->toRoute('browse-card', array('url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_name' => $card->name));
+    		return $this->redirect()->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
     	
     	$viewModel = new ViewModel();
@@ -117,6 +119,26 @@ class BrowseController extends AbstractActionController
     	$viewModel->card = $card;
     	//$viewModel->sets = $setTable->getSetsByUser($userId);
     	$viewModel->setTerminal(true);
+    	return $viewModel; 
+    }
+    
+    public function cardAction()
+    {
+
+    	$sm = $this->getServiceLocator();
+    	$setTable = $sm->get('Application\Model\SetTable');
+    	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+    	$cardTable = $sm->get('Application\Model\CardTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+
+    	$viewModel = new ViewModel();
+
+    	$viewModel->set = $setTable->getSetByUrlName($this->getEvent()->getRouteMatch()->getParam('set_url_name'));
+    	$viewModel->user = $userTable->getUser($viewModel->set->userId);
+    	$viewModel->setVersion = $setVersionTable->getSetVersionByUrlName($viewModel->set->setId, $this->getEvent()->getRouteMatch()->getParam('version_url_name'));
+    	$viewModel->card = $cardTable->getCardByUrlName($viewModel->setVersion->setVersionId, $this->getEvent()->getRouteMatch()->getParam('card_url_name'));
+    	
     	return $viewModel;
     }
 }

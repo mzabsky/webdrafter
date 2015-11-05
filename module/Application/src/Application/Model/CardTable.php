@@ -62,7 +62,18 @@ class CardTable
 		return $row;
 	}
 	
-	public function getCardbyName($setVersionId, $name)
+	public function getCardByUrlName($setVersionId, $urlName)
+	{
+		$setVersionId  = (int) $setVersionId;
+		$rowset = $this->tableGateway->select(array('set_version_id' => $setVersionId, 'url_name' => $urlName));
+		$row = $rowset->current();
+		if (!$row) {
+			throw new \Exception("Could not find card $urlName");
+		}
+		return $row;
+	}
+	
+	public function getCardByName($setVersionId, $name)
 	{
 		$setVersionId  = (int) $setVersionId;
 		$rowset = $this->tableGateway->select(array('set_version_id' => $setVersionId, 'name' => $name));

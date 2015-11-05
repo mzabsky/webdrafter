@@ -68,12 +68,8 @@ class SetVersion implements InputFilterAwareInterface
     						'table' => 'set_version',
     						'field' => 'name',
     						'adapter' => $this->dbAdapter,
-    					),
-						'exclude' => array
-						(
-							'field' => 'set_version_id',
-							'value' => $this->setVersionId
-						)
+							'exclude' => '(set_id = ' . ((int)$this->setId) . ' AND  set_version_id != ' . ((int)$this->setVersionId) . ')'
+    					)
     				),
     			),
     		));
@@ -109,11 +105,7 @@ class SetVersion implements InputFilterAwareInterface
     										'table' => 'set_version',
     										'field' => 'url_name',
     										'adapter' => $this->dbAdapter,
-    										'exclude' => array
-    										(
-    												'field' => 'set_version_id',
-    												'value' => $this->setVersionId
-    										)
+    										'exclude' => '(set_id = ' . ((int)$this->setId) . ' AND  set_version_id != ' . ((int)$this->setVersionId) . ')'
     								),
     						),
     				),

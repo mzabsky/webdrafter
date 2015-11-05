@@ -370,18 +370,16 @@ form input.code-input {
 .set-status-label-5 { @include set-status($set-status-finished-color);}
 .set-status-label-6 { @include set-status($set-status-discontinued-color);}
 
-#set-page {
-	.set-info-bar {
-		border-top: 1px lightgray solid;
-		border-bottom: 1px lightgray solid;
-		margin-bottom: 10px;
-		padding: 5px;
-	}
+.info-bar {
+	border-top: 1px lightgray solid;
+	border-bottom: 1px lightgray solid;
+	margin-bottom: 10px;
+	padding: 5px;
 	
-	.set-info-bar-item {
+	.info-bar-item {
 		display: inline-block;
 		margin-right: 20px;
-	}
+	}	
 }
 
 .markdown-content {
@@ -405,7 +403,7 @@ $shape-split-width: 523px;
 $shape-split-height: 375px;
 $shape-double-width: 752px;
 $shape-double-height: 523px;
-
+/*
 .shape-normal, .shape-flip {
 	background: red;
 	width: $shape-normal-width;
@@ -440,4 +438,157 @@ $shape-double-height: 523px;
 	position: absolute;
 	width: $shape-double-width;
 	height: $shape-double-height;
+}
+*/
+.card-detail.shape-normal, .card-detail.shape-double
+{
+	.card-image-day div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -12px -12px;     
+	    margin-right: 20px;
+	}
+	
+	.card-image-night div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -389px -12px;
+	    margin-left: 20px;    
+	}
+}
+
+.card-detail.shape-flip
+{
+	.card-image-day div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -12px -12px;     
+	    margin-right: 20px;
+	}
+	
+	.card-image-night div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -12px -12px;
+	    margin-left: 20px;    
+	    
+	    -webkit-transform: rotate(180deg);
+	    -moz-transform: rotate(180deg);
+	    -ms-transform: rotate(180deg);
+	    -o-transform: rotate(180deg);
+	    transform: rotate(180deg);
+	}
+}
+
+.card-detail.shape-split
+{
+	.card-image-day div {
+	    width: 499px;
+	    height: 351px;
+	    background-repeat: no-repeat;
+	    background-position: -12px -12px;     
+	    margin-right: 20px;
+	}
+}
+
+.card-detail 
+{
+	width: 100%;
+	
+	td {
+	    vertical-align: top;
+	    /*border: 1px black solid;*/
+	}
+	
+	/*.card-image-day {
+	    width: 351px;
+	    height: 499px;
+	}*/
+	
+	/*.card-image-day div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -12px -12px;     
+	    margin-right: 20px;
+	}
+	
+	.card-image-night div {
+	    width: 351px;
+	    height: 499px;
+	    background-repeat: no-repeat;
+	    background-position: -389px -12px;
+	    margin-left: 20px;    
+	}
+	*/
+	.card-main-row {
+	    font-weight: bold;
+	    font-size: 1.5em;
+	    /*width: 500px;*/
+	    height: 30px;
+	    width: 99%;
+	}
+	
+	.card-type-row {
+	    height: 30px;
+	}
+	
+	.card-name {
+	    float: left;
+	}
+	
+	.card-cost {
+	    float: right;
+	}
+	
+	.card-cost .mana-symbol {
+	    width: 25px;
+	    height: 25px;
+	}
+	
+	
+	.card-types {
+	    float: left;
+	}
+	
+	.card-rarity {
+	    float: right;
+	}
+	.card-pt-row {
+	    height: 30px;
+	}
+	
+	.card-pt {
+	    font-size: 1.6em;
+	    float: right;
+	}
+	
+	.card-rules .mana-symbol {
+	    width: 16px;
+	    height: 16px;
+	}
+	
+	.card-flavor {
+	    margin-top: 10px;
+	    font-style: italic;
+	}
+	
+	.card-spoilingDate {
+	    margin-top: 10px;
+	}
+	
+	.card-art {
+	    margin-top: 10px;
+	}
+	
+	.card-separator hr{
+		border: none;
+	    height: 1px;
+	    color: lightgray; /* old IE */
+	    background-color: lightgray; /* Modern Browsers */
+	}
 }

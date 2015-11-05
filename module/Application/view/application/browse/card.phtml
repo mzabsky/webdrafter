@@ -1,0 +1,99 @@
+<script>
+</script>
+<h2 id="contentTitle"><?php echo $this->card->name; ?></h2>
+<div id="card-page">
+	<div class="info-bar">
+		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('user_id' => $this->user->userId)) ?>"><?php echo $this->user->name ?></a></span>		
+		<span class="info-bar-item">Set: <a href="<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>"><?php echo $this->set->name ?></a></span>
+		<span class="info-bar-item">Version: <a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>"><?php echo $this->setVersion->name ?></a></span>		
+		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>		
+		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
+		<span class="info-bar-item"><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>">Copy image link</a></span>
+		<span class="info-bar-item"><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>">Copy forum code</a></span>
+	</div>
+	<table class="card-detail shape-<?php echo $this->card->getShapeName() ?>">
+		<tbody>
+			<tr>
+				<td class="card-image-day card-front" rowspan="15">
+					<div style="background-image: url(&quot;<?php echo $this->card->artUrl ?>&quot;)"></div>
+				</td>
+				<td class="card-main-row card-front">
+					<div class="card-name"><?php echo $this->card->name ?></div>
+					<div class="card-cost">
+						<?php echo $this->card->manaCost ?>
+					</div>
+				</td>
+				<?php if($this->card->shape == \Application\Model\Card::SHAPE_FLIP || $this->card->shape == \Application\Model\Card::SHAPE_DOUBLE){ ?>
+					<td class="card-image-night card-front" rowspan="15">
+						<div style="background-image: url(&quot;<?php echo $this->card->artUrl ?>&quot;)"></div>
+					</td>
+				<?php } ?>
+			</tr>
+			<tr>
+				<td class="card-type-row card-front">
+					<div class="card-types"><?php echo $this->card->types ?></div>
+					<div class="card-rarity"><?php echo $this->card->rarity ?></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="card-rules-row card-front">
+					<div class="card-rules"><?php echo $this->card->rulesText ?></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="card-flavor-row card-front">
+					<div class="card-flavor"><?php echo $this->card->flavorText ?></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="card-pt-row card-front">
+					<div class="card-pt"><?php echo $this->card->ptString ?></div>
+				</td>
+			</tr>
+			<tr>
+				<td class="card-filler-row card-front">
+					&nbsp;
+				</td>
+			</tr>
+			<?php if($this->card->shape != \Application\Model\Card::SHAPE_NORMAL){ ?>
+				<tr>
+					<td class="card-separator"><hr/></td>
+				</tr>
+				<tr>
+					<td class="card-main-row card-back">
+						<div class="card-name"><?php echo $this->card->name2 ?></div>
+						<div class="card-cost">
+							<?php echo $this->card->manaCost2 ?>
+						</div>
+					</td
+				</tr>
+				<tr>
+					<td class="card-type-row card-back">
+						<div class="card-types"><?php echo $this->card->types2 ?></div>
+						<div class="card-rarity"><?php echo $this->card->rarity ?></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="card-rules-row card-back">
+						<div class="card-rules"><?php echo $this->card->rulesText2 ?></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="card-flavor-row card-back">
+						<div class="card-flavor"><?php echo $this->card->flavorText2 ?></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="card-pt-row card-back">
+						<div class="card-pt"><?php echo $this->card->ptString2 ?></div>
+					</td>
+				</tr>
+				<tr>
+					<td class="card-filler-row">
+						&nbsp;
+					</td>
+				</tr>
+			<?php } ?>
+		</tbody>
+	</table>	
+</div>

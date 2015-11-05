@@ -71,6 +71,17 @@ class SetVersionTable
 		return $row;
 	}
 	
+	public function getSetVersionByUrlName($setId, $urlName)
+	{
+		$setId  = (int) $setId;
+		$rowset = $this->tableGateway->select(array('set_id' => $setId, 'url_name' => $urlName));
+		$row = $rowset->current();
+		if (!$row) {
+			throw new \Exception("Could not find set version $urlName");
+		}
+		return $row;
+	}
+	
 	public function saveSetVersion(SetVersion $setVersion)
 	{
 		$data = array(
