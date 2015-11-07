@@ -47,31 +47,33 @@
     </head>
     <body>
         <div class="container">
-        	<div id="header">
-        		<?php if($this->config('devRealm')){?>
-        			<div style="position: absolute; left: 50%; font-weight: bold; color: red;">
-        				<div style="position: relative; left: -50%;"/>This instance is a development realm. It is work in progress. No data is shared with the production realm.</div>
-        			</div>
-        		<?php } ?>
-	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
-	        	<div id="menuBar">
-		        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
-		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+        	<div id="header-wrapper">
+	        	<div id="header">
+	        		<?php if($this->config('devRealm')){?>
+	        			<div style="position: absolute; left: 50%; font-weight: bold; color: red;">
+	        				<div style="position: relative; left: -50%;"/>This instance is a development realm. It is work in progress. No data is shared with the production realm.</div>
+	        			</div>
+	        		<?php } ?>
+		        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
+		        	<div id="menuBar">
+			        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
+			        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+		        	</div>
+		        	<div id="userPanel">
+			        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
+			        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
+			        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+			        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
+			        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+			        	<?php } else  {?>
+			        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
+			        	<?php } ?>
+		        	</div>
+	        		<div class="clear"></div>
 	        	</div>
-	        	<div id="userPanel">
-		        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
-		        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
-		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-		        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
-		        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-		        	<?php } else  {?>
-		        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
-		        	<?php } ?>
-	        	</div>
-        		<div class="clear"></div>
         	</div>
         	<div id="body">
             	<?php echo $this->content; ?>

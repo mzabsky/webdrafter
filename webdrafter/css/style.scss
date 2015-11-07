@@ -1,3 +1,5 @@
+$page-width: 1400px;
+
 $set-status-unplayable-color: salmon;
 $set-status-design-color: orange;
 $set-status-development-color: yellow;
@@ -34,11 +36,16 @@ a:visited {
 	color: black;
 }
 
-#header {
+#header-wrapper {
 	background: #eeeeee;
 	border-bottom: 1px black solid;
 	height: 42px;
 	padding: 5px;
+}
+
+#header {
+	margin:    0 auto;
+    max-width: $page-width;
 	margin-bottom: 8px;
 }
 
@@ -87,7 +94,9 @@ a:visited {
 }
 
 #body {
-	margin: 0 15px 50px 15px;
+	margin:    0 auto 50px auto;
+    max-width: $page-width;
+	/*margin: 0 15px 50px 15px;*/
 }
 
 #contentTitle {
