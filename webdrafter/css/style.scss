@@ -5,6 +5,11 @@ $set-status-finishing-color: yellowgreen;
 $set-status-finished-color: lightgreen;
 $set-status-discontinued-color: lightgray;
 
+$rarity-common-color: black;
+$rarity-uncommon-color: gray;
+$rarity-rare-color: yellow;
+$rarity-mythic-color: red;
+
 body {
     padding-bottom: 40px;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
@@ -535,6 +540,7 @@ $shape-double-height: 523px;
 	
 	.card-type-row {
 	    height: 30px;
+	    font-size: 1.2em;
 	}
 	
 	.card-name {
@@ -558,6 +564,19 @@ $shape-double-height: 523px;
 	.card-rarity {
 	    float: right;
 	}
+	
+	.card-rarity.card-rarity-u {
+		color: $rarity-uncommon-color;
+	}
+	
+	.card-rarity.card-rarity-r {
+		color: $rarity-rare-color;
+	}
+	
+	.card-rarity.card-rarity-m {
+		color: $rarity-mythic-color;
+	}
+	
 	.card-pt-row {
 	    height: 30px;
 	}
@@ -573,8 +592,7 @@ $shape-double-height: 523px;
 	}
 	
 	.card-flavor {
-	    margin-top: 10px;
-	    font-style: italic;
+	    margin-top: 10px; 
 	}
 	
 	.card-spoilingDate {

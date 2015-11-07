@@ -20,7 +20,7 @@
 				<td class="card-main-row card-front">
 					<div class="card-name"><?php echo $this->card->name ?></div>
 					<div class="card-cost">
-						<?php echo $this->card->manaCost ?>
+						<?php echo $this->symbols($this->card->manaCost) ?>
 					</div>
 				</td>
 				<?php if($this->card->shape == \Application\Model\Card::SHAPE_FLIP || $this->card->shape == \Application\Model\Card::SHAPE_DOUBLE){ ?>
@@ -32,12 +32,12 @@
 			<tr>
 				<td class="card-type-row card-front">
 					<div class="card-types"><?php echo $this->card->types ?></div>
-					<div class="card-rarity"><?php echo $this->card->rarity ?></div>
+					<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->rarity ?></div>
 				</td>
 			</tr>
 			<tr>
 				<td class="card-rules-row card-front">
-					<div class="card-rules"><?php echo $this->card->rulesText ?></div>
+					<div class="card-rules"><?php echo $this->symbols($this->card->rulesText) ?></div>
 				</td>
 			</tr>
 			<tr>
@@ -63,19 +63,19 @@
 					<td class="card-main-row card-back">
 						<div class="card-name"><?php echo $this->card->name2 ?></div>
 						<div class="card-cost">
-							<?php echo $this->card->manaCost2 ?>
+							<?php echo $this->symbols($this->card->manaCost2) ?>
 						</div>
 					</td
 				</tr>
 				<tr>
 					<td class="card-type-row card-back">
 						<div class="card-types"><?php echo $this->card->types2 ?></div>
-						<div class="card-rarity"><?php echo $this->card->rarity ?></div>
+						<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->rarity ?></div>
 					</td>
 				</tr>
 				<tr>
 					<td class="card-rules-row card-back">
-						<div class="card-rules"><?php echo $this->card->rulesText2 ?></div>
+						<div class="card-rules"><?php echo $this->symbols($this->card->rulesText2) ?></div>
 					</td>
 				</tr>
 				<tr>

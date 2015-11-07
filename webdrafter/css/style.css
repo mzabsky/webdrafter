@@ -422,7 +422,8 @@ form input.code-input {
     height: 30px;
     width: 99%; }
   .card-detail .card-type-row {
-    height: 30px; }
+    height: 30px;
+    font-size: 1.2em; }
   .card-detail .card-name {
     float: left; }
   .card-detail .card-cost {
@@ -434,6 +435,12 @@ form input.code-input {
     float: left; }
   .card-detail .card-rarity {
     float: right; }
+  .card-detail .card-rarity.card-rarity-u {
+    color: gray; }
+  .card-detail .card-rarity.card-rarity-r {
+    color: yellow; }
+  .card-detail .card-rarity.card-rarity-m {
+    color: red; }
   .card-detail .card-pt-row {
     height: 30px; }
   .card-detail .card-pt {
@@ -443,8 +450,7 @@ form input.code-input {
     width: 16px;
     height: 16px; }
   .card-detail .card-flavor {
-    margin-top: 10px;
-    font-style: italic; }
+    margin-top: 10px; }
   .card-detail .card-spoilingDate {
     margin-top: 10px; }
   .card-detail .card-art {

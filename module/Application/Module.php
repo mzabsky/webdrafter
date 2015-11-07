@@ -198,6 +198,10 @@ class Module
      					'markdown' => function($sm) {
      						$helper = new \Application\View\Helper\Markdown() ;
      						return $helper;
+     					},
+     					'symbols' => function($sm) {
+     						$helper = new \Application\View\Helper\Symbols() ;
+     						return $helper;
      					}
      			)
      	);
