@@ -1,9 +1,10 @@
 mse version: 0.3.8
-short name: WebDrafter
-full name: WebDrafter Exporter
+short name: PlaneSculptors
+full name: PlaneSculptors Exporter
 position hint: 006
 version: 2015-02-14
-installer group: magic/Export/webdrafter
+installer group: magic/Export/planesculptors
+create directory: true
 
 depends on:
 	package: magic.mse-game
@@ -16,9 +17,13 @@ file type: *.txt|*.txt|*.*|*.*
 # Written by modifying thequinn's IsochronDrafter exporter ()
 
 script:
+	symbol_font      := "magic-mana-small"
+	symbol_font_size := 12
 	escape_linebreaks := replace@(match: "\n", replace: "///br///")
 	determine_shape := {
 		if contains(card.shape, match:"normal") and card.name_2 != "" then "double"
+		else if contains(card.shape, match:"leveler") then "normal"
+		else if contains(card.shape, match:"planeswalker") then "normal"
 		else card.shape
 	}
 	
@@ -30,26 +35,26 @@ script:
 		
 		+"\n"+card.name
 		+"\n"+card.card_color
-		+"\n"+card.casting_cost
-		+"\n"+card.type
-		+"\n"+card.power
-		+"\n"+card.toughness
-		+"\n"+escape_linebreaks(card.rule_text)
-		+"\n"+escape_linebreaks(card.flavor_text)
-		+"\n"+card.illustrator
+		+"\n"+symbols_to_html(card.casting_cost)
+		+"\n"+to_text(card.type)
+		+"\n"+to_text(card.power)
+		+"\n"+to_text(card.toughness)
+		+"\n"+escape_linebreaks(to_html(card.rule_text))
+		+"\n"+escape_linebreaks(to_html(card.flavor_text))
+		+"\n"+to_html(card.illustrator)
 		
 		+"\n"+card.name_2
 		+"\n"+card.card_color_2
-		+"\n"+card.casting_cost_2
-		+"\n"+card.type_2
-		+"\n"+card.power_2
-		+"\n"+card.toughness_2
-		+"\n"+escape_linebreaks(card.rule_text_2)
-		+"\n"+escape_linebreaks(card.flavor_text_2)
-		+"\n"+card.illustrator_2
-		+"\n"
+		+"\n"+symbols_to_html(card.casting_cost_2)
+		+"\n"+to_text(card.type_2)
+		+"\n"+to_text(card.power_2)
+		+"\n"+to_text(card.toughness_2)
+		+"\n"+escape_linebreaks(to_html(card.rule_text_2))
+		+"\n"+escape_linebreaks(to_html(card.flavor_text_2))
+		+"\n"+to_html(card.illustrator_2)
+		+"\n==========="
 		}
-	write_cards := to_text(for each card in sort_list(cards, order_by: {input.card_number}) do write_card())
+	write_cards := for each card in sort_list(cards, order_by: {input.card_number}) do write_card()
 	to_string(
 		 set.title+"\n"
 		 +"3\n"
