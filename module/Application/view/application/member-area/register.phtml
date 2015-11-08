@@ -1,6 +1,10 @@
 <script>
 $(document).ready(function(){
 	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
 });
 </script>
 <?php if($this->registrationMode){?>
@@ -15,6 +19,7 @@ $form->prepare();
 echo $this->form()->openTag($form);
 if($this->registrationMode){
 	echo $this->fullFormInput($form->get('name'));
+	echo $this->fullFormInput($form->get('url_name'));
 }
 echo $this->fullFormInput($form->get('email_privacy'));
 echo $this->fullFormInput($form->get('about'));

@@ -3,7 +3,7 @@
 <h2 id="contentTitle"><?php echo $this->card->name; ?></h2>
 <div id="card-page">
 	<div class="info-bar">
-		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('user_id' => $this->user->userId)) ?>"><?php echo $this->user->name ?></a></span>		
+		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>		
 		<span class="info-bar-item">Set: <a href="<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>"><?php echo $this->set->name ?></a></span>
 		<span class="info-bar-item">Version: <a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>"><?php echo $this->setVersion->name ?></a></span>		
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>		

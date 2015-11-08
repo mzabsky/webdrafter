@@ -8,7 +8,7 @@ $(function(){
 	<div class="info-bar">
 		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
-		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('user_id' => $this->user->userId)) ?>"><?php echo $this->user->name ?></a></span>
+		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
 		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
 		<?php if($this->currentSetVersion != null) { ?>
 			<span class="info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>

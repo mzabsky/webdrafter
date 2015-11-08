@@ -87,6 +87,7 @@ class MemberAreaController extends AbstractActionController
 			$user = $auth->getUser();
 			$inputFilter = $user->getInputFilter();
 			$inputFilter->remove('name');
+			$inputFilter->remove('url_name');
 			$form->setInputFilter($inputFilter);			
 		
 			$form->setData($formData);
@@ -150,6 +151,7 @@ class MemberAreaController extends AbstractActionController
 			if ($form->isValid($formData))
 			{
 				$user->name = $formData["name"];
+				$user->urlName = $formData["url_name"];
 				$user->emailPrivacy = $formData["email_privacy"];
 				$user->about = $formData["about"];
 					

@@ -78,7 +78,7 @@ $(function(){
 		<?php
 		foreach ($this->users as $user)
 		{
-			echo "<tr url='" . $this->url('browse-user', array('user_id' => $user["userId"])) . "'><td class='nameCell'>";
+			echo "<tr url='" . $this->url('browse-user', array('url_name' => $user["userUrlName"])) . "'><td class='nameCell'>";
 			echo $user["userName"];
 			echo "</td><td>" . $user["setCount"] . "</td><td>" . $user["draftCount"] . "</td></tr>";	
 		}

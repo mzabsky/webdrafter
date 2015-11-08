@@ -163,10 +163,10 @@ return array(
         	'browse-user' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/user/:user_id',
+        			'route' => '/user/:url_name',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    	'user_id' => '[0-9]+'
+                    	'url_name' => '[a-zA-Z][a-z0-9-]*'
                     ),
        				'defaults' => array(
       					'controller' => 'Application\Controller\Browse',
