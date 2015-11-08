@@ -29,7 +29,7 @@ class BrowseController extends AbstractActionController
     
     public function setAction()
     {
-    	$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+    	$setUrlName = $this->getEvent()->getRouteMatch()->getParam('url_name');
     	
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
@@ -38,7 +38,7 @@ class BrowseController extends AbstractActionController
     	$userTable = $sm->get('Application\Model\UserTable');
     	
     	$viewModel = new ViewModel();
-    	$viewModel->set = $setTable->getSetByUrlName($setId);
+    	$viewModel->set = $setTable->getSetByUrlName($setUrlName);
     	$viewModel->user = $userTable->getUser($viewModel->set->userId);
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
     	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
