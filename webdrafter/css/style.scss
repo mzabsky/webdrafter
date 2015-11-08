@@ -9,12 +9,12 @@ $set-status-discontinued-color: lightgray;
 
 $rarity-common-color: black;
 $rarity-uncommon-color: gray;
-$rarity-rare-color: yellow;
+$rarity-rare-color: gold;
 $rarity-mythic-color: red;
 
 body {
     padding-bottom: 40px;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;    
     margin: 0;
 }
 
@@ -96,6 +96,7 @@ a:visited {
 #body {
 	margin:    0 auto 50px auto;
     max-width: $page-width;
+    padding: 0 5px;
 	/*margin: 0 15px 50px 15px;*/
 }
 

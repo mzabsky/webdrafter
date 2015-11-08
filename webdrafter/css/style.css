@@ -66,6 +66,7 @@ a:visited {
 #body {
   margin: 0 auto 50px auto;
   max-width: 1400px;
+  padding: 0 5px;
   /*margin: 0 15px 50px 15px;*/ }
 
 #contentTitle {
@@ -444,7 +445,7 @@ form input.code-input {
   .card-detail .card-rarity.card-rarity-u {
     color: gray; }
   .card-detail .card-rarity.card-rarity-r {
-    color: yellow; }
+    color: gold; }
   .card-detail .card-rarity.card-rarity-m {
     color: red; }
   .card-detail .card-pt-row {
