@@ -18,8 +18,8 @@ class IsochronDrafterSetParser
 		$version = array_shift($rows);
 		array_shift($rows);
 		
-		if(trim($version) != "3"){
-			throw new \Exception("Invalid version of the exporter.");
+		if(trim($version) != "1.0"){
+			throw new \Exception("Invalid or outdated version of the exporter.");
 		}
 		
 		$currentCard = new \Application\Model\Card();
