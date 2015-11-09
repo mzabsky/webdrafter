@@ -691,5 +691,9 @@ $shape-double-height: 523px;
 	.card-filler-row {
 	    height: 100%;
 	    vertical-align: bottom;
+	    
+	    a {
+	    	margin-right: 20px;
+	    }
 	}
 }

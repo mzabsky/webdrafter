@@ -32,7 +32,7 @@
 			<tr>
 				<td class="card-type-row card-front">
 					<div class="card-types"><?php echo $this->card->types ?></div>
-					<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->rarity ?></div>
+					<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->getRarityName() ?></div>
 				</td>
 			</tr>
 			<tr>
@@ -70,7 +70,7 @@
 				<tr>
 					<td class="card-type-row card-back">
 						<div class="card-types"><?php echo $this->card->types2 ?></div>
-						<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->rarity ?></div>
+						<div class="card-rarity card-rarity-<?php echo strtolower($this->card->rarity) ?>"><?php echo $this->card->getRarityName() ?></div>
 					</td>
 				</tr>
 				<tr>

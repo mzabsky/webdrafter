@@ -65,7 +65,7 @@ Spoiler.prototype.initializeCardElements = function () {
         var card = this.data[i];
 
         this.imageCardElements[card.name] = $("" +
-        	"<img src='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' />");
+        	"<a href='" + card.url + "'><img src='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' /></a>");
         
         this.spoilerCardElements[card.name] = $("" +
             "<table class='card-detail shape-" + card.shape + "'>" +
@@ -107,7 +107,11 @@ Spoiler.prototype.initializeCardElements = function () {
                 "   </tr>" : "")
             : "") +
             "   <tr>" +
-            "       <td class='card-filler-row'><a href='javascript:void(0)' onclick='spoiler.copyAsBBCode(\"" + card.name + "\")'>Copy as forum code</a>" + (this.localUrl != null ? " <a href='javascript:void(0)' onclick='spoiler.copyAsBBLink(\"" + card.name + "\")'>Copy forum link</a> <a href='" + this.localUrl + "#" + card.name + "' onclick='spoiler.copyUrl(\"" + card.name + "\")'>Copy URL</a>" : "") + "</td>" +
+            "       <td class='card-filler-row'>" +
+            "			<a href='javascript:void(0)' onclick='spoiler.copyAsBBCode(\"" + card.name + "\")'>Copy as forum code</a>" + 
+    		"			<a href='javascript:void(0)' onclick='spoiler.copyUrl(\"" + card.name + "\")'>Copy permalink</a>" +
+    		"			<a href='javascript:void(0)' onclick='spoiler.copyArtUrl(\"" + card.name + "\")'>Copy image URL</a>" +
+    		"		</td>" +
             "   </tr>" +
             "</table><hr class='card-separator' />");
     }
@@ -157,7 +161,7 @@ Spoiler.prototype.initializeSorting = function () {
             var ratingB = b.cmc != null ? b.cmc : -1;
 
             if (ratingA == ratingB) return spoiler.sortFunctions["color"](spoiler, a, b);
-            else return ratingB - ratingA;
+            else return ratingA - ratingB;
         },
         "name": function (spoiler, a, b) {
             return a.name.localeCompare(b.name);
@@ -242,57 +246,152 @@ Spoiler.prototype.getCardByName = function (cardName) {
     return null;
 }
 
-Spoiler.prototype.copyUrl = function(cardName) {
-    this.showCopyable(this.localUrl + "#" + cardName);
+Spoiler.prototype.copyArtUrl = function(cardName) {
+	var card = this.getCardByName(cardName);
+    this.showCopyable(card.artUrl);
     return false;
 };
 
+
+Spoiler.prototype.copyUrl = function(cardName) {
+	var card = this.getCardByName(cardName);
+    this.showCopyable(card.url);
+    return false;
+};
+
+//In-built replace is dumb and replaces only one occurence
+Spoiler.prototype.smartReplace = function (haystack, needle, replace) {
+    return haystack.replace(new RegExp(needle, 'g'), replace);
+}
+
+Spoiler.prototype.replaceSymbolsForBB = function (str)
+{	
+	str = this.smartReplace(str, '<span class="symbol">', "");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg white"></i></span>', ":symw: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg blue"></i></span>', ":symu: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg black"></i></span>', ":symb: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg red"></i></span>', ":symr: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg green"></i></span>', ":symg: ");
+
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-0"></i></span>', ":0mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-1"></i></span>', ":1mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-2"></i></span>', ":2mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-3"></i></span>', ":3mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-4"></i></span>', ":4mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-5"></i></span>', ":5mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-6"></i></span>', ":6mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-7"></i></span>', ":7mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-8"></i></span>', ":8mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-9"></i></span>', ":9mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-10"></i></span>', ":10mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-11"></i></span>', ":11mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-12"></i></span>', ":12mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-13"></i></span>', ":13mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-14"></i></span>', ":14mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-15"></i></span>', ":15mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-16"></i></span>', ":16mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-17"></i></span>', ":17mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-18"></i></span>', ":18mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-19"></i></span>', ":19mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-20"></i></span>', ":20mana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-x"></i></span>', ":xmana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-y"></i></span>', ":ymana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg mana-z"></i></span>', ":zmana: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg tap"></i></span>', ":symtap: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg untap"></i></span>', ":symuntap: ");
+	
+
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-wu"></i></span>', ":symwu: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-ub"></i></span>', ":symub: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-br"></i></span>', ":symbr: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-rg"></i></span>', ":symrg: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-gw"></i></span>', ":symgw: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-wb"></i></span>', ":symwb: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-ur"></i></span>', ":symur: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-bg"></i></span>', ":symbg: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-rw"></i></span>', ":symrw: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-gu"></i></span>', ":symgu: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-2w"></i></span>', ":sym2w: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-2u"></i></span>', ":sym2u: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-2b"></i></span>', ":sym2b: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-2r"></i></span>', ":sym2r: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg hybrid-2g"></i></span>', ":sym2g: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg phyrexian-w"></i></span>', ":sympw: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg phyrexian-u"></i></span>', ":sympu: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg phyrexian-b"></i></span>', ":sympb: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg phyrexian-r"></i></span>', ":sympr: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg phyrexian-g"></i></span>', ":sympg: ");
+	str = this.smartReplace(str, '<span class="icon-wrapper"><i class="mtg snow"></i></span>', ":snow: ");
+	str = this.smartReplace(str, '</span>', "");
+	
+	return str;
+}
+
 Spoiler.prototype.copyAsBBCode = function (cardName) {
-    var card = this.getCardByName(cardName);
+
+	
+	var card = this.getCardByName(cardName);
 
     var rulesText = null;
-    if (card.text != null) {
-        rulesText = this.smartReplace(card.text, "<i>", "[i]");
+    if (card.rulesText != '') {
+        rulesText = this.replaceSymbolsForBB(card.rulesText);
+        rulesText = this.smartReplace(rulesText, "<i>", "[i]");
         rulesText = this.smartReplace(rulesText, "</i>", "[/i]");
-        rulesText = this.smartReplace(rulesText, "{", "[mana]");
-        rulesText = this.smartReplace(rulesText, "}", "[/mana]");
+        rulesText = this.smartReplace(rulesText, "<b>", "[b]");
+        rulesText = this.smartReplace(rulesText, "</b>", "[/b]");
         rulesText = this.smartReplace(rulesText, "<br />", "\n");
         rulesText = this.smartReplace(rulesText, "<br/>", "\n");
+        rulesText = this.smartReplace(rulesText, "<br>", "\n");
     }
 
     var flavorText = null;
-    if (card.flavor != null) {
-        flavorText = this.smartReplace(card.flavor, "<br />", "\n");
+    if (card.flavorText != '') {
+    	flavorText = this.smartReplace(card.flavorText, "<i>", "[i]");
+    	flavorText = this.smartReplace(flavorText, "</i>", "[/i]");
+    	flavorText = this.smartReplace(flavorText, "<b>", "[b]");
+    	flavorText = this.smartReplace(flavorText, "</b>", "[/b]");
+        flavorText = this.smartReplace(flavorText, "<br />", "\n");
         flavorText = this.smartReplace(flavorText, "<br/>", "\n");
+        flavorText = this.smartReplace(flavorText, "<br>", "\n");
     }
 
-    var backsideText = null;
-    if (card.backside != null && card.backside.text) {
-        backsideText = this.smartReplace(card.backside.text, "<i>", "[i]");
-        backsideText = this.smartReplace(backsideText, "</i>", "[/i]");
-        backsideText = this.smartReplace(backsideText, "{", "[mana]");
-        backsideText = this.smartReplace(backsideText, "}", "[/mana]");
-        backsideText = this.smartReplace(backsideText, "<br />", "\n");
-        backsideText = this.smartReplace(backsideText, "<br/>", "\n");
+    if(card.shape != "normal")
+    {
+        var rulesText2 = null;
+        if (card.rulesText2 != '') {
+            rulesText2 = this.replaceSymbolsForBB(card.rulesText2);
+            rulesText2 = this.smartReplace(rulesText2, "<i>", "[i]");
+            rulesText2 = this.smartReplace(rulesText2, "</i>", "[/i]");
+            rulesText2 = this.smartReplace(rulesText2, "<b>", "[b]");
+            rulesText2 = this.smartReplace(rulesText2, "</b>", "[/b]");
+            rulesText2 = this.smartReplace(rulesText2, "<br />", "\n");
+            rulesText2 = this.smartReplace(rulesText2, "<br/>", "\n");
+            rulesText2 = this.smartReplace(rulesText2, "<br>", "\n");
+        }
+
+        var flavorText2 = null;
+        if (card.flavorText2 != '') {
+        	flavorText2 = this.smartReplace(card.flavorText2, "<i>", "[i]");
+        	flavorText2 = this.smartReplace(flavorText2, "</i>", "[/i]");
+        	flavorText2 = this.smartReplace(flavorText2, "<b>", "[b]");
+        	flavorText2 = this.smartReplace(flavorText2, "</b>", "[/b]");
+        	flavorText2 = this.smartReplace(flavorText2, "<br />", "\n");
+        	flavorText2 = this.smartReplace(flavorText2, "<br/>", "\n");
+        	flavorText2 = this.smartReplace(flavorText2, "<br>", "\n");
+        }    	
     }
 
-    var backsideFlavorText = null;
-    if (card.backside != null && card.backside.flavor != null) {
-        backsideFlavorText = this.smartReplace(card.backside.flavor, "<br />", "\n");
-        backsideFlavorText = this.smartReplace(backsideFlavorText, "<br/>", "\n");
-    }
-
-    var bbCode = "[quote][b]" + (this.localUrl != null ? "[url=" + this.localUrl + "#" + cardName + "]" + cardName + "[/url]" : cardName ) + "[/b] " + (card.cost != null ? "[mana]" + this.smartReplace(this.smartReplace(card.cost, "{", ""), "}", "") + "[/mana]" : "") + "\n" +
+    var bbCode = "[quote][b][url=" + card.url + "]" + cardName + "[/url] [/b]       " + (card.manaCost != '' ? this.replaceSymbolsForBB(card.manaCost) : "") + "\n" +
         card.types + " (" + card.rarity + ")\n" +
-        (card.text != null ? rulesText + "\n" : "") +
-        (card.pt != null ? card.pt + "\n" : "") +
-        (card.flavor != null ? "[i]" + flavorText + "[/i]\n" : "") +
-        (card.backside != null ? "//\n" +
-            "[b]" + card.backside.name + "[/b]\n" +
-            card.backside.types + "\n" +
-            (card.backside.text != null ? backsideText + "\n" : "") +
-            (card.backside.pt != null ? card.backside.pt + "\n" : "") +
-            (card.backside.flavor != null ? "[i]" + backsideFlavorText + "[/i]" : "") +
+        (card.rulesText != '' ? rulesText + "\n" : "") +
+        (card.ptString != '' ? card.ptString + "\n" : "") +
+        (card.flavorText != '' ? flavorText + "\n" : "") +
+        (card.shape != "normal" ? "//\n" +
+            "[b]" + card.name2 + "[/b] " + (card.manaCost2 != '' ? this.replaceSymbolsForBB(card.manaCost2) : "") + "\n" +
+            card.types2 + " (" + card.rarity + ")\n" +
+            (card.rulesText2 != '' ? rulesText2 + "\n" : "") +
+            (card.ptString2 != '' ? card.ptString2 + "\n" : "") +
+            (card.flavorText2 != '' ? flavorText2 + "\n" : "") +
             "": "") +
         "[/quote]";
 

@@ -521,5 +521,7 @@ form input.code-input {
   .card-detail .card-filler-row {
     height: 100%;
     vertical-align: bottom; }
+    .card-detail .card-filler-row a {
+      margin-right: 20px; }
 
 /*# sourceMappingURL=style.css.map */
