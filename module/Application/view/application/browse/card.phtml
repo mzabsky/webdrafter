@@ -17,17 +17,17 @@
 				<td class="card-image-day card-front" rowspan="15">
 					<div style="background-image: url(&quot;<?php echo $this->card->artUrl ?>&quot;)"></div>
 				</td>
+				<?php if($this->card->shape == \Application\Model\Card::SHAPE_FLIP || $this->card->shape == \Application\Model\Card::SHAPE_DOUBLE){ ?>
+					<td class="card-image-night card-front" rowspan="15">
+						<div style="background-image: url(&quot;<?php echo $this->card->artUrl ?>&quot;)"></div>
+					</td>
+				<?php } ?>
 				<td class="card-main-row card-front">
 					<div class="card-name"><?php echo $this->card->name ?></div>
 					<div class="card-cost">
 						<?php echo $this->symbols($this->card->manaCost) ?>
 					</div>
 				</td>
-				<?php if($this->card->shape == \Application\Model\Card::SHAPE_FLIP || $this->card->shape == \Application\Model\Card::SHAPE_DOUBLE){ ?>
-					<td class="card-image-night card-front" rowspan="15">
-						<div style="background-image: url(&quot;<?php echo $this->card->artUrl ?>&quot;)"></div>
-					</td>
-				<?php } ?>
 			</tr>
 			<tr>
 				<td class="card-type-row card-front">
