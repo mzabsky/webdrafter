@@ -87,6 +87,20 @@ class Card
     	}
     }
     
+    public function getRarityName()
+    {
+    	switch($this->rarity)
+    	{
+    		case "C": return "Common";
+    		case "U": return "Uncommon";
+    		case "R": return "Rare";
+    		case "M": return "Mythic";
+    		case "S": return "Special";
+    		case "T": return "Token";
+    		case "L": return "Basic Land";
+    	}
+    }
+    
     public function __toString ()
     {
     	return $this->name;

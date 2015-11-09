@@ -1,17 +1,61 @@
 <script>
+var spoiler;
+
+var cardData = [
+<?php foreach($this->cards as $card)
+{
+	//echo $card->colors;
+	
+	$colors = array_diff(array_unique (array_merge(str_split(trim($card->colors)), str_split(trim($card->colors2)))), array(""));	
+	foreach($colors as &$color)
+	{
+		$color = "'" . $color . "'";
+	}
+?>
+	{
+	    shape: "<?php echo $card->getShapeName() ?>",
+	    name: "<?php echo $card->name ?>",
+	    manaCost: '<?php echo $this->symbols($card->manaCost) ?>',
+	    cmc: <?php echo $card->cmc ?>,
+	    colors: [<?php echo implode(',', $colors) ?>],
+	    types: "<?php echo $card->types ?>",
+	    artUrl: "<?php echo $card->artUrl ?>",
+	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $this->currentSetVersion->urlName, 'card_url_name' => $card->urlName)) ?>",
+	    rulesText: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText)) ?>',
+	    flavorText: "<?php echo preg_replace('/\n+/', '', $card->flavorText) ?>",
+	    rarity: "<?php echo $card->rarity ?>",
+	    rarityName: "<?php echo $card->getRarityName() ?>",
+	    ptString: "<?php echo $card->ptString ?>",
+	    illustrator: "<?php echo $card->illustrator ?>",
+
+	    name2: "<?php echo $card->name2 ?>",
+	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
+	    types2: "<?php echo $card->types2 ?>",
+	    rulesText2: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText2)) ?>',
+	    flavorText2: "<?php echo preg_replace('/\n+/', '', $card->flavorText2) ?>",
+	    ptString2: "<?php echo $card->ptString2 ?>",
+	    illustrator2: "<?php echo $card->illustrator2 ?>"
+	},
+<?php } ?>	
+];
+
 $(function(){
 	$("#tabs").tabs();
+
+	spoiler = new Spoiler($("#spoiler"), cardData);
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
 <div id="set-page">
 	<div class="info-bar">
-		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
-		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
 		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
 		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
 		<?php if($this->currentSetVersion != null) { ?>
 			<span class="info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
+		<?php } ?>
+		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
+		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>		
+		<?php if($this->currentSetVersion != null) { ?>			
 			<?php if($this->currentSetVersion->downloadUrl != null){?>
 				<span class="info-bar-item"><a href="<?php echo $this->currentSetVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
 			<?php }?>
@@ -29,11 +73,12 @@ $(function(){
 		<?php echo $this->markdown($set->about); ?>
 		</div>
 		<div id="cards_tab">
+			<div id="spoiler"></div>
 		<?php
-		foreach($this->cards as $card)
+		/*foreach($this->cards as $card)
 		{
 			echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
-		}
+		}*/
 		?>
 		</div>
 		<div id="history_tab">

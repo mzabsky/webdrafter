@@ -322,6 +322,48 @@ form input.code-input {
 .markdown-content th {
   background: #eeeeee; }
 
+#spoiler .spoiler-filters-and-sorts {
+  height: 145px; }
+#spoiler .spoiler-sort a {
+  display: inline-block;
+  padding: 5px;
+  border: 1px black solid;
+  margin: 2px;
+  background-color: #eeeeee;
+  color: black;
+  text-decoration: none; }
+#spoiler .spoiler-filters {
+  float: left;
+  margin-right: 20px;
+  vertical-align: middle; }
+#spoiler .spoiler-filters .mana-symbol {
+  width: 16px;
+  height: 16px; }
+#spoiler .spoiler-filters a {
+  display: inline-block;
+  padding: 5px;
+  border: 1px black solid;
+  margin: 2px;
+  background-color: #eeeeee;
+  color: black;
+  text-decoration: none;
+  height: 21px; }
+#spoiler .spoiler-mode a {
+  display: inline-block;
+  padding: 5px;
+  border: 1px black solid;
+  margin: 2px;
+  background-color: #eeeeee;
+  color: black;
+  text-decoration: none;
+  height: 21px; }
+#spoiler .activeSort {
+  font-weight: bold;
+  background: black !important;
+  color: white !important; }
+#spoiler .card-image {
+  margin: 5px; }
+
 /*
 .shape-normal, .shape-flip {
 	background: red;
@@ -370,7 +412,8 @@ form input.code-input {
   height: 499px;
   background-repeat: no-repeat;
   background-position: -389px -12px;
-  margin-left: 20px; }
+  margin-left: -28px;
+  margin-right: 20px; }
 
 .card-detail.shape-flip .card-image-day div {
   width: 351px;
@@ -383,7 +426,8 @@ form input.code-input {
   height: 499px;
   background-repeat: no-repeat;
   background-position: -12px -12px;
-  margin-left: 20px;
+  margin-left: -28px;
+  margin-right: 20px;
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
   -ms-transform: rotate(180deg);
@@ -441,13 +485,14 @@ form input.code-input {
   .card-detail .card-types {
     float: left; }
   .card-detail .card-rarity {
-    float: right; }
+    float: right;
+    font-weight: bold; }
   .card-detail .card-rarity.card-rarity-u {
-    color: gray; }
+    color: #9CB6C3; }
   .card-detail .card-rarity.card-rarity-r {
-    color: gold; }
+    color: #E3C67E; }
   .card-detail .card-rarity.card-rarity-m {
-    color: red; }
+    color: #E67820; }
   .card-detail .card-pt-row {
     height: 30px; }
   .card-detail .card-pt {
@@ -456,7 +501,10 @@ form input.code-input {
   .card-detail .card-rules .mana-symbol {
     width: 16px;
     height: 16px; }
+  .card-detail .card-rules {
+    line-height: 200%; }
   .card-detail .card-flavor {
+    line-height: 200%;
     margin-top: 10px; }
   .card-detail .card-spoilingDate {
     margin-top: 10px; }
@@ -468,6 +516,10 @@ form input.code-input {
     color: lightgray;
     /* old IE */
     background-color: lightgray;
-    /* Modern Browsers */ }
+    /* Modern Browsers */
+    clear: both; }
+  .card-detail .card-filler-row {
+    height: 100%;
+    vertical-align: bottom; }
 
 /*# sourceMappingURL=style.css.map */

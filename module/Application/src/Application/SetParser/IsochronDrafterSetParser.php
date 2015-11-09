@@ -89,7 +89,10 @@ class IsochronDrafterSetParser
 					if(strpos($data, 'black') !== false) $currentCard->colors .= "B";
 					if(strpos($data, 'red') !== false) $currentCard->colors .= "R";
 					if(strpos($data, 'green') !== false) $currentCard->colors .= "G";
+					
 					if(strpos($data, 'land') !== false) $currentCard->colors = "";
+					elseif($data == "multicolor") $currentCard->colors = "WUBRG";
+					
 					$state = "manaCost";
 					break;
 				case "manaCost":

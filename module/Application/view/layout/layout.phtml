@@ -24,6 +24,7 @@
         <!-- Scripts -->
         <?php echo $this->headScript()
             ->prependFile($this->basePath('js/autocard.js'))
+            ->prependFile($this->basePath('js/spoiler.js'))
             ->prependFile($this->basePath('js/webdrafter.js'))
             ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
@@ -50,8 +51,8 @@
         	<div id="header-wrapper">
 	        	<div id="header">
 	        		<?php if($this->config('devRealm')){?>
-	        			<div style="position: absolute; left: 50%; font-weight: bold; color: red;">
-	        				<div style="position: relative; left: -50%;"/>This instance is a development realm. It is work in progress. No data is shared with the production realm.</div>
+	        			<div style="position: absolute; left: 50%; font-weight: bold; color: red; pointer-events:none;">
+	        				<div style="position: relative; left: -50%;">This instance is a development realm. It is work in progress. No data is shared with the production realm.</div>
 	        			</div>
 	        		<?php } ?>
 		        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
