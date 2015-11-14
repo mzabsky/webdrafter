@@ -478,6 +478,13 @@ form input.code-input {
     max-height: 360px;
 }
 
+.autocard-image-content {
+	height: auto; 
+    width: auto; 
+    min-width: 375px; 
+    min-height: 375px;
+}
+
 $shape-normal-width: 375px;
 $shape-normal-height: 523px;
 $shape-split-width: 523px;

@@ -13,7 +13,7 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     {
     	$str = '<div class="markdown-content">' . \Michelf\MarkdownExtra::defaultTransform($text) . '</div>';
     	
-    	$str = preg_replace_callback('/!\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<img src="/autocard?image&context=' . $contextSetUrlName . '&set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '" class="autocard-image" />';}, $str);
+    	$str = preg_replace_callback('/!\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<img src="/autocard?image&context=' . $contextSetUrlName . '&set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '" class="autocard-image autocard" />';}, $str);
     	$str = preg_replace_callback('/\[\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\]\]/', function($matches) use($contextSetUrlName){ return '<a href="/autocard?context=' . $contextSetUrlName . '&set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '" class="autocard">' . (count($matches) > 7 ? $matches[7] : $matches[5]) . '</a>';}, $str);
     	
     	$str = str_replace('[W]', '<span class="icon-wrapper"><i class="mtg white"></i></span>', $str);

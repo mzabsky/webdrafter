@@ -370,6 +370,12 @@ form input.code-input {
   max-width: 360px;
   max-height: 360px; }
 
+.autocard-image-content {
+  height: auto;
+  width: auto;
+  min-width: 375px;
+  min-height: 375px; }
+
 /*
 .shape-normal, .shape-flip {
 	background: red;

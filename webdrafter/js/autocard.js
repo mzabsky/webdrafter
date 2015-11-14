@@ -1,5 +1,5 @@
 function bindAutocard(){
-	$('.autocard').tooltipster({
+	/*$('.autocard').tooltipster({
 	    content: 'Loading...',
 	    theme: 'tooltipster-light',
 	    //autoClose: false,
@@ -24,9 +24,32 @@ function bindAutocard(){
 	            });
 	        }
 	    }
+	});*/
+	
+	$(document).tooltip({
+		items: ".autocard",
+		track: true,
+		show: false,
+		hide: false,
+		content: function(){
+			var element = $(this);
+			var image = $("<img src='" + (element.attr("href") != null ? element.attr("href") : element.attr("src")) + "&image' class='autocard-image-content'>");
+			//image.
+			return image;
+		},
+		using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .removeClass( "arrow" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
 	});
+
 }
 
 $(document).ready(function(){
 	bindAutocard();
 });
+
