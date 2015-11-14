@@ -14,38 +14,38 @@ Spoiler.prototype.initializeStructure = function () {
         //"<div class='spoler-cards-no'>Number of cards: " + this.data.length + "</div>" +
         "<div class='spoiler-filters-and-sorts'>" +
         "   <div class='spoiler-mode'>" +
-        "      Display: <a href='javascript:void(0)' onclick='spoiler.setMode(\"spoiler\")' mode='spoiler' class='activeSort'>Spoiler</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.setMode(\"images\")' mode='images'>Images</a>" +
+        "      Display: <a href='javascript:void(0)' onclick='spoiler.setMode(\"spoiler\")' mode='spoiler' class='activeSort' title='Display all card information'>Spoiler</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.setMode(\"images\")' mode='images' title='Display card images only'>Images</a>" +
         "   </div>" +
         "   <div class='spoiler-sort'>" +
-        "      Sort by: <a href='javascript:void(0)' onclick='spoiler.sort(\"color\")' sort='color' class='activeSort'>Color</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"rarity\")' sort='rarity'>Rarity</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"cmc\")' sort='cmc'>CMC</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"name\")' sort='name'>Name</a>" +
+        "      Sort by: <a href='javascript:void(0)' onclick='spoiler.sort(\"color\")' sort='color' class='activeSort' title='Sort by color, then name'>Color</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"rarity\")' sort='rarity' title='Sort by rarity, then color and name'>Rarity</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"cmc\")' sort='cmc' title='Sort by converted mana cost, then color and name'>CMC</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"name\")' sort='name' title='Sort by name'>Name</a>" +
         "   </div>" +
         "   <div class='spoiler-filters spoiler-filters-rarity'>" +
-        "      Rarity filter: <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"M\")' filter='M'>M</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"R\")' filter='R'>R</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"U\")' filter='U'>U</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"C\")' filter='C'>C</a>" +
+        "      Rarity filter: <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"M\")' filter='M' title='Mythic rares only'>M</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"R\")' filter='R' title='Rares only'>R</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"U\")' filter='U' title='Uncommons only'>U</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"C\")' filter='C' title='Commons only'>C</a>" +
         "   </div>" +
         "   <div class='spoiler-filters spoiler-filters-color'>" +
-        "      Color filter: <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"W\")' filter='W'><span class='icon-wrapper'><i class='mtg white'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"U\")' filter='U'><span class='icon-wrapper'><i class='mtg blue'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"B\")' filter='B'><span class='icon-wrapper'><i class='mtg black'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"R\")' filter='R'><span class='icon-wrapper'><i class='mtg red'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"G\")' filter='G'><span class='icon-wrapper'><i class='mtg green'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"M\")' filter='M'><span class='icon-wrapper'><i class='mtg hybrid-wu'></i></span></a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"1\")' filter='1'><span class='icon-wrapper'><i class='mtg mana-1'></i></span></a>" +
+        "      Color filter: <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"W\")' filter='W' title='White cards only'><span class='icon-wrapper'><i class='mtg white'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"U\")' filter='U' title='Blue cards only'><span class='icon-wrapper'><i class='mtg blue'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"B\")' filter='B' title='Black cards only'><span class='icon-wrapper'><i class='mtg black'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"R\")' filter='R' title='Red cards only'><span class='icon-wrapper'><i class='mtg red'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"G\")' filter='G' title='Green cards only'><span class='icon-wrapper'><i class='mtg green'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"M\")' filter='M' title='Multicolor cards only'><span class='icon-wrapper'><i class='mtg hybrid-wu'></i></span></a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"1\")' filter='1' title='Colorless cards only'><span class='icon-wrapper'><i class='mtg mana-1'></i></span></a>" +
         "   </div>" +
         "   <div class='spoiler-filters spoiler-filters-type'>" +
-        "      Type filter: <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Artifact\")' filter='Artifact'>Artifact</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Creature\")' filter='Creature'>Creature</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Enchantment\")' filter='Enchantment'>Enchantment</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Instant\")' filter='Instant'>Instant</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Land\")' filter='Land'>Land</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Planeswalker\")' filter='Planeswalker'>Planeswalker</a>" +
-        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Sorcery\")' filter='Sorcery'>Sorcery</a>" +
+        "      Type filter: <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Artifact\")' filter='Artifact' title='Artifacts only'>Artifact</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Creature\")' filter='Creature' title='Creatures only'>Creature</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Enchantment\")' filter='Enchantment' title='Enchantments only'>Enchantment</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Instant\")' filter='Instant' title='Instants only'>Instant</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Land\")' filter='Land' title='Lands only'>Land</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Planeswalker\")' filter='Planeswalker' title='Planeswalkers only'>Planeswalker</a>" +
+        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Sorcery\")' filter='Sorcery' title='Sorceries only'>Sorcery</a>" +
         "   </div>" +
         "</div>" +
         "<hr class='card-separator' />" +

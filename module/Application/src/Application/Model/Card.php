@@ -18,6 +18,8 @@ class Card
 	public $rarity;
 	public $artUrl;
 	public $urlName;
+	public $firstVersionCardId;
+	public $isChanged;
 	
 	public $name;	
 	public $colors;
@@ -51,6 +53,8 @@ class Card
         $this->rarity = (!empty($data['rarity'])) ? $data['rarity'] : null;
         $this->artUrl = (!empty($data['art_url'])) ? $data['art_url'] : null;
         $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
+        $this->firstVersionCardId = (!empty($data['first_version_card_id'])) ? $data['first_version_card_id'] : null;
+        $this->isChanged = $data['is_changed'];
         
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
         $this->colors = (!empty($data['colors'])) ? $data['colors'] : null;
@@ -99,6 +103,40 @@ class Card
     		case "T": return "Token";
     		case "L": return "Basic Land";
     	}
+    }
+    
+    public function isNewVersionChanged(Card $newCard)
+    {
+    	/*var_dump($this->rarity != $newCard->rarity);
+    	var_dump($this->colors != $newCard->colors);
+    	var_dump($this->manaCost != $newCard->manaCost);
+    	var_dump($this->types != $newCard->types);
+    	var_dump($this->rulesText != $newCard->rulesText);
+    	var_dump($this->flavorText != $newCard->flavorText);
+    	var_dump($this->ptString != $newCard->ptString);
+    	var_dump($this->colors2 != $newCard->colors2);
+    	var_dump($this->manaCost2 != $newCard->manaCost2);
+    	var_dump($this->types2 != $newCard->types2);
+    	var_dump($this->rulesText2 != $newCard->rulesText2);
+    	var_dump($this->flavorText2 != $newCard->flavorText2);
+    	var_dump($this->ptString2 != $newCard->ptString2);
+    	var_dump("=======");*/
+    	
+    	return
+    		$this->rarity != $newCard->rarity ||
+    		$this->colors != $newCard->colors ||
+    		$this->manaCost != $newCard->manaCost ||
+    		$this->types != $newCard->types ||
+    		$this->rulesText != $newCard->rulesText ||
+    		$this->flavorText != $newCard->flavorText ||
+    		$this->ptString != $newCard->ptString ||
+    		$this->name2 != $newCard->name2 ||
+    		$this->colors2 != $newCard->colors2 ||
+    		$this->manaCost2 != $newCard->manaCost2 ||
+    		$this->types2 != $newCard->types2 ||
+    		$this->rulesText2 != $newCard->rulesText2 ||
+    		$this->flavorText2 != $newCard->flavorText2 ||
+    		$this->ptString2 != $newCard->ptString2;
     }
     
     public function __toString ()

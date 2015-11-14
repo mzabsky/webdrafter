@@ -49,7 +49,7 @@ class SetVersionTable
 		{
 			$resultArray[] = array(
 					'set_version_id' => $result->set_version_id,
-					'name' => $result->version_name,
+					'versionName' => $result->version_name,
 					'about' => $result->about,
 					'createdOn' => $result->created_on,
 					'draftCount' => $result->draft_count,

@@ -802,6 +802,15 @@ class MemberAreaController extends AbstractActionController
 					
 					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
 					
+					// Get cards from the current version so that we can compare the uploaded file against it
+					$cardTable = $sm->get('Application\Model\CardTable');
+					$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+					$currentVersionCardArray = array();
+					foreach($currentVersionCards as $card)
+					{
+						$currentVersionCardArray[$card->name] = $card;
+					}
+					
 					try 
 					{
 						$parser = new \Application\SetParser\IsochronDrafterSetParser();
@@ -827,7 +836,13 @@ class MemberAreaController extends AbstractActionController
 								default:
 									throw new \Exception("Invalid art URL format.");
 							}
+							
+							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
+							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
+							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->cardId : NULL;
 						}
+						
+						//die();
 	
 						$guid = \uniqid();
 						
@@ -926,6 +941,11 @@ class MemberAreaController extends AbstractActionController
 		
 		$form = new \Application\Form\CreateSetVersionForm();
 		
+		// Get cards from the previous version so that we can compare the uploaded file against it
+		$cardTable = $sm->get('Application\Model\CardTable');
+		$previousSetVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
+		$previousVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+		
 		if ($this->getRequest()->isPost())
 		{
 			$formData = array_merge_recursive(
@@ -956,7 +976,6 @@ class MemberAreaController extends AbstractActionController
 					$set->currentSetVersionId = $setVersion->setVersionId;
 					$setTable->saveSet($set);
 					
-					$cardTable = $sm->get('Application\Model\CardTable');
 					foreach($cards as $card)
 					{
 						$card->setVersionId = $setVersion->setVersionId;
@@ -989,6 +1008,69 @@ class MemberAreaController extends AbstractActionController
 					'url_name' => "version-" . ($previousSetVersionCount + 1)
 			));
 			$form->setData(array('name' => "Version " . (count($setVersionTable->fetchBySet($set->setId)) + 1)));
+			
+			if($previousSetVersionCount > 0)
+			{
+				$addedCards = array();
+				$changedCards = array();
+				$removedCards = array();
+				$cardArray = array();
+				foreach($cards as $card)
+				{
+					if($card->isChanged)
+					{
+						if($card->firstVersionCardId == NULL)
+						{
+							$addedCards[] = $card;
+						}
+						else 
+						{
+							$changedCards[] = $card;
+						}
+					}
+					
+					$cardArray[$card->name] = $card;
+				}
+				
+				foreach($previousVersionCards as $previousVersionCard)
+				{
+					if(!isset($cardArray[$previousVersionCard->name]))
+					{
+						$removedCards[] = $previousVersionCard;
+					}
+				}
+				
+				if(count($addedCards) > 0 || count($removedCards) > 0 || count($changedCards) > 0)
+				{
+					$changeLog = "Change log:\n\n";
+					foreach($addedCards as $card)
+					{
+						$changeLog .= "* Added [[" . $card->name . "]].\n";
+					}
+					
+					foreach($removedCards as $card)
+					{
+						$changeLog .= "* Removed [[" . $set->urlName . "|" . $previousSetVersion->urlName . "|" . $card->name . "]].\n";
+					}
+					
+					foreach($changedCards as $card)
+					{
+						$changeLog .= "* Changed [[" . $card->name . "]].\n";
+					}
+					
+				}
+				else
+				{
+					$changeLog = "This update didn't change any cards.";	
+				}
+				
+				$changeLog = trim($changeLog);
+				
+				$form->setData(array('about' => $changeLog));
+			}
+			else {
+				$form->setData(array('about' => "This is the first version of " . $set->name . " published on WebDrafter."));
+			}
 		}
 		
 		$viewModel = new ViewModel();

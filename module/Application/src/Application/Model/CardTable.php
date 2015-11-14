@@ -95,6 +95,8 @@ class CardTable
 			'rarity'  => $card->rarity,
 			'art_url'  => $card->artUrl,
 			'url_name'  => $card->urlName,
+			'first_version_card_id'  => $card->firstVersionCardId,
+			'is_changed'  => $card->isChanged,
 
 			'name'  => $card->name,
 			'colors'  => $card->colors,
