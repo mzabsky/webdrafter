@@ -398,17 +398,46 @@ form input.code-input {
 }
 
 .markdown-content {
+	 text-align: justify;
+	
 	table {
 		border-collapse: collapse;
 	}
 	
 	td, th {
     	border: 1px solid lightgray;
-    	padding: 3px;
+    	padding: 5px;
 	}
 	
 	th {
 		background: #eeeeee;
+	}
+
+	.autocard-image {
+		height: auto; 
+	    width: auto; 
+	    max-width: 420px; 
+	    max-height: 350px;
+	    margin: 10px;
+	}
+	
+	.autocard-image-right {
+	    float: right;
+	}
+	
+	.autocard-image-left {
+	    float: letft;
+	}
+	
+	.autocard-image-content {
+		height: auto; 
+	    width: auto; 
+	    min-width: 375px; 
+	    min-height: 420px;
+	}
+	
+	h1, h2, h3, h4 {
+		clear: both;
 	}
 }
 
@@ -469,20 +498,6 @@ form input.code-input {
 	.card-image {
 		margin: 5px;
 	}
-}
-
-.autocard-image {
-	height: auto; 
-    width: auto; 
-    max-width: 360px; 
-    max-height: 360px;
-}
-
-.autocard-image-content {
-	height: auto; 
-    width: auto; 
-    min-width: 375px; 
-    min-height: 375px;
 }
 
 $shape-normal-width: 375px;

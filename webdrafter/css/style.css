@@ -314,13 +314,32 @@ form input.code-input {
     display: inline-block;
     margin-right: 20px; }
 
-.markdown-content table {
-  border-collapse: collapse; }
-.markdown-content td, .markdown-content th {
-  border: 1px solid lightgray;
-  padding: 3px; }
-.markdown-content th {
-  background: #eeeeee; }
+.markdown-content {
+  text-align: justify; }
+  .markdown-content table {
+    border-collapse: collapse; }
+  .markdown-content td, .markdown-content th {
+    border: 1px solid lightgray;
+    padding: 5px; }
+  .markdown-content th {
+    background: #eeeeee; }
+  .markdown-content .autocard-image {
+    height: auto;
+    width: auto;
+    max-width: 420px;
+    max-height: 350px;
+    margin: 10px; }
+  .markdown-content .autocard-image-right {
+    float: right; }
+  .markdown-content .autocard-image-left {
+    float: letft; }
+  .markdown-content .autocard-image-content {
+    height: auto;
+    width: auto;
+    min-width: 375px;
+    min-height: 420px; }
+  .markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4 {
+    clear: both; }
 
 #spoiler .spoiler-filters-and-sorts {
   height: 145px; }
@@ -363,18 +382,6 @@ form input.code-input {
   color: white !important; }
 #spoiler .card-image {
   margin: 5px; }
-
-.autocard-image {
-  height: auto;
-  width: auto;
-  max-width: 360px;
-  max-height: 360px; }
-
-.autocard-image-content {
-  height: auto;
-  width: auto;
-  min-width: 375px;
-  min-height: 375px; }
 
 /*
 .shape-normal, .shape-flip {
