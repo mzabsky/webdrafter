@@ -530,4 +530,8 @@ form input.code-input {
     .card-detail .card-filler-row a {
       margin-right: 20px; }
 
+.set-version-about-expandable {
+  max-height: 300px;
+  overflow: hidden; }
+
 /*# sourceMappingURL=style.css.map */

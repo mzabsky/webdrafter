@@ -49,7 +49,7 @@ $(function(){
 <div id="set-page">
 	<div class="info-bar">
 		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
-		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="#"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
+		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->currentSetVersion->urlName)) ?>"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
 		<?php if($this->currentSetVersion != null) { ?>
 			<span class="info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
 		<?php } ?>
@@ -84,12 +84,13 @@ $(function(){
 		<div id="history_tab">
 		<?php foreach($this->setVersions as $setVersion){?>
 		<div class="set-version">
-			<h2><?php echo $setVersion["versionName"] ?></h2>
-			<div class="set-info-bar">
-				<span class="set-info-bar-item">Date: <?php echo $setVersion["createdOn"] ?></span>
+			<h2><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $setVersion["versionUrlName"])) ?>"><?php echo $setVersion["versionName"] ?></a></h2>
+			<div class="info-bar">
+				<span class="info-bar-item">Date: <?php echo $setVersion["createdOn"] ?></span>
 			</div>
-			<?php echo $this->markdown($setVersion["about"]); ?>
-			<p>WIP: How to present card list?</p>
+			<div class="set-version-about-expandable"/>
+				<?php echo $this->markdown($setVersion["about"], $this->set->urlName); ?>
+			</div>
 		</div>
 		<?php } ?>
 		</div>	
