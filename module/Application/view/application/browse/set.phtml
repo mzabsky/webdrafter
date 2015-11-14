@@ -70,7 +70,7 @@ $(function(){
 			<li><a href="#history_tab">Version history</a></li>
 		</ul>
 		<div id="details_tab">
-		<?php echo $this->markdown($set->about); ?>
+		<?php echo $this->markdown($this->set->about, $this->set->urlName); ?>
 		</div>
 		<div id="cards_tab">
 			<div id="spoiler"></div>

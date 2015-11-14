@@ -364,6 +364,12 @@ form input.code-input {
 #spoiler .card-image {
   margin: 5px; }
 
+.autocard-image {
+  height: auto;
+  width: auto;
+  max-width: 360px;
+  max-height: 360px; }
+
 /*
 .shape-normal, .shape-flip {
 	background: red;

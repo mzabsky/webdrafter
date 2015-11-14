@@ -108,6 +108,11 @@ class BrowseController extends AbstractActionController
     		$card = $cardTable->getCardByName($setVersion->setVersionId, $cardIdentifier);
     	}
     	
+    	if(isset($_GET["image"]))
+    	{
+    		return $this->redirect()->toUrl($card->artUrl);//->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
+    	}
+    	
     	if(!isset($_GET["ajax"]))
     	{
     		return $this->redirect()->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));

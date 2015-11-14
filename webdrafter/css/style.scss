@@ -471,6 +471,13 @@ form input.code-input {
 	}
 }
 
+.autocard-image {
+	height: auto; 
+    width: auto; 
+    max-width: 360px; 
+    max-height: 360px;
+}
+
 $shape-normal-width: 375px;
 $shape-normal-height: 523px;
 $shape-split-width: 523px;
