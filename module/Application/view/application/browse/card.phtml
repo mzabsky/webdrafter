@@ -1,4 +1,4 @@
-<?php $this->headTitle()->append($card->name); ?>
+<?php $this->headTitle()->append($this->card->name); ?>
 <script>
 </script>
 <h2 id="contentTitle"><?php echo $this->card->name; ?></h2>
@@ -9,6 +9,7 @@
 		<span class="info-bar-item">Version: <a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>"><?php echo $this->setVersion->name ?></a></span>		
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>		
 		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
+		<span class="info-bar-item">Last changed: <?php echo $this->card->changedOn?></span>
 		<span class="info-bar-item"><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>">Copy image link</a></span>
 		<span class="info-bar-item"><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>">Copy forum code</a></span>
 	</div>

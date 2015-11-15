@@ -55,6 +55,7 @@ class Card
         $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
         $this->firstVersionCardId = (!empty($data['first_version_card_id'])) ? $data['first_version_card_id'] : null;
         $this->isChanged = $data['is_changed'];
+        $this->changedOn = $data['changed_on'];
         
         $this->name = (!empty($data['name'])) ? $data['name'] : null;
         $this->colors = (!empty($data['colors'])) ? $data['colors'] : null;

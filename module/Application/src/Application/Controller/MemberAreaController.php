@@ -840,6 +840,7 @@ class MemberAreaController extends AbstractActionController
 							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
 							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
 							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->cardId : NULL;
+							$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
 						}
 						
 						//die();

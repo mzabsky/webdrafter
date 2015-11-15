@@ -97,6 +97,7 @@ class CardTable
 			'url_name'  => $card->urlName,
 			'first_version_card_id'  => $card->firstVersionCardId,
 			'is_changed'  => $card->isChanged,
+			'changed_on'  => $card->changedOn,
 
 			'name'  => $card->name,
 			'colors'  => $card->colors,
