@@ -78,6 +78,12 @@ class IsochronDrafterSetParser
 					{
 						throw new \Exception("Name \"" . $data . "\" is used for more than one card on line " . $line . ".");
 					}
+					
+					if(preg_match('/[;\[\]<>:|]/', $data))
+					{
+						throw new \Exception("Card name \"" . $data . "\" must not contain characters ;, |, :, [, ], < and >.");
+					}
+					
 					$usedNames[] = $data;
 					$currentCard->name = $data;					
 					$state = "colors";
