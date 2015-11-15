@@ -105,8 +105,6 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
     	
     	$str = str_replace(':)', '<i class="fa fa-smile-o"></i>', $str);
     	$str = str_replace(':(', '<i class="fa fa-frown-o"></i>', $str);
-    	
-
     	return $str;
     }
 }

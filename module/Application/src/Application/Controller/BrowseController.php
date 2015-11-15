@@ -43,7 +43,12 @@ class BrowseController extends AbstractActionController
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
     	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
     	$viewModel->cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
-    	 
+    	
+    	if(isset($_GET["source"])){
+    		echo nl2br (htmlspecialchars($viewModel->set->about));
+    		die();
+    	}
+    	
     	return $viewModel;
     }
     
@@ -57,8 +62,13 @@ class BrowseController extends AbstractActionController
     
     	$viewModel = new ViewModel();
     	$viewModel->user = $userTable->getUserByUrlName($urlName);
-    	$viewModel->sets = $setTable->getSetsByUser($urlName);
+    	$viewModel->sets = $setTable->getSetsByUser($viewModel->user->userId, false);
     
+    	if(isset($_GET["source"])){
+    		echo nl2br (htmlspecialchars($viewModel->user->about));
+    		die();
+    	}
+    	
     	return $viewModel;
     }
     

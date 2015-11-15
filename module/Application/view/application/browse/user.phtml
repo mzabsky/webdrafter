@@ -37,7 +37,7 @@ $this->markdown($this->user->about) ?>
 <?php
 		foreach ($this->sets as $set)
 		{
-			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo "<tr url='" . $this->url('browse-set', array('url_name' => $set["setUrlName"])) . "'><td class='nameCell'>";
 			echo $set["setName"];
 			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
 		}

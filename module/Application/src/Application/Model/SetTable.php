@@ -39,7 +39,7 @@ class SetTable
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('set');
 		//$select->forUpdate();
-		$select->columns(array('set_name' => 'name', 'set_id'));
+		$select->columns(array('set_name' => 'name', 'set_id', 'set_url_name' => 'url_name'));
 		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array(), 'left');
 		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
 		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set.current_set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
@@ -64,6 +64,7 @@ class SetTable
 			$resultArray[] = array(
 					'setId' => $result->set_id,
 					'setName' => $result->set_name,
+					'setUrlName' => $result->set_url_name,
 					'draftCount' => $result->draft_count,
 					'cardCount' => $result->card_count
 			);
