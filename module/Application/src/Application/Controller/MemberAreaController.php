@@ -1051,7 +1051,7 @@ class MemberAreaController extends AbstractActionController
 					
 					foreach($removedCards as $card)
 					{
-						$changeLog .= "* Removed [[" . $set->urlName . "|" . $previousSetVersion->urlName . "|" . $card->name . "]].\n";
+						$changeLog .= "* Removed [[" . $set->urlName . ":" . $previousSetVersion->urlName . ":" . $card->name . "]].\n";
 					}
 					
 					foreach($changedCards as $card)
