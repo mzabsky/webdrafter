@@ -1,3 +1,4 @@
+<?php $this->headTitle()->append($this->draft->name); ?>
 <h2 id="contentTitle"><?php echo $this->draft->name; ?></h2>
 <?php if($this->draft->status != \Application\Model\Draft::STATUS_OPEN){?>
 <p>This event is not currently open for joining.</p>

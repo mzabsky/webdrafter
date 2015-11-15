@@ -1,3 +1,4 @@
+<?php if($this->registrationMode){ $this->headTitle()->append("User registration"); }?>
 <script>
 $(document).ready(function(){
 	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
