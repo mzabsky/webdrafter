@@ -131,13 +131,15 @@ class Card
     		$this->rulesText != $newCard->rulesText ||
     		$this->flavorText != $newCard->flavorText ||
     		$this->ptString != $newCard->ptString ||
+    		$this->illustrator != $newCard->illustrator ||
     		$this->name2 != $newCard->name2 ||
     		$this->colors2 != $newCard->colors2 ||
     		$this->manaCost2 != $newCard->manaCost2 ||
     		$this->types2 != $newCard->types2 ||
     		$this->rulesText2 != $newCard->rulesText2 ||
     		$this->flavorText2 != $newCard->flavorText2 ||
-    		$this->ptString2 != $newCard->ptString2;
+    		$this->ptString2 != $newCard->ptString2 ||
+    		$this->illustrator2 != $newCard->illustrator2;
     }
     
     public function __toString ()
