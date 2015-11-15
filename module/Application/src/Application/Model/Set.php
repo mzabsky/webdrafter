@@ -19,6 +19,7 @@ class Set implements InputFilterAwareInterface
 	public $status;
 	public $isPrivate;
 	public $currentSetVersionId;
+	public $isFeatured;
 	
 	const STATUS_UNPLAYABLE = 1;
 	const STATUS_DESIGN = 2;
@@ -41,7 +42,8 @@ class Set implements InputFilterAwareInterface
 			'created_on' => $this->createdOn,
 			'status' => $this->status,
 			'is_private' => $this->isPrivate,
-			'current_set_version_id' => $this->currentSetVersionId
+			'current_set_version_id' => $this->currentSetVersionId,
+			'is_featured' => $this->isFeatured,
 		);
 	}
 	
@@ -70,6 +72,7 @@ class Set implements InputFilterAwareInterface
         $this->status = (!empty($data['status'])) ? $data['status'] : null;
         $this->isPrivate = (!empty($data['is_private'])) ? $data['is_private'] : null;
         $this->currentSetVersionId = (!empty($data['current_set_version_id'])) ? $data['current_set_version_id'] : null;
+        $this->isFeatured = (!empty($data['is_featured'])) ? $data['is_featured'] : null;
     }
     
     public function setDbAdapter(\Zend\Db\Adapter\Adapter $adapter)

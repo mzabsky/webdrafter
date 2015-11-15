@@ -1,5 +1,7 @@
 $page-width: 1400px;
 
+$featured-color: #FFFFA1;
+
 $set-status-unplayable-color: salmon;
 $set-status-design-color: orange;
 $set-status-development-color: yellow;
@@ -730,4 +732,16 @@ $shape-double-height: 523px;
 .set-version-about-expandable {
 	max-height: 300px;
 	overflow: hidden;
+}
+
+.featured-set-title {
+	vertical-align: middle;
+	font-size: 0.6em;
+	display: inline-block;
+	margin-left: 30px;
+	padding: 2px;	
+	border: 1px black solid;
+	font-weight: bold;
+	background: $featured-color;
+	margin-bottom: 4px;
 }

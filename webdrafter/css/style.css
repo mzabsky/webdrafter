@@ -547,4 +547,15 @@ form input.code-input {
   max-height: 300px;
   overflow: hidden; }
 
+.featured-set-title {
+  vertical-align: middle;
+  font-size: 0.6em;
+  display: inline-block;
+  margin-left: 30px;
+  padding: 2px;
+  border: 1px black solid;
+  font-weight: bold;
+  background: #FFFFA1;
+  margin-bottom: 4px; }
+
 /*# sourceMappingURL=style.css.map */

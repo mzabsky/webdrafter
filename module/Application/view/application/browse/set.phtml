@@ -45,7 +45,7 @@ $(function(){
 	spoiler = new Spoiler($("#spoiler"), cardData);
 });
 </script>
-<h2 id="contentTitle"><?php echo $this->set->name; ?></h2>
+<h2 id="contentTitle"><?php echo $this->set->name; ?> <?php if($set->isFeatured){ ?><span class="featured-set-title">Featured</span><?php } ?></h2>
 <div id="set-page">
 	<div class="info-bar">
 		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
