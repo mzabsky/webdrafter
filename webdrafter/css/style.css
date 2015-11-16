@@ -542,6 +542,9 @@ form input.code-input {
     vertical-align: bottom; }
     .card-detail .card-filler-row a {
       margin-right: 20px; }
+  .card-detail .card-set-version {
+    margin-left: 20px;
+    font-size: 0.7em; }
 
 .set-version-about-expandable {
   max-height: 300px;

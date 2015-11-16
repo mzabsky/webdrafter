@@ -1,7 +1,8 @@
-var Spoiler = function (element, data, enableControl){
-    this.data = data;    
-    this.mainElement = element;
-    this.enableControl = enableControl;
+var Spoiler = function (options){
+    this.data = options.data;    
+    this.mainElement = options.element;
+    this.enableControl = options.enableControl != null ? options.enableControl : true;
+    this.showVersion = options.showVersion != null ? options.showVersion : false;
     this.initializeStructure();
     this.initializeCardElements();
     this.initializeSorting();
@@ -76,7 +77,7 @@ Spoiler.prototype.initializeCardElements = function () {
             "   <tr>" +
             "       <td class='card-image-day card-front' rowspan='15'><div style='background-image: url(\"" + card.artUrl + "\")'></td>" +
             (card.shape == "flip" || card.shape == "double" ? "<td class='card-image-night card-back' rowspan='15'><div style='background-image: url(\"" + card.artUrl + "\")'></td>" : "") +
-            "       <td class='card-main-row card-front'><div class='card-name'><a href='" + card.url + "'>" + card.name + "</a></div>" + (card.manaCost != null ?"<div class='card-cost'>" + card.manaCost + "</div></td>" : "</td>")+            
+            "       <td class='card-main-row card-front'><div class='card-name'><a href='" + card.url + "'>" + card.name + "</a> " + (this.showVersion ? "<span class='card-set-version'>(" + card.setVersionLink + ")</span>" : "") +"</div>" + (card.manaCost != null ?"<div class='card-cost'>" + card.manaCost + "</div></td>" : "</td>")+            
             "   </tr>" +
             "   <tr>" +
             "       <td class='card-type-row card-front'><div class='card-types'>" + card.types + "</div><div class='card-rarity card-rarity-" + card.rarity.toLowerCase() +"'>" + card.rarityName + "</div></td>" +

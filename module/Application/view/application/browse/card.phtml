@@ -16,13 +16,13 @@ if($this->changeHistory != NULL)
 		'/application/fragment/cards-to-spoiler-data', 
 		array(
 			'set' => $this->set,
-			'setVersion' => $this->setVersion,
+			'setVersion' => null,
 			'cards' => $modifiedChangeHistory
 	)); 
 	?>
 
 	$(function(){
-		spoiler = new Spoiler($("#change-history"), historyData, false);
+		spoiler = new Spoiler({element: $("#change-history"), data: historyData, enableControl: false, showVersion: true});
 	});
 	
 	</script>
@@ -125,7 +125,7 @@ if($this->changeHistory != NULL)
 		</tbody>
 	</table>
 	<?php if($this->changeHistory != NULL) {?>	
-		<h2>Previous versions</h2>
+		<h2>Change history</h2>
 		<div id="change-history"></div>
 	<?php } ?>
 </div>

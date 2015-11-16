@@ -13,7 +13,7 @@ var cardData = <?php echo $this->partial(
 $(function(){
 	$("#tabs").tabs();
 
-	spoiler = new Spoiler($("#spoiler"), cardData, true);
+	spoiler = new Spoiler({element: $("#spoiler"), data: cardData, enableControl: true});
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?> <?php if($set->isFeatured){ ?><span class="featured-set-title">Featured</span><?php } ?></h2>
