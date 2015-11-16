@@ -84,6 +84,18 @@ class CardTable
 		return $row;
 	}
 	
+	public function getCardHistory($firstVersionCardId)
+	{
+		$firstVersionCardId  = (int) $firstVersionCardId;
+		
+		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($firstVersionCardId){
+			$select->where(array('first_version_card_id' => $firstVersionCardId, 'is_changed' => true));
+			$select->order("card.card_id DESC");
+		});
+		return $resultSet;
+	}
+	
+	
 	public function saveCard(Card $card)
 	{
 		$data = array(

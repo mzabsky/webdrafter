@@ -153,6 +153,14 @@ class BrowseController extends AbstractActionController
     	$viewModel->user = $userTable->getUser($viewModel->set->userId);
     	$viewModel->setVersion = $setVersionTable->getSetVersionByUrlName($viewModel->set->setId, $this->getEvent()->getRouteMatch()->getParam('version_url_name'));
     	$viewModel->card = $cardTable->getCardByUrlName($viewModel->setVersion->setVersionId, $this->getEvent()->getRouteMatch()->getParam('card_url_name'));
+    	if($viewModel->card->firstVersionCardId != NULL)
+    	{
+    		$viewModel->changeHistory = \Application\resultSetToArray($cardTable->getCardHistory($viewModel->card->firstVersionCardId));
+    	}    	
+    	else 
+    	{
+    		$viewModel->changeHistory = NULL;
+    	}
     	
     	return $viewModel;
     }

@@ -1,6 +1,32 @@
-<?php $this->headTitle()->append($this->card->name); ?>
-<script>
-</script>
+<?php $this->headTitle()->append($this->card->name); 
+
+if($this->changeHistory != NULL)
+{
+	$modifiedChangeHistory = $this->changeHistory;
+	
+	if($modifiedChangeHistory[0]->cardId == $this->card->cardId)
+	{
+		array_shift ($modifiedChangeHistory); // Remove the first entry of the history, if it is the "current" card
+	}
+	
+	?>
+	<script>
+	var spoiler;
+	var historyData = <?php echo $this->partial(
+		'/application/fragment/cards-to-spoiler-data', 
+		array(
+			'set' => $this->set,
+			'setVersion' => $this->setVersion,
+			'cards' => $modifiedChangeHistory
+	)); 
+	?>
+
+	$(function(){
+		spoiler = new Spoiler($("#change-history"), historyData, false);
+	});
+	
+	</script>
+<?php }?>
 <h2 id="contentTitle"><?php echo $this->card->name; ?></h2>
 <div id="card-page">
 	<div class="info-bar">
@@ -97,5 +123,9 @@
 				</tr>
 			<?php } ?>
 		</tbody>
-	</table>	
+	</table>
+	<?php if($this->changeHistory != NULL) {?>	
+		<h2>Previous versions</h2>
+		<div id="change-history"></div>
+	<?php } ?>
 </div>

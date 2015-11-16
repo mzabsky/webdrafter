@@ -2,48 +2,18 @@
 <script>
 var spoiler;
 
-var cardData = [
-<?php foreach($this->cards as $card)
-{
-	//echo $card->colors;
-	
-	$colors = array_diff(array_unique (array_merge(str_split(trim($card->colors)), str_split(trim($card->colors2)))), array(""));	
-	foreach($colors as &$color)
-	{
-		$color = "'" . $color . "'";
-	}
-?>
-	{
-	    shape: "<?php echo $card->getShapeName() ?>",
-	    name: "<?php echo $card->name ?>",
-	    manaCost: '<?php echo $this->symbols($card->manaCost) ?>',
-	    cmc: <?php echo $card->cmc ?>,
-	    colors: [<?php echo implode(',', $colors) ?>],
-	    types: "<?php echo $card->types ?>",
-	    artUrl: "<?php echo $card->artUrl ?>",
-	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $this->currentSetVersion->urlName, 'card_url_name' => $card->urlName), array('force_canonical' => true)) ?>",
-	    rulesText: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText)) ?>',
-	    flavorText: "<?php echo preg_replace('/\n+/', '', $card->flavorText) ?>",
-	    rarity: "<?php echo $card->rarity ?>",
-	    rarityName: "<?php echo $card->getRarityName() ?>",
-	    ptString: "<?php echo $card->ptString ?>",
-	    illustrator: "<?php echo $card->illustrator ?>",
-
-	    name2: "<?php echo $card->name2 ?>",
-	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
-	    types2: "<?php echo $card->types2 ?>",
-	    rulesText2: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText2)) ?>',
-	    flavorText2: "<?php echo preg_replace('/\n+/', '', $card->flavorText2) ?>",
-	    ptString2: "<?php echo $card->ptString2 ?>",
-	    illustrator2: "<?php echo $card->illustrator2 ?>"
-	},
-<?php } ?>	
-];
+var cardData = <?php echo $this->partial(
+	'/application/fragment/cards-to-spoiler-data', 
+	array(
+		'set' => $this->set,
+		'setVersion' => $this->currentSetVersion,
+		'cards' => $this->cards
+)); ?>
 
 $(function(){
 	$("#tabs").tabs();
 
-	spoiler = new Spoiler($("#spoiler"), cardData);
+	spoiler = new Spoiler($("#spoiler"), cardData, true);
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->set->name; ?> <?php if($set->isFeatured){ ?><span class="featured-set-title">Featured</span><?php } ?></h2>
