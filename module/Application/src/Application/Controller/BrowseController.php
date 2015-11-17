@@ -101,6 +101,7 @@ class BrowseController extends AbstractActionController
     {
 
     	$contextIdentifier = isset($_GET['context']) ? $_GET['context'] : "";
+    	$contextVersionIdentifier = isset($_GET['contextVersion']) ? $_GET['contextVersion'] : "";
     	$cardIdentifier = isset($_GET['card']) ? $_GET['card'] : "";
     	$setIdentifier = isset($_GET['set']) ? $_GET['set'] : "";
     	$setVersionIdentifier = isset($_GET['setVersion']) ? $_GET['setVersion'] : "";
@@ -135,6 +136,9 @@ class BrowseController extends AbstractActionController
     		}
     		else if($setVersionIdentifier != null && $setVersionIdentifier != ""){
     			$setVersion = $setVersionTable->getSetVersionByUrlName($set->setId, $setVersionIdentifier);
+    		}
+    		else if($contextVersionIdentifier != null && $contextVersionIdentifier != ""){
+    			$setVersion = $setVersionTable->getSetVersionByUrlName($set->setId, $contextVersionIdentifier);
     		}
     		else {
     			$setVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);

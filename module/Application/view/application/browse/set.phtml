@@ -41,7 +41,7 @@ $(function(){
 			<li><a href="#history">Version history</a></li>
 		</ul>
 		<div id="details">
-		<?php echo $this->markdown($this->set->about, $this->set->urlName); ?>
+		<?php echo $this->markdown($this->set->about, $this->set->urlName, $this->currentSetVersion->urlName); ?>
 		</div>
 		<div id="cards">
 			<div id="spoiler"></div>
@@ -60,7 +60,7 @@ $(function(){
 				<span class="info-bar-item">Date: <?php echo $setVersion["createdOn"] ?></span>
 			</div>
 			<div class="set-version-about-expandable"/>
-				<?php echo $this->markdown($setVersion["about"], $this->set->urlName); ?>
+				<?php echo $this->markdown($setVersion["about"], $this->set->urlName, $setVersion["versionUrlName"]); ?>
 			</div>
 		</div>
 		<?php } ?>
