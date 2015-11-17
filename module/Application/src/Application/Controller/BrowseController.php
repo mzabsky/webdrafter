@@ -126,8 +126,11 @@ class BrowseController extends AbstractActionController
     		else if($setIdentifier != null && $setIdentifier  != "") {
     			$set = $setTable->getSetByUrlName($setIdentifier);
     		}
-    		else {
+    		else if($contextIdentifier != null && $contextIdentifier != "") {
     			$set = $setTable->getSetByUrlName($contextIdentifier);
+    		}
+    		else {
+    			return $this->notFoundAction();
     		}
     		 
     		if(is_numeric($setVersionIdentifier))
