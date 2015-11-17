@@ -23,3 +23,24 @@ function toUrlName(str){
 	
 	return str;
 }
+
+function makeTabs(element)
+{
+	element.tabs();
+
+	$.address.change(function(event){
+		if(window.location.hash != "" && window.location.hash != null){
+			element.tabs("option", "active", element.find(window.location.hash).index()-1 );
+		}
+		
+    })
+
+    // when the tab is selected update the url with the hash
+    element.bind("tabsactivate", function(event, ui) {
+    	//alert("bb");
+    	history.pushState(null,null,ui.newTab.children().attr("href"));
+    })
+    
+    //alert(window.location.hash);
+    //element.tabs("option", "active", element.find(window.location.hash).index()-1 );
+}

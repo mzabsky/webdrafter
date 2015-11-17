@@ -1,7 +1,7 @@
 <?php $this->headTitle()->append("Member area"); ?>
 <script>
 $(function(){
-	$("#tabs").tabs();
+	makeTabs($("#tabs"));
 	
 	$('#owned-sets-grid').DataTable({
 		"searching": false,

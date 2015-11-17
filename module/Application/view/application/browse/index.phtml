@@ -1,7 +1,7 @@
 <?php $this->headTitle()->append("Explore content"); ?>
 <script>
 $(function(){
-	$("#tabs").tabs();
+	makeTabs($("#tabs"));
 	
 	$('#sets-grid').DataTable({
 		"searching": false,

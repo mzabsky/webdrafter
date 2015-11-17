@@ -11,7 +11,7 @@ var cardData = <?php echo $this->partial(
 )); ?>
 
 $(function(){
-	$("#tabs").tabs();
+	makeTabs($("#tabs"));
 
 	spoiler = new Spoiler({element: $("#spoiler"), data: cardData, enableControl: true});
 });
