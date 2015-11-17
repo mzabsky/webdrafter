@@ -40,7 +40,4 @@ function makeTabs(element)
     	//alert("bb");
     	history.pushState(null,null,ui.newTab.children().attr("href"));
     })
-    
-    //alert(window.location.hash);
-    //element.tabs("option", "active", element.find(window.location.hash).index()-1 );
 }

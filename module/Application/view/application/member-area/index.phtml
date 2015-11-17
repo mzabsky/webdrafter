@@ -25,7 +25,10 @@ $(function(){
 
 	$('.dataTable').on( 'click', 'tr', function () {
 		$(this).addClass('selected');
-		window.location = $(this).attr('url');
+		if($(this).attr('url') != null)
+		{
+			window.location = $(this).attr('url');
+		}
 	});
 });
 </script>
