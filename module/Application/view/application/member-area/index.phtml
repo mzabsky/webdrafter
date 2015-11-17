@@ -3,20 +3,20 @@
 $(function(){
 	$("#tabs").tabs();
 	
-	$('#owned_sets_grid').DataTable({
+	$('#owned-sets-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15
 	});
 	
-	$('#hosted_events_grid').DataTable({
+	$('#hosted-events-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15,
 		"order": [[ 1, "desc" ]]
 	});
 	
-	$('#played_events_grid').DataTable({
+	$('#played-events-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15,
@@ -56,15 +56,15 @@ if($this->accountUpdated)
 
 <div id="tabs">
 	<ul>
-		<li><a href="#played_events_tab">Played events</a></li>
-		<li><a href="#hosted_events_tab">Hosted events</a></li>
-		<li><a href="#owned_sets_tab">Owned sets</a></li>
-		<li><a href="#account_settings_tab">Account settings</a></li>
+		<li><a href="#played-events">Played events</a></li>
+		<li><a href="#hosted-events">Hosted events</a></li>
+		<li><a href="#owned-sets">Owned sets</a></li>
+		<li><a href="#account-settings">Account settings</a></li>
 	</ul>
-	<div id="owned_sets_tab">
+	<div id="owned-sets">
 		<p>This page contains an overview of sets you own.</p>
 		<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
-		<table id="owned_sets_grid" class="display hover stripe clickableRows" >
+		<table id="owned-sets-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>Set name</th>
@@ -85,9 +85,9 @@ if($this->accountUpdated)
 			</tbody>
 		</table>
 	</div>
-	<div id="hosted_events_tab">
+	<div id="hosted-events">
 		<p>This page contains an overview of drafts and other events you hosted.</p>		
-		<table id="hosted_events_grid" class="display hover stripe clickableRows" >
+		<table id="hosted-events-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>Event name</th>
@@ -125,9 +125,9 @@ if($this->accountUpdated)
 			</tbody>
 		</table>
 	</div>
-	<div id="played_events_tab">
+	<div id="played-events">
 		<p>This page contains an overview of drafts and other events you played in.</p>		
-		<table id="played_events_grid" class="display hover stripe clickableRows" >
+		<table id="played-events-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>Event name</th>
@@ -167,7 +167,7 @@ if($this->accountUpdated)
 			</tbody>
 		</table>
 	</div>
-	<div id="account_settings_tab">	
+	<div id="account-settings">	
 		<?php echo $this->partial('/application/member-area/register', array('form' => $this->form, 'registrationMode' => false)); ?>
 	</div>
 </div>

@@ -36,14 +36,14 @@ $(function(){
 	</div>
 	<div id="tabs">
 		<ul>
-			<?php if($this->set->about != NULL) { ?><li><a href="#details_tab">Set details</a></li><?php } ?>
-			<li><a href="#cards_tab">Cards</a></li>
-			<li><a href="#history_tab">Version history</a></li>
+			<?php if($this->set->about != NULL) { ?><li><a href="#details">Set details</a></li><?php } ?>
+			<li><a href="#cards">Cards</a></li>
+			<li><a href="#history">Version history</a></li>
 		</ul>
-		<div id="details_tab">
+		<div id="details">
 		<?php echo $this->markdown($this->set->about, $this->set->urlName); ?>
 		</div>
-		<div id="cards_tab">
+		<div id="cards">
 			<div id="spoiler"></div>
 		<?php
 		/*foreach($this->cards as $card)
@@ -52,7 +52,7 @@ $(function(){
 		}*/
 		?>
 		</div>
-		<div id="history_tab">
+		<div id="history">
 		<?php foreach($this->setVersions as $setVersion){?>
 		<div class="set-version">
 			<h2><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $setVersion["versionUrlName"])) ?>"><?php echo $setVersion["versionName"] ?></a></h2>

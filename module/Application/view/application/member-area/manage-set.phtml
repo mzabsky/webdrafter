@@ -8,7 +8,7 @@ function makePublicDialog(){
 $(function(){
 	$("#tabs").tabs();
 
-	$('#history_grid').DataTable({
+	$('#history-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15,
@@ -163,12 +163,12 @@ if(count($this->setVersions) == 0)
 </p>
 <div id="tabs">
 	<ul>
-		<li><a href="#details_tab">Set details</a></li>
-		<li><a href="#status_tab">Development stage</a></li>
-		<li><a href="#history_tab">Version history</a></li>
-		<li><a href="#upload_tab">Upload card file</a></li>
+		<li><a href="#details">Set details</a></li>
+		<li><a href="#status">Development stage</a></li>
+		<li><a href="#history">Version history</a></li>
+		<li><a href="#upload">Upload card file</a></li>
 	</ul>
-	<div id="details_tab">
+	<div id="details">
 		<?php
 		$form = $this->form;
 		 
@@ -196,7 +196,7 @@ if(count($this->setVersions) == 0)
 		echo $this->form()->closeTag();
 		?>
 	</div>
-	<div id="status_tab">
+	<div id="status">
 		Here you can set how far into the development your set is. You can include additional information into the set description.
 		<table class="set_status_picker">
 			<tr class='set_status_unplayable <?php if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_UNPLAYABLE ?>">
@@ -243,8 +243,8 @@ if(count($this->setVersions) == 0)
 			</tr>
 		</table>
 	</div>
-	<div id="history_tab">
-		<table id="history_grid" class="display hover stripe clickableRows" >
+	<div id="history">
+		<table id="history-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>Version name</th>
@@ -268,7 +268,7 @@ if(count($this->setVersions) == 0)
 			</tbody>
 		</table>
 	</div>
-	<div id="upload_tab">
+	<div id="upload">
 		<p>The first step is to upload the file and to specify where will the images be loaded from. We will then check all the card image URLs and ask you to fill in some additional information.
 		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
 		<?php

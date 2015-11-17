@@ -3,7 +3,7 @@
 $(function(){
 	$("#tabs").tabs();
 	
-	$('#sets_grid').DataTable({
+	$('#sets-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15
@@ -15,7 +15,7 @@ $(function(){
 		"pageLength": 15
 	});*/
 	
-	$('#users_grid').DataTable({
+	$('#users-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
 		"pageLength": 15
@@ -31,12 +31,12 @@ $(function(){
 <h2 id="contentTitle">Explore content</h2>
 <div id="tabs">
 	<ul>
-		<li><a href="#sets_tab">Sets</a></li>
-		<li><a href="#cards_tab">Cards</a></li>
-		<li><a href="#users_tab">Users</a></li>
+		<li><a href="#sets">Sets</a></li>
+		<li><a href="#cards">Cards</a></li>
+		<li><a href="#users">Users</a></li>
 	</ul>
-	<div id="sets_tab">
-		<table id="sets_grid" class="display hover stripe clickableRows" >
+	<div id="sets">
+		<table id="sets-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>Set name</th>
@@ -63,11 +63,11 @@ $(function(){
 			</tbody>
 		</table>
 	</div>
-	<div id="cards_tab">
+	<div id="cards">
 		WIP
 	</div>
-	<div id="users_tab">
-		<table id="users_grid" class="display hover stripe clickableRows" >
+	<div id="users">
+		<table id="users-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
 					<th>User name</th>
