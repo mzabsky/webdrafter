@@ -790,7 +790,7 @@ class MemberAreaController extends AbstractActionController
 					//var_dump($form->getMessages());
 				}
 			}
-			else if(isset($formData["upload"]))
+			else if(isset($formData["submit_upload"]))
 			{
 				$uploadForm->setInputFilter($form->getInputFilter());
 				

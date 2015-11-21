@@ -98,7 +98,7 @@ class UploadCardsForm extends Form
 			->setAttrib('enctype', 'multipart/form-data');*/
 
 		$this->add($factory->createElement(array(
-			'name' => 'upload',
+			'name' => 'submit_upload',
             'attributes' => array(
                 'value' => 'Upload',
             ),
