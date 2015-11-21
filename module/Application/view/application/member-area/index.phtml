@@ -64,27 +64,45 @@ if($this->accountUpdated)
 		<li><a href="#owned-sets">Owned sets</a></li>
 		<li><a href="#account-settings">Account settings</a></li>
 	</ul>
-	<div id="owned-sets">
-		<p>This page contains an overview of sets you own.</p>
-		<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
-		<table id="owned-sets-grid" class="display hover stripe clickableRows" >
+	<div id="played-events">
+		<p>This page contains an overview of drafts and other events you played in.</p>		
+		<table id="played-events-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
-					<th>Set name</th>
-					<th>Number of cards</th>
-					<th>Number of events</th>
+					<th>Event name</th>
+					<th>Date and time</th>
+					<th>Host</th>
+					<th>Status</th>
+					<th>Number of players</th>
 				</tr>
 			</thead>
 			<tbody>
 		<?php
-		foreach ($this->setsOwned as $set)
+		foreach ($this->draftsPlayed as $draft)
 		{
-			echo "<tr url='" . $this->url('member-area-manage-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
-			echo $set["setName"];
-			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
+			echo "<tr url='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'><td class='nameCell'>";
+			echo $draft["draftName"];
+		
+			echo "</td><td>";
+			echo $draft["createdOn"];	
+			echo "</td><td>";
+			echo $draft["hostName"];				
+			echo "</td><td>";
+			switch($draft["draftStatus"])
+			{
+				case \Application\Model\Draft::STATUS_OPEN:
+					echo "OPEN";
+					break;
+				case \Application\Model\Draft::STATUS_RUNNING:
+					echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["packNumber"];
+					break;
+				case \Application\Model\Draft::STATUS_FINISHED:
+					echo "FINISHED";
+					break;
+			}
+			echo "</td><td>" . $draft["playerCount"] . "</td></tr>";
 		}
 		?>
-				</tr>
 			</tbody>
 		</table>
 	</div>
@@ -128,45 +146,27 @@ if($this->accountUpdated)
 			</tbody>
 		</table>
 	</div>
-	<div id="played-events">
-		<p>This page contains an overview of drafts and other events you played in.</p>		
-		<table id="played-events-grid" class="display hover stripe clickableRows" >
+	<div id="owned-sets">
+		<p>This page contains an overview of sets you own.</p>
+		<a href="<?php echo $this->url('member-area', array('action' => 'create-set'));?>">Create a new set</a><br/>
+		<table id="owned-sets-grid" class="display hover stripe clickableRows" >
 			<thead>
 				<tr>
-					<th>Event name</th>
-					<th>Date and time</th>
-					<th>Host</th>
-					<th>Status</th>
-					<th>Number of players</th>
+					<th>Set name</th>
+					<th>Number of cards</th>
+					<th>Number of events</th>
 				</tr>
 			</thead>
 			<tbody>
 		<?php
-		foreach ($this->draftsPlayed as $draft)
+		foreach ($this->setsOwned as $set)
 		{
-			echo "<tr url='" . $this->url('draft', array('invite_key' => $draft["inviteKey"])) . "'><td class='nameCell'>";
-			echo $draft["draftName"];
-		
-			echo "</td><td>";
-			echo $draft["createdOn"];	
-			echo "</td><td>";
-			echo $draft["hostName"];				
-			echo "</td><td>";
-			switch($draft["draftStatus"])
-			{
-				case \Application\Model\Draft::STATUS_OPEN:
-					echo "OPEN";
-					break;
-				case \Application\Model\Draft::STATUS_RUNNING:
-					echo "RUNNING - pack " . $draft["packNumber"] . ", pick " . $draft["packNumber"];
-					break;
-				case \Application\Model\Draft::STATUS_FINISHED:
-					echo "FINISHED";
-					break;
-			}
-			echo "</td><td>" . $draft["playerCount"] . "</td></tr>";
+			echo "<tr url='" . $this->url('member-area-manage-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo $set["setName"];
+			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
 		}
 		?>
+				</tr>
 			</tbody>
 		</table>
 	</div>
