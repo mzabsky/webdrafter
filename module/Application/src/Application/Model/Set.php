@@ -49,7 +49,12 @@ class Set implements InputFilterAwareInterface
 	
 	public function getStatusName()
 	{
-		switch($this->status)
+		return Set::GetStatusNameStatic($this->status);
+	}
+	
+	public static function getStatusNameStatic($status)
+	{
+		switch($status)
 		{
 			case self::STATUS_UNPLAYABLE: return "Unplayable";
 			case self::STATUS_DESIGN: return "Design";
