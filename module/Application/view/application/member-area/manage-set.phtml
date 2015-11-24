@@ -42,6 +42,14 @@ $(function(){
 	$("input[name='name']").on('input', function(){
 		$("input[name='url_name']").val(toUrlName($(this).val()));
 	});
+
+	$('.dataTable').on( 'click', 'tr', function () {
+		$(this).addClass('selected');
+		if($(this).attr('url') != null)
+		{
+			window.location = $(this).attr('url');
+		}
+	});
 });
 
 var createPicker = function() {
@@ -257,7 +265,7 @@ if(count($this->setVersions) == 0)
 		<?php
 		foreach ($this->setVersions as $setVersion)
 		{
-			echo "<tr url='" . /*$this->url('member-area-manage-set-version', array('set_version_id' => $setVersion["setVersionId"])) .*/ "'><td class='nameCell'>";
+			echo "<tr url='" . $this->url('member-area-manage-set-version', array('set_id' => $this->set->setId, 'set_version_id' => $setVersion["setVersionId"])) . "'><td class='nameCell'>";
 			echo $setVersion["versionName"];
 			echo "</td><td>";
 			echo $setVersion["createdOn"];

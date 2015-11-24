@@ -20,6 +20,17 @@ class SetVersion implements InputFilterAwareInterface
 	private $inputFilter;
 	private $dbAdapter;
 	
+	public function getArray(){
+		return array(
+			'set_version_id' => $this->setVersionId,
+			'name' => $this->name,
+			'url_name' => $this->urlName,
+			'set_id' => $this->setId,
+			'created_on' => $this->createdOn,
+			'about' => $this->about,
+		);
+	}
+	
     public function exchangeArray($data)
     {
         $this->setVersionId     = (!empty($data['set_version_id'])) ? $data['set_version_id'] : null;
@@ -45,7 +56,7 @@ class SetVersion implements InputFilterAwareInterface
     {
     	if (!$this->inputFilter) {
     		$inputFilter = new InputFilter();
-    
+    		
     		$inputFilter->add(array(
     			'name'     => 'name',
     			'required' => true,

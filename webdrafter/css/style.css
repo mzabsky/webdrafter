@@ -561,4 +561,20 @@ form input.code-input {
   background: #FFFFA1;
   margin-bottom: 4px; }
 
+.explicit-url {
+  font-size: 0.9em;
+  font: monospace; }
+
+.code-sample {
+  background: #EEEEEE;
+  border: lightgray 1px solid;
+  padding: 5px; }
+
+.code-sample-inline {
+  display: inline-block;
+  background: #EEEEEE;
+  border: lightgray 1px solid;
+  padding: 5px;
+  word-wrap: break-word; }
+
 /*# sourceMappingURL=style.css.map */

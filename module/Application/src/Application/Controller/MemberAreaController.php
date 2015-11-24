@@ -1082,5 +1082,71 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->uploadGuid = $_GET["upload"];
 		return $viewModel;
 	}
+	public function manageSetVersionAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+	
+		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		$setVersion = $setVersionTable->getSetVersion($this->getEvent()->getRouteMatch()->getParam('set_version_id'));
+	
+		if($set->setId != $setVersion->setId)
+		{
+			return $this->notFoundAction();
+		}
+		
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+	
+		$form = new \Application\Form\CreateSetVersionForm();
+		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set-version', array('set_id' => $set->setId, 'set_version_id' => $setVersion->setVersionId)));
+
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+				
+			if(isset($formData["submit"]))
+			{
+				// Set properties form
+				$inputFilter = $setVersion->getInputFilter();
+				//$inputFilter->remove('name');
+				$form->setInputFilter($inputFilter);
+	
+				$form->setData($formData);
+	
+				if ($form->isValid($formData))
+				{
+					$setVersion->name = $formData["name"];
+					$setVersion->urlName = $formData["url_name"];
+					$setVersion->about = $formData["about"];
+	
+					$setVersionTable->saveSetVersion($setVersion);
+	
+					return $this->redirect()->toRoute('member-area-manage-set-version', array('set_id' => $setVersion->setId, 'set_version_id' => $setVersion->setVersionId), array('query' => 'changes-saved'));
+				}
+				else
+				{
+					//var_dump($form->getMessages());
+				}
+			}
+		}
+		else
+		{
+			$form->setData($setVersion->getArray());
+		}
+	
+		$viewModel = new ViewModel();
+		$viewModel->changesSaved = isset($_GET['changes-saved']);
+	
+		$viewModel->set = $set;
+		$viewModel->setVersion = $setVersion;
+		$viewModel->form = $form;
+		return $viewModel;
+	}
 }
 ?>

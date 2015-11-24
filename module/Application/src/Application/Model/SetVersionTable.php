@@ -48,7 +48,7 @@ class SetVersionTable
 		foreach ($resultSet as $result)
 		{
 			$resultArray[] = array(
-					'set_version_id' => $result->set_version_id,
+					'setVersionId' => $result->set_version_id,
 					'versionName' => $result->version_name,
 					'versionUrlName' => $result->url_name,
 					'about' => $result->about,
