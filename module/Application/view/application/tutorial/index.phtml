@@ -2,7 +2,30 @@
 <h2 id="contentTitle">Formatting text content</h2>
 <p>Most input where you enter a block of text, such as set description or user profile page content can be formatted using an extended Markdown syntax. This tutorial will introduce you to Markdown and descibe of all the extensions provided by WebDrafter.</p>
 <h3>Introduction to Markdown</h3>
-https://guides.github.com/features/mastering-markdown/
+Markdown is a markup language used to format text on websites like Reddit and GitHub. You can see a quick "cheat sheet" below. For more advanced quide see <a hred="https://guides.github.com/features/mastering-markdown/" title="Mastering Markdown">Mastering Markdown</a>. In addition to standard Markdown, WebDrafter also supports GitHub-style tables (see example below). 
+<pre class="code-sample"># Heading level 1
+## Heading level 2
+### Heading level 3
+
+*Italic text*
+**Bold text**
+~~Strikethrough~~
+
+* Unordered list item
+* Unordered list item
+* Unordered list item
+
+1. Ordered list item
+2. Ordered list item
+3. Ordered list item
+
+[Link title](http://www.google.com)
+![Image title](http://www.github.com/images/logo.png)
+
+First Header | Second Header | Third header
+------------ | ------------- | ------------
+Content from cell 1 | Content from cell 2 | Content from cell 3
+Content from cell 4 | Content from cell 5 | Content from cell 6</pre>
 <h3>Magic symbols</h3>
 These are all the Magic: the Gathering symbols that you can use in text. The symbols will correspond in size to currrent font size (for example, if you include a symbol in a heading, it will be enlarged appropriately).
 <table>
@@ -96,7 +119,10 @@ These are all the Magic: the Gathering symbols that you can use in text. The sym
 <p>Font Awesome is publically available library of <a href="https://fortawesome.github.io/Font-Awesome/icons/" title="Font Awesome" target="_blank">hundreds of symbolic icons</a> for web applications. You can use any of these icons using following syntax, where <span class="explicit-url">fa-thumbs-up</span> is name of the icon:</p>
 <pre class="code-sample">[fa-thumbs-up]</pre> 
 Which will result in this: <i class="fa fa-thumbs-up"></i>. All icons from all FA versions up to 4.4.0 are supported. As with the Magic symbols, all of these will scale with current size of the text. :) and :( will be transformed into appropriate Font Awesome emotes even without the explicit syntax.
-
+<h3>Inline HTML</h3>
+<p>You can use HTML arbitrarily in combination with any other syntax offered by WebDrafter, with inline CSS being allowed as well. With HTML, you can achieve many things that the simple markup syntax wouldn't allow you to. Please take care not to interfere with layout of the website, otherwise yoru content will be taken down.<p>
+<h3>Page source code</h3>
+<p>You can view the source code of any user-submitted formatted text on any page (user profile, set page etc.) by adding "?source" to the URL of that page, for example <span class="explicit-url"><?php echo $this->url('browse-version', array('url_name' => 'modern-masters-2015', 'version_url_name' => 'version-3'), array('force_canonical' => true))?></span>. If that page specifies a hash fagment (<span class="explicit-url">#detail</span>), always add the source parameter before it.<p>
 <h2 id="contentTitle">How to import sets into WebDrafter</h2>
 <div class="tutorial">
 This tutorial assumes you created your custom set using <a href="http://magicseteditor.sourceforge.net/">Magic Set Editor 2</a>.
