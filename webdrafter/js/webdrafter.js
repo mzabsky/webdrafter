@@ -41,3 +41,9 @@ function makeTabs(element)
     	history.pushState(null,null,ui.newTab.children().attr("href"));
     })
 }
+
+function showCopyable (str) {
+    $("<div class='show-copyable-dialog'><textarea>" + str + "</textarea></div>").dialog({ modal: true, resizable: true, width: 800, height: 500, title: "Copy text" });
+
+    $(".show-copyable-dialog textarea").select();
+}

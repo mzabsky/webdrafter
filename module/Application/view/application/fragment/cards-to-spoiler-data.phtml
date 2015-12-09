@@ -41,7 +41,8 @@ foreach($this->cards as $card)
 	    ptString2: "<?php echo $card->ptString2 ?>",
 	    illustrator2: "<?php echo $card->illustrator2 ?>",
 	    
-	    setVersionLink: "<a href='<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName)) ?>'><?php echo $versionName ?></a>" 
+	    setVersionLink: "<a href='<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName)) ?>'><?php echo $versionName ?></a>",
+	    bbCode: '<?php echo $this->partial('/application/fragment/card-to-phpbb', array('setUrlName' => $this->set->urlName, 'versionUrlName' => $versionUrlName, 'card' => $card));?>'
 	},
 <?php 
 $i++;
