@@ -16,17 +16,22 @@ $rarity-mythic-color: #E67820;
 
 body {
     padding-bottom: 40px;
-    font-family: "Trebuchet MS", Helvetica, sans-serif;    
+    font-family: Lucida Grande, sans-serif;  
+    font-size: 1.05em;
+    line-height: 1.47;  
     margin: 0;
+    /*word-spacing: 0.15em;*/
 }
 
 a {
-	color: black;
-	text-decoration: none;
+	color: #444;
+	text-decoration: underline;
 	font-weight: bold;
 }
 
 a:hover {
+	color: black;
+    text-shadow: 0 0 5px #ddd; 
 	text-decoration: underline;
 }
 
@@ -34,50 +39,64 @@ a:active {
 	color: blue;
 }
 
-a:visited {
-	color: black;
+h1, h2, h3, h4, h5, h6 {
+	/*letter-spacing: 0.05em;*/
 }
+
+/*a:visited {
+	color: #444;
+}*/
 
 #header-wrapper {
 	background: #eeeeee;
 	border-bottom: 1px black solid;
-	height: 42px;
+	height: 45px;
 	padding: 5px;
+	margin-bottom: 10px;
 }
 
 #header {
 	margin:    0 auto;
     max-width: $page-width;
-	margin-bottom: 8px;
+	margin-bottom: 200px;
+
+	a {
+		text-decoration: none;
+		display: inline-block;
+		padding-right: 8px;
+	}
+	
+	a:hover {
+		text-decoration: underline;
+	}
+	
+	a:active {
+		color: blue;
+	}
+	
+	#mainHeader {
+		color: black;
+		display: block;
+		float: left;
+		margin: 0px;
+		font-weight: stronger;
+	}
+
+	#mainHeader h1 {
+		padding: 5px;
+		margin: 0;
+	}
 }
 
-#header a {
-	display: inline-block;
-	padding-right: 8px;
+.clear {
+	clear: both;
 }
 
-#header a:hover {
-	text-decoration: underline;
-}
-
-#header a:active {
-	color: blue;
-}
-
-#header a:visited {
-	color: black;
-}
-
-#mainHeader {
-	display: block;
-	float: left;
-	margin: 0px;
-	font-weight: stronger;
-}
-
-#mainHeader h1 {
-	padding: 5px;
-	margin: 0;
+#body {
+	margin:    -10px auto 0 auto;
+    max-width: $page-width;
+    padding: 8px 15px 50px 15px;
+	/*margin: 0 15px 50px 15px;*/
 }
 
 #menuBar {
@@ -89,17 +108,6 @@ a:visited {
 	margin-top: 3px;
 	float: right;
 	height: 100%;
-}
-
-.clear {
-	clear: both;
-}
-
-#body {
-	margin:    0 auto 50px auto;
-    max-width: $page-width;
-    padding: 0 5px;
-	/*margin: 0 15px 50px 15px;*/
 }
 
 #contentTitle {
@@ -115,7 +123,7 @@ footer {
 
 #tabs {
 	border: none !important;
-	margin: 0 -20px 0 -20px;
+	margin: 0 -15px 0 -15px;
 }
 
 #tabs .ui-widget-header {
@@ -400,7 +408,7 @@ form input.code-input {
 }
 
 .markdown-content {
-	 text-align: justify;
+	text-align: left;
 	
 	table {
 		border-collapse: collapse;
