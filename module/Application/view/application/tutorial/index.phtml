@@ -1,8 +1,9 @@
 <?php $this->headTitle()->append("Tutorials"); ?>
-<h2 id="contentTitle">Formatting text content</h2>
+<h2 id="contentTitle">Tutorials</h2>
+<h3>Formatting text content</h2>
 <p>Most input where you enter a block of text, such as set description or user profile page content can be formatted using an extended Markdown syntax. This tutorial will introduce you to Markdown and descibe of all the extensions provided by WebDrafter.</p>
-<h3>Introduction to Markdown</h3>
-Markdown is a markup language used to format text on websites like Reddit and GitHub. You can see a quick "cheat sheet" below. For more advanced quide see <a hred="https://guides.github.com/features/mastering-markdown/" title="Mastering Markdown">Mastering Markdown</a>. In addition to standard Markdown, WebDrafter also supports GitHub-style tables (see example below). 
+<h4>Introduction to Markdown</h3>
+<p>Markdown is a markup language used to format text on websites like Reddit and GitHub. You can see a quick "cheat sheet" below. For more advanced quide see <a hred="https://guides.github.com/features/mastering-markdown/" title="Mastering Markdown">Mastering Markdown</a>. In addition to standard Markdown, WebDrafter also supports GitHub-style tables (see example below).</p> 
 <pre class="code-sample"># Heading level 1
 ## Heading level 2
 ### Heading level 3
@@ -26,8 +27,8 @@ First Header | Second Header | Third header
 ------------ | ------------- | ------------
 Content from cell 1 | Content from cell 2 | Content from cell 3
 Content from cell 4 | Content from cell 5 | Content from cell 6</pre>
-<h3>Magic symbols</h3>
-These are all the Magic: the Gathering symbols that you can use in text. The symbols will correspond in size to currrent font size (for example, if you include a symbol in a heading, it will be enlarged appropriately).
+<h4>Magic symbols</h3>
+<p>These are all the Magic: the Gathering symbols that you can use in text. The symbols will correspond in size to currrent font size (for example, if you include a symbol in a heading, it will be enlarged appropriately).</p>
 <table>
   <tr>
     <th>Syntax</th>
@@ -96,7 +97,7 @@ These are all the Magic: the Gathering symbols that you can use in text. The sym
     <td>&nbsp;</td>
   </tr>
 </table>
-<h3>Referencing cards</h3>
+<h4>Referencing cards</h3>
 <p>Unlike on traditional Magic: the Gathering message boards, many sets can contain different cards with the same name. Additionally, each set can exist in multiple versions. Bcause of this, the syntax used to reference cards on WebDrafter is slightly more complicated. Card refernce will be transformed into a hyperlink leading to that card's page, and will also display image of that card when the user hover with his mouse cursor over the link.</p>
 <p>The most basic syntax is this:</p>
 <pre class="code-sample">[[Lightning Bolt]]</pre>
@@ -115,18 +116,17 @@ These are all the Magic: the Gathering symbols that you can use in text. The sym
 <pre class="code-sample">!r[[modern-masters-2015:version-3:Lightning Bolt]]</pre>
 <p>Either of these will also make text flow nicely around the card image (if you don't specify alignment, the image will be placed inline into the text). </p>
 
-<h3>Font Awesome</h3>
+<h4>Font Awesome</h3>
 <p>Font Awesome is publically available library of <a href="https://fortawesome.github.io/Font-Awesome/icons/" title="Font Awesome" target="_blank">hundreds of symbolic icons</a> for web applications. You can use any of these icons using following syntax, where <span class="explicit-url">fa-thumbs-up</span> is name of the icon:</p>
 <pre class="code-sample">[fa-thumbs-up]</pre> 
-Which will result in this: <i class="fa fa-thumbs-up"></i>. All icons from all FA versions up to 4.4.0 are supported. As with the Magic symbols, all of these will scale with current size of the text. :) and :( will be transformed into appropriate Font Awesome emotes even without the explicit syntax.
-<h3>Inline HTML</h3>
+<p>Which will result in this: <i class="fa fa-thumbs-up"></i>. All icons from all FA versions up to 4.4.0 are supported. As with the Magic symbols, all of these will scale with current size of the text. :) and :( will be transformed into appropriate Font Awesome emotes even without the explicit syntax.</p>
+<h4>Inline HTML</h3>
 <p>You can use HTML arbitrarily in combination with any other syntax offered by WebDrafter, with inline CSS being allowed as well. With HTML, you can achieve many things that the simple markup syntax wouldn't allow you to. Please take care not to interfere with layout of the website, otherwise yoru content will be taken down.<p>
 <h3>Page source code</h3>
 <p>You can view the source code of any user-submitted formatted text on any page (user profile, set page etc.) by adding "?source" to the URL of that page, for example <span class="explicit-url"><?php echo $this->url('browse-version', array('url_name' => 'modern-masters-2015', 'version_url_name' => 'version-3'), array('force_canonical' => true))?></span>. If that page specifies a hash fagment (<span class="explicit-url">#detail</span>), always add the source parameter before it.<p>
-<h2 id="contentTitle">How to import sets into WebDrafter</h2>
+<h3 id="contentTitle">How to import sets into WebDrafter</h2>
 <div class="tutorial">
-This tutorial assumes you created your custom set using <a href="http://magicseteditor.sourceforge.net/">Magic Set Editor 2</a>.
-
+<p>This tutorial assumes you created your custom set using <a href="http://magicseteditor.sourceforge.net/">Magic Set Editor 2</a>.</p>
 <ol>
 	<li><strong>Export card data file for WebDrafter</strong>
 		<ol>

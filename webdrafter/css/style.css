@@ -49,13 +49,50 @@ h1, h2, h3, h4, h5, h6 {
     display: block;
     float: left;
     margin: 0px;
-    font-weight: stronger; }
+    margin-left: 5px; }
+  #header #mainHeader:hover {
+    text-decoration: none !important; }
   #header #mainHeader h1 {
+    /*font-family: Georgia, serif;*/
     padding: 5px;
-    margin: 0; }
+    margin: 0;
+    font-weight: normal; }
 
 .clear {
   clear: both; }
+
+#contentTitle, h2 {
+  /*font-family: Georgia, serif;*/
+  font-size: 2.8em;
+  margin: 5px 0 5px 0;
+  font-weight: normal; }
+
+h3 {
+  /*font-family: Georgia, serif;*/
+  font-size: 2.2em;
+  margin: 3px 0 3px 0;
+  font-weight: normal; }
+
+h4 {
+  /*font-family: Georgia, serif;*/
+  font-style: italic;
+  font-size: 1.5em;
+  margin: 3px 0 3px 0;
+  font-weight: normal; }
+
+h5 {
+  /*font-family: Georgia, serif;*/
+  font-style: italic;
+  font-size: 1.3em;
+  margin: 3px 0 3px 0;
+  font-weight: normal; }
+
+h5 {
+  /*font-family: Georgia, serif;*/
+  font-style: italic;
+  font-size: 1.1em;
+  margin: 3px 0 3px 0;
+  font-weight: normal; }
 
 #body {
   margin: -10px auto 0 auto;
@@ -71,11 +108,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 3px;
   float: right;
   height: 100%; }
-
-#contentTitle {
-  font-size: 2.5em;
-  margin: 5px 0 10px 0;
-  font-weight: normal; }
 
 footer {
   border-top: 1px black solid;
