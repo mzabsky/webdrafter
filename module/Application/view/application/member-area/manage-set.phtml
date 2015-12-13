@@ -278,7 +278,7 @@ if(count($this->setVersions) == 0)
 	</div>
 	<div id="upload">
 		<p>The first step is to upload the file and to specify where will the images be loaded from. We will then check all the card image URLs and ask you to fill in some additional information.
-		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
+		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial', array(), array('fragment' => 'set-import'))?>">the tutorial</a>.</p>
 		<?php
 		$form = $this->uploadForm;
 		
