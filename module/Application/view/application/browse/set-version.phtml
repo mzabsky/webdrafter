@@ -16,13 +16,16 @@ $(function(){
 	spoiler = new Spoiler({element: $("#spoiler"), data: cardData, enableControl: true});
 });
 </script>
-<h2 id="contentTitle"><a href="<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>"><?php echo $this->set->name; ?></a> (<?php echo $this->setVersion->name?>)</h2>
+<h2 id="contentTitle">
+	<a href="<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>"><?php echo $this->set->name; ?></a> (<?php echo $this->setVersion->name?>)
+	<?php if($set->isPrivate){ ?><span class="private-set-title">Private</span><?php } ?>
+</h2>
 <div id="set-page">
 	<div class="info-bar">
 		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
 		<span class="info-bar-item">Date: <?php echo $this->setVersion->createdOn ?></span>
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
-		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>			
+		<!--<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span> -->			
 		<?php if($this->setVersion->downloadUrl != null){?>
 			<span class="info-bar-item"><a href="<?php echo $this->setVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
 		<?php }?>

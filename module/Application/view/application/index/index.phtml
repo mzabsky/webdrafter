@@ -1,26 +1,38 @@
-WebDrafter is a web application where you can draft custom Magic: the Gathering sets. Feel free to upload your set and organize some drafts or sealed deck events!
+<div id="homepage">
+	<div class="beta-notice">
+		<div>
+			WebDrafter is still in development. If you have any feedback, contact me at <a href="mailto:mzabsky@gmail.com">mzabsky@gmail.com</a>.<br/>
+			<font color="red">Testers, please report <strong>anything</strong> you don't like: bugs, typos, even visual details.<br/>
+			<strong>EVENT HOSTING DOES NOT WORK YET!!!</strong></font> 
+		</div>
+	</div>
+	<!-- WebDrafter is a web application where you can explore, draft and share custom Magic: the Gathering sets. -->
+	
+	<h2>Explore</h2>
+	<p><a href="<?php echo $this->url('browse') ?>" title="Explore content">Browse</a> our database of custom Magic sets. You can get started by having a look at one our featured sets:</p>
+	<ul class="featured-sets">
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set (RAF won't be actually featured, once I get some nice sets to feature).</li>
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set.</li>
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set.</li>
+	</ul>
+	
+	<h2>Draft</h2>
+	<p>Pick any playable custom Magic set, invite a few friends and host a draft or a sealed event. The host needs to <a href="<?php echo $this->url('member-area', array('action' => 'login'))?>">log in</a> with a Google Account, players only need an invitation link.</p>
+	<p>Need more players for your event? Ask around on <a href="https://client01.chat.mibbit.com/?channel=%23custommagic&server=irc.synirc.net">#CustomMagic IRC channel</a>!</p>
+	
+	<h2>Share</h2>
+	<p>Do you have your own Magic set to show off? There is no better way to share it with the community than uploading it to WebDrafter. Read the <a href="<?php echo $this->url('tutorial', array(), array("fragment" => 'set-import'))?>" title="Set import tutorial"/>set import tutorial</a> to learn how.</p>
 
-<p>Do you need players for your event? Ask around on <a href="https://client01.chat.mibbit.com/?channel=%23custommagic&server=irc.synirc.net">#CustomMagic IRC channel</a>!</p>
-
-<p><a href="https://trello.com/b/olnCSJQC/webdrafter">View issues and TODO</a></p>
-<p><a href="https://github.com/mzabsky/webdrafter">Source code</a></p>
-
-<p>If you have any feedback, contact me at <a href="mailto:mzabsky@gmail.com">mzabsky@gmail.com</a>.</p>
-
-<h2>Host an event</h2>
-To host an event or to upload a set, <a href="<?php echo $this->url('member-area', array('action' => 'login'))?>">login</a> with your Google account.
-
-<h2>Join an event</h2>
-To join an event, open the link provided to you by your event organizer. You don't have to log in or register, but you will lose on some features.
-
-<h2>News</h2>
-<ul>
-	<li><strong>08/09/2015</strong> - User accounts are now used to enter events for registered users. Added links to player page from the draft screen.</li>
-	<li><strong>05/09/2015</strong> - Started UI revamp. So far, member area and explore content screens are done. Added user registration.</li>
-	<li><strong>01/08/2015</strong> - Added basic lands to the deckbuilder.</li>
-	<li><strong>31/07/2015</strong> - Improved error handling in various scenarios, making the application much more user friendly in these situations.</li>
-	<li><strong>18/07/2015</strong> - Added set import tutorial.</li>
-	<li><strong>17/07/2015</strong> - Deckbuilder now supports dragging multiple cards at once (click cards to select them, then drag any card to move the entire group).</li>
-	<li><strong>16/07/2015</strong> - Added option to load card images from Google Drive.</li>
-	<li><strong>26/06/2015</strong> - Moved WebDrafter to its current address.</li>
-</ul>
+	<hr class="spacer"/>
+	<h2>News</h2>
+	<ul class="news">
+		<li><strong>08/09/2015</strong> - User accounts are now used to enter events for registered users. Added links to player page from the draft screen.</li>
+		<li><strong>05/09/2015</strong> - Started UI revamp. So far, member area and explore content screens are done. Added user registration.</li>
+		<li><strong>01/08/2015</strong> - Added basic lands to the deckbuilder.</li>
+		<li><strong>31/07/2015</strong> - Improved error handling in various scenarios, making the application much more user friendly in these situations.</li>
+		<li><strong>18/07/2015</strong> - Added set import tutorial.</li>
+		<li><strong>17/07/2015</strong> - Deckbuilder now supports dragging multiple cards at once (click cards to select them, then drag any card to move the entire group).</li>
+		<li><strong>16/07/2015</strong> - Added option to load card images from Google Drive.</li>
+		<li><strong>26/06/2015</strong> - Moved WebDrafter to its current address.</li>
+	</ul>
+</div>

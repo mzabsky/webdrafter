@@ -31,14 +31,16 @@ if($this->changeHistory != NULL)
 <script>
 var bbCode = '<?php echo $this->partial('/application/fragment/card-to-phpbb', array('setUrlName' => $this->set->urlName, 'versionUrlName' => $this->setVersion->urlName, 'card' => $card)) ?>';
 </script>
-<h2 id="contentTitle"><?php echo $this->card->name; ?></h2>
+<h2 id="contentTitle"><?php echo $this->card->name; ?>
+	<?php if($this->set->isPrivate){ ?><span class="private-set-title">Private</span><?php } ?>
+</h2>
 <div id="card-page">
 	<div class="info-bar">
 		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>		
 		<span class="info-bar-item">Set: <a href="<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>"><?php echo $this->set->name ?></a></span>
 		<span class="info-bar-item">Version: <a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->setVersion->urlName)) ?>"><?php echo $this->setVersion->name ?></a></span>		
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>		
-		<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>
+		<!-- <span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span> -->
 		<span class="info-bar-item">Last changed: <?php echo $this->card->changedOn?></span>
 		<span class="info-bar-item"><a href="#" onclick="showCopyable('<?php echo $this->card->artUrl?>')">Copy image link</a></span>
 		<span class="info-bar-item"><a href="#" onclick="showCopyable(bbCode)">Copy forum code</a></span>

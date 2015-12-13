@@ -35,6 +35,7 @@ h1, h2, h3, h4, h5, h6 {
 #header {
   margin: 0 auto;
   max-width: 1400px;
+  min-width: 800px;
   margin-bottom: 200px; }
   #header a {
     text-decoration: none;
@@ -57,8 +58,17 @@ h1, h2, h3, h4, h5, h6 {
     padding: 5px;
     margin: 0;
     font-weight: normal; }
+  #header #userPanel {
+    margin-top: 0px;
+    float: right;
+    height: 100%; }
 
 .clear {
+  clear: both; }
+
+.spacer {
+  border: 0;
+  height: 50px;
   clear: both; }
 
 #contentTitle, h2 {
@@ -97,17 +107,26 @@ h5 {
 #body {
   margin: -10px auto 0 auto;
   max-width: 1400px;
+  min-width: 800px;
   padding: 8px 15px 50px 15px;
   /*margin: 0 15px 50px 15px;*/ }
+
+#homepage h2 {
+  margin: 5px 0 0 0; }
+#homepage p {
+  margin: 0 0 5px 0; }
+#homepage .beta-notice {
+  text-align: center;
+  margin-top: 15px; }
+#homepage .featured-sets {
+  list-style-type: none; }
+#homepage .news {
+  list-style-type: none;
+  padding-left: 0; }
 
 #menuBar {
   float: left;
   padding: 22px 3px 0 30px; }
-
-#userPanel {
-  margin-top: 3px;
-  float: right;
-  height: 100%; }
 
 footer {
   border-top: 1px black solid;
@@ -129,7 +148,7 @@ footer {
   background: lightgreen;
   font-size: 1.1em; }
 
-.warning-message {
+.warning-message, #homepage .beta-notice div {
   padding: 15px;
   margin: 5px;
   border: 3px goldenrod solid;
@@ -375,6 +394,40 @@ form input.code-input {
     min-height: 420px; }
   .markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4 {
     clear: both; }
+  .markdown-content h1 {
+    /*font-family: Georgia, serif;*/
+    font-size: 2.8em;
+    margin: 5px 0 5px 0;
+    font-weight: normal; }
+  .markdown-content h2 {
+    /*font-family: Georgia, serif;*/
+    font-size: 2.2em;
+    margin: 3px 0 3px 0;
+    font-weight: normal; }
+  .markdown-content h3 {
+    /*font-family: Georgia, serif;*/
+    font-style: italic;
+    font-size: 1.5em;
+    margin: 3px 0 3px 0;
+    font-weight: normal; }
+  .markdown-content h4 {
+    /*font-family: Georgia, serif;*/
+    font-style: italic;
+    font-size: 1.3em;
+    margin: 3px 0 3px 0;
+    font-weight: normal; }
+  .markdown-content h5 {
+    /*font-family: Georgia, serif;*/
+    font-style: italic;
+    font-size: 1.1em;
+    margin: 3px 0 3px 0;
+    font-weight: normal; }
+  .markdown-content h6 {
+    /*font-family: Georgia, serif;*/
+    font-style: italic;
+    font-size: 1.0em;
+    margin: 3px 0 3px 0;
+    font-weight: normal; }
 
 #spoiler .spoiler-filters-and-sorts {
   height: 145px; }
@@ -585,7 +638,7 @@ form input.code-input {
   max-height: 300px;
   overflow: hidden; }
 
-.featured-set-title {
+.featured-set-title, .private-set-title {
   vertical-align: middle;
   font-size: 0.6em;
   display: inline-block;
@@ -595,6 +648,9 @@ form input.code-input {
   font-weight: bold;
   background: #FFFFA1;
   margin-bottom: 4px; }
+
+.private-set-title {
+  background: salmon; }
 
 .explicit-url {
   font-size: 0.9em;

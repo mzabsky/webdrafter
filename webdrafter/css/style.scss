@@ -1,6 +1,8 @@
 $page-width: 1400px;
+$min-width: 800px;
 
 $featured-color: #FFFFA1;
+$private-color: salmon;
 
 $set-status-unplayable-color: salmon;
 $set-status-design-color: orange;
@@ -58,6 +60,7 @@ h1, h2, h3, h4, h5, h6 {
 #header {
 	margin:    0 auto;
     max-width: $page-width;
+    min-width: $min-width;
 	margin-bottom: 200px;
 
 	a {
@@ -92,9 +95,21 @@ h1, h2, h3, h4, h5, h6 {
 		margin: 0;
 		font-weight: normal;
 	}
+	
+	#userPanel {
+		margin-top: 0px;
+		float: right;
+		height: 100%;
+	}
 }
 
 .clear {
+	clear: both;
+}
+
+.spacer {
+	border: 0;
+	height: 50px;
 	clear: both;
 }
 
@@ -139,19 +154,43 @@ h5 {
 #body {
 	margin:    -10px auto 0 auto;
     max-width: $page-width;
+    min-width: $min-width;
     padding: 8px 15px 50px 15px;
 	/*margin: 0 15px 50px 15px;*/
+}
+
+#homepage {
+	h2 {
+		margin: 5px 0 0 0;
+	}
+	
+	p {
+		margin: 0 0 5px 0;
+	}
+	
+	.beta-notice {
+		text-align: center;
+		margin-top: 15px;
+		div {
+			@extend .warning-message;
+		}
+	}
+	
+	.featured-sets {
+		list-style-type: none;
+	}
+	
+	.news {
+		list-style-type: none;
+			padding-left: 0;
+		li {
+		}
+	}
 }
 
 #menuBar {
 	float: left;
 	padding: 22px 3px 0 30px;
-}
-
-#userPanel {
-	margin-top: 3px;
-	float: right;
-	height: 100%;
 }
 
 footer {
@@ -487,6 +526,53 @@ form input.code-input {
 	h1, h2, h3, h4 {
 		clear: both;
 	}
+	
+	h1 {
+		/*font-family: Georgia, serif;*/
+		font-size: 2.8em;
+		margin: 5px 0 5px 0;
+		font-weight: normal;
+	}
+	
+	h2 {
+		/*font-family: Georgia, serif;*/
+		font-size: 2.2em;
+		margin: 3px 0 3px 0;
+		font-weight: normal;
+	}
+	
+	h3 {
+		/*font-family: Georgia, serif;*/
+		font-style: italic;
+		font-size: 1.5em;
+		margin: 3px 0 3px 0;
+		font-weight: normal;
+	}
+	
+	h4 {
+		/*font-family: Georgia, serif;*/
+		font-style: italic;
+		font-size: 1.3em;
+		margin: 3px 0 3px 0;
+		font-weight: normal;
+	}
+	
+	h5 {
+		/*font-family: Georgia, serif;*/
+		font-style: italic;
+		font-size: 1.1em;
+		margin: 3px 0 3px 0;
+		font-weight: normal;
+	}
+	
+	h6 {
+		/*font-family: Georgia, serif;*/
+		font-style: italic;
+		font-size: 1.0em;
+		margin: 3px 0 3px 0;
+		font-weight: normal;
+	}
+
 }
 
 #spoiler {
@@ -795,6 +881,11 @@ $shape-double-height: 523px;
 	font-weight: bold;
 	background: $featured-color;
 	margin-bottom: 4px;
+}
+
+.private-set-title {
+	@extend .featured-set-title;
+	background: $private-color; 
 }
 
 .explicit-url {
