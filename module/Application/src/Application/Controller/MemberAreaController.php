@@ -286,6 +286,7 @@ class MemberAreaController extends AbstractActionController
 					//$set->downloadUrl = $formData["download_url"];
 					$set->userId = $_SESSION["user_id"];
 					$set->isPrivate = 1;
+					$set->isFeatured = 0;
 					$set->currentSetVersion = null;
 					$set->status = Set::STATUS_UNPLAYABLE;
 					
@@ -942,10 +943,16 @@ class MemberAreaController extends AbstractActionController
 		
 		$form = new \Application\Form\CreateSetVersionForm();
 		
-		// Get cards from the previous version so that we can compare the uploaded file against it
 		$cardTable = $sm->get('Application\Model\CardTable');
-		$previousSetVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
-		$previousVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+		
+
+		// Get cards from the previous version so that we can compare the uploaded file against it
+		$previousSetVersion = null;
+		$previousVersionCards = null;
+		if($set->currentSetVersionId != null){
+			$previousSetVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
+			$previousVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+		}
 		
 		if ($this->getRequest()->isPost())
 		{
