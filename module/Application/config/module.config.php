@@ -77,8 +77,9 @@ return array(
         	'member-area-manage-set' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/member-area/manage-set/:set_id',
+        			'route' => '/member-area/:action/:set_id',
                     'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'set_id' => '[0-9]+'
                     ),
        				'defaults' => array(
