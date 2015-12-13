@@ -69,7 +69,7 @@ class RegistrationForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About me: ',
-				'description' => 'Arbitrary text displayed in your profile. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
+				'description' => 'Arbitrary text displayed in your profile. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
 			),
 		)));
 

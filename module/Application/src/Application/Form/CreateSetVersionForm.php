@@ -51,7 +51,7 @@ class CreateSetVersionForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About the version: ',
-				'description' => 'Arbitrary description of this version. Can contain information such as change log. Formatted with <a href="https://help.github.com/articles/markdown-basics/" target="blank">Markdown</a>. Can be changed at any time. Up to 5000 characters.'
+				'description' => 'Arbitrary description of this version. Can contain information such as change log. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
 			),
 		)));
 		
