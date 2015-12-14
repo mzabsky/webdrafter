@@ -14,6 +14,7 @@ class User implements InputFilterAwareInterface
 	public $urlName;
 	public $emailPrivacy;
 	public $about;
+	public $createdOn;
 	
 	private $inputFilter;
 	private $dbAdapter;
@@ -26,6 +27,7 @@ class User implements InputFilterAwareInterface
         $this->urlName = (!empty($data['url_name'])) ? $data['url_name'] : null;
         $this->emailPrivacy = (!empty($data['email_privacy'])) ? $data['email_privacy'] : null;
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
+        $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
     }
     
     public function getArray()
@@ -37,6 +39,7 @@ class User implements InputFilterAwareInterface
     		'url_name' => $this->urlName,
     		'email_privacy' => $this->emailPrivacy,
     		'about' => $this->about,
+    		'created_on' => $this->createdOn,
     	);
     }
     

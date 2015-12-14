@@ -17,15 +17,28 @@ $(function(){
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->user->name; ?></h2>
+<div class="info-bar">
+	<span class="info-bar-item">Email: <?php 
+		if(
+				($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) ||
+				$this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_PUBLIC
+		)
+		{
+			echo $this->user->email;
+		}
+		else if($this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) {
+			echo "Log in to see";
+		}
+		else {
+			echo "Hidden";
+		}
+	?></span>
+	<span class="info-bar-item">Registration date: <?php echo $this->user->createdOn ?></span>
+	
+</div>
 <?php 
 
-if(
-	($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) ||
-	$this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_PUBLIC
-)
-{
-	echo "<p>Email: " . $this->user->email . "</p>";
-}
+
 
 
 echo $this->markdown($this->user->about) ?>
