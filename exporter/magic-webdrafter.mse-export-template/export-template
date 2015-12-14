@@ -57,8 +57,8 @@ script:
 			+(if contains(paragraph_count(card.rule_text), match:"••") then split_text(match:"\n", card.rule_text).2)
 		# The Fourth Ability
 		+(if contains(paragraph_count(card.rule_text), match:"•••") then "\n")
-			+(if card.loyalty_2 != "" then card.loyalty_cost_4)
-			+(if card.loyalty_cost_4 !="" and card.loyalty_2 != "" then ": ")
+			+(if card.loyalty_4 != "" then card.loyalty_cost_4)
+			+(if card.loyalty_cost_4 !="" and card.loyalty_4 != "" then ": ")
 			+(if contains(paragraph_count(card.rule_text), match:"•••") then split_text(match:"\n", card.rule_text).3)
 		+"\n"
 		+"Starting loyalty: "+card.loyalty
