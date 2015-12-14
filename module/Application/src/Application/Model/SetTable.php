@@ -66,8 +66,8 @@ class SetTable
 					'setName' => $result->set_name,
 					'setStatus' => $result->set_status,
 					'setUrlName' => $result->set_url_name,
-					'draftCount' => $result->draft_count,
-					'cardCount' => $result->card_count
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0
 			);
 		}
 	
@@ -99,8 +99,8 @@ class SetTable
 					'setName' => $result->set_name,
 					'setStatus' => $result->set_status,
 					'urlName' => $result->url_name,
-					'draftCount' => $result->draft_count,
-					'cardCount' => $result->card_count,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0,
 					'userName' => $result->user_name,
 					'createdOn' => $result->created_on,
 					'isFeatured' => $result->is_featured

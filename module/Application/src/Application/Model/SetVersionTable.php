@@ -53,8 +53,8 @@ class SetVersionTable
 					'versionUrlName' => $result->url_name,
 					'about' => $result->about,
 					'createdOn' => $result->created_on,
-					'draftCount' => $result->draft_count,
-					'cardCount' => $result->card_count
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0
 			);
 		}
 	

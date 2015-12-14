@@ -62,8 +62,8 @@ class UserTable
 					'userId' => $result->user_id,
 					'userName' => $result->user_name,
 					'userUrlName' => $result->user_url_name,
-					'draftCount' => $result->draft_count,
-					'setCount' => $result->set_count
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'setCount' => $result->set_count != null ? $result->set_count : 0
 			);
 		}
 	
