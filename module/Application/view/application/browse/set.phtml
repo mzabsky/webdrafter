@@ -44,9 +44,11 @@ $(function(){
 			<li><a href="#cards">Cards</a></li>
 			<li><a href="#history">Version history</a></li>
 		</ul>
-		<div id="details">
-		<?php echo $this->markdown($this->set->about, $this->set->urlName, $this->currentSetVersion->urlName); ?>
-		</div>
+		<?php if($this->set->about != NULL) { ?>
+			<div id="details">
+			<?php echo $this->markdown($this->set->about, $this->set->urlName, $this->currentSetVersion != null ? $this->currentSetVersion->urlName : $this->currentSetVersion); ?>
+			</div>
+		<?php }?>
 		<div id="cards">
 			<div id="spoiler"></div>
 		<?php
