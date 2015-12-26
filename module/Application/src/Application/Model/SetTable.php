@@ -116,7 +116,7 @@ class SetTable
 		$rowset = $this->tableGateway->select(array('set_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find set $id");
+			return null;
 		}
 		return $row;
 	}
@@ -126,7 +126,7 @@ class SetTable
 		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find set $urlName");
+			return null;
 		}
 		return $row;
 	}

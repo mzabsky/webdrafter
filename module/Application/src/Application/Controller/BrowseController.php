@@ -39,7 +39,15 @@ class BrowseController extends AbstractActionController
     	
     	$viewModel = new ViewModel();
     	$viewModel->set = $setTable->getSetByUrlName($setUrlName);
+    	if($viewModel->set === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->user = $userTable->getUser($viewModel->set->userId);
+    	if($viewModel->user === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
     	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
     	$viewModel->cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
@@ -65,6 +73,10 @@ class BrowseController extends AbstractActionController
     	
     	$viewModel = new ViewModel();
     	$viewModel->set = $setTable->getSetByUrlName($setUrlName);
+    	if($viewModel->set === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->user = $userTable->getUser($viewModel->set->userId);
     	$viewModel->setVersion = $setVersionTable->getSetVersionByUrlName($viewModel->set->setId, $setVersionUrlName);
     	$viewModel->cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->setVersion->setVersionId));
@@ -87,6 +99,10 @@ class BrowseController extends AbstractActionController
     
     	$viewModel = new ViewModel();
     	$viewModel->user = $userTable->getUserByUrlName($urlName);
+    	if($viewModel->user === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->sets = $setTable->getSetsByUser($viewModel->user->userId, false);
     
     	if(isset($_GET["source"])){
@@ -132,6 +148,10 @@ class BrowseController extends AbstractActionController
     		else {
     			return $this->notFoundAction();
     		}
+
+    		if($set === null){
+    			return $this->notFoundAction();
+    		}
     		 
     		if(is_numeric($setVersionIdentifier))
     		{
@@ -147,7 +167,15 @@ class BrowseController extends AbstractActionController
     			$setVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
     		}
     		
+    		if($setVersion === null){
+    			return $this->notFoundAction();
+    		}
+    		
     		$card = $cardTable->getCardByName($setVersion->setVersionId, $cardIdentifier);
+    		
+    		if($card === null){
+    			return $this->notFoundAction();
+    		}
     	}
     	
     	if(isset($_GET["image"]))
@@ -182,9 +210,21 @@ class BrowseController extends AbstractActionController
     	$viewModel = new ViewModel();
 
     	$viewModel->set = $setTable->getSetByUrlName($this->getEvent()->getRouteMatch()->getParam('set_url_name'));
+    	if($viewModel->set === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->user = $userTable->getUser($viewModel->set->userId);
     	$viewModel->setVersion = $setVersionTable->getSetVersionByUrlName($viewModel->set->setId, $this->getEvent()->getRouteMatch()->getParam('version_url_name'));
+    	if($viewModel->setVersion === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	$viewModel->card = $cardTable->getCardByUrlName($viewModel->setVersion->setVersionId, $this->getEvent()->getRouteMatch()->getParam('card_url_name'));
+    	if($viewModel->card === null){
+    		return $this->notFoundAction();
+    	}
+    	
     	if($viewModel->card->firstVersionCardId != NULL)
     	{
     		$viewModel->changeHistory = \Application\resultSetToArray($cardTable->getCardHistory($viewModel->card->firstVersionCardId));

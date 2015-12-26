@@ -67,7 +67,7 @@ class SetVersionTable
 		$rowset = $this->tableGateway->select(array('set_version_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find set version $id");
+			return null;
 		}
 		return $row;
 	}
@@ -78,7 +78,7 @@ class SetVersionTable
 		$rowset = $this->tableGateway->select(array('set_id' => $setId, 'url_name' => $urlName));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find set version $urlName");
+			return null;
 		}
 		return $row;
 	}

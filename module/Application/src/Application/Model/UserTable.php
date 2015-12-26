@@ -28,7 +28,7 @@ class UserTable
 		$rowset = $this->tableGateway->select(array('user_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find user $id");
+			return null;
 		}
 		return $row;
 	}
@@ -38,7 +38,7 @@ class UserTable
 		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find user $urlName");
+			return null;
 		}
 		return $row;
 	}

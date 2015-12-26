@@ -60,7 +60,7 @@ class CardTable
 		$rowset = $this->tableGateway->select(array('card_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find card $id");
+			return null;
 		}
 		return $row;
 	}
@@ -71,7 +71,7 @@ class CardTable
 		$rowset = $this->tableGateway->select(array('set_version_id' => $setVersionId, 'url_name' => $urlName));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find card $urlName");
+			return null;
 		}
 		return $row;
 	}
@@ -82,7 +82,7 @@ class CardTable
 		$rowset = $this->tableGateway->select(array('set_version_id' => $setVersionId, 'name' => $name));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find card $name");
+			return null;
 		}
 		return $row;
 	}
@@ -100,42 +100,7 @@ class CardTable
 		//var_dump($selectString);
 		
 		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-		
-		/*
-	public $cardId;
-	public $setVersionId;
-	public $shape;
-	public $cardNumber;
-	public $cmc;
-	public $rarity;
-	public $artUrl;
-	public $urlName;
-	public $firstVersionCardId;
-	public $isChanged;
 	
-	public $name;	
-	public $colors;
-	public $manaCost;
-	public $types;
-	public $rulesText;
-	public $flavorText;
-	public $power;
-	public $toughness;
-	public $ptString;
-	public $illustrator;
-
-	public $name2;
-	public $colors2;
-	public $manaCost2;
-	public $types2;
-	public $rulesText2;
-	public $flavorText2;
-	public $power2;
-	public $toughness2;
-	public $ptString2;
-	public $illustrator2;
-		 * */
-		
 		$resultArray = array();
 		foreach ($resultSet as $result)
 		{
@@ -178,18 +143,6 @@ class CardTable
 		}
 		
 		return $resultArray;
-		
-		/*$firstVersionCardId  = (int) $firstVersionCardId;
-		
-		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($firstVersionCardId){
-			$select->where(array('first_version_card_id' => $firstVersionCardId, 'is_changed' => true));
-			
-		});
-		
-		
-		
-		
-		return $resultSet;*/
 	}
 	
 	

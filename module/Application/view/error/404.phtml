@@ -1,6 +1,10 @@
-<h1><?php echo $this->translate('A 404 error occurred') ?></h1>
-<h2><?php echo $this->message ?></h2>
-
+<h2>Not found</h2>
+Sorry, whatewer it is you were looking for is not located on this website.
+<ul>
+	<li><a href="<?php echo $this->url('home')?>">Go to the main page</a></li>
+	<li><a href="<?php echo $this->url('browse')?>">Explore content</a></li>
+</ul>
+<?php return; ?>
 <?php if (isset($this->reason) && $this->reason): ?>
 
 <?php

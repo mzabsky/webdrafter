@@ -381,10 +381,8 @@ class MemberAreaController extends AbstractActionController
 	
 				try
 				{
-					
 					$setTable = $sm->get('Application\Model\SetTable');
-					
-
+				
 					$setIds = array();
 					$numberOfPacks = (int)$formData['number_of_packs'];
 					switch($mode)
@@ -728,6 +726,10 @@ class MemberAreaController extends AbstractActionController
 		$setTable = $sm->get('Application\Model\SetTable');
 		
 		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
 		if($set->userId != $auth->getUser()->userId){
 			throw new Exception("You don't own this set.");
 		}
@@ -747,6 +749,9 @@ class MemberAreaController extends AbstractActionController
 		$setTable = $sm->get('Application\Model\SetTable');
 		
 		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		if($set === null) {
+			return $this->notFoundAction();
+		}
 		
 		if($set->userId != $auth->getUser()->userId){
 			throw new Exception("You don't own this set.");
@@ -780,8 +785,6 @@ class MemberAreaController extends AbstractActionController
 					$set->urlName = $formData["url_name"];
 					$set->code = $formData["code"];
 					$set->about = $formData["about"];
-						
-					$setTable = $sm->get('Application\Model\SetTable');
 					$setTable->saveSet($set);
 				
 					return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'changes-saved'));
@@ -869,10 +872,9 @@ class MemberAreaController extends AbstractActionController
 		{
 			$form->setData($set->getArray());
 		}
-		
 
 		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
-		$setVersions = $setVersionTable->fetchBySet($set->setId);		
+		$setVersions = $setVersionTable->fetchBySet($set->setId);
 		
 		$viewModel = new ViewModel();
 		$viewModel->setCreated = isset($_GET['set-created']);
@@ -904,6 +906,10 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
 		if($set->userId != $auth->getUser()->userId){
 			throw new Exception("You don't own this set.");
 		}
@@ -925,6 +931,9 @@ class MemberAreaController extends AbstractActionController
 		$setTable = $sm->get('Application\Model\SetTable');
 
 		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
 		
 		if($set->userId != $auth->getUser()->userId){
 			throw new Exception("You don't own this set.");
@@ -1089,6 +1098,7 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->uploadGuid = $_GET["upload"];
 		return $viewModel;
 	}
+	
 	public function manageSetVersionAction()
 	{
 		if(($redirect = $this->initUser()) != NULL) return $redirect;
@@ -1099,7 +1109,14 @@ class MemberAreaController extends AbstractActionController
 		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 	
 		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
 		$setVersion = $setVersionTable->getSetVersion($this->getEvent()->getRouteMatch()->getParam('set_version_id'));
+		if($setVersion === null) {
+			return $this->notFoundAction();
+		}
 	
 		if($set->setId != $setVersion->setId)
 		{
