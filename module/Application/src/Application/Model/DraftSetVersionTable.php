@@ -4,7 +4,7 @@ namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 
-class DraftSetTable
+class DraftSetVersionTable
 {
 	protected $tableGateway;
 	
@@ -22,32 +22,32 @@ class DraftSetTable
 		return $resultSet;
 	}
 	
-	public function getDraftSet($id)
+	public function getDraftSetVersion($id)
 	{
 		$id  = (int) $id;
-		$rowset = $this->tableGateway->select(array('draft_set_id' => $id));
+		$rowset = $this->tableGateway->select(array('draft_set_version_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find draft set $id");
+			throw new \Exception("Could not find draft set version $id");
 		}
 		return $row;
 	}
 	
-	public function saveDraftSet(DraftSet $draftSet)
+	public function saveDraftSetVersion(DraftSetVersion $draftSetVersion)
 	{
 		$data = array(
-			'draft_id' => $draftSet->draftId,
-			'set_id' => $draftSet->setId,
-			'pack_number' => $draftSet->packNumber
+			'draft_id' => $draftSetVersion->draftId,
+			'set_version_id' => $draftSetVersion->setVersionId,
+			'pack_number' => $draftSetVersion->packNumber
 		);
 	
-		$id = (int) $draftSet->draftSetId;
+		$id = (int) $draftSetVersion->draftSetVersionId;
 		if ($id == 0) {
 			$this->tableGateway->insert($data);
-			$draftSet->draftSetId = $this->tableGateway->lastInsertValue;
+			$draftSet->draftSetVersionId = $this->tableGateway->lastInsertValue;
 		} else {
-			if ($this->getDraftSet($id)) {
-				$this->tableGateway->update($data, array('draft_set_id' => $id));
+			if ($this->getDraftSetVersion($id)) {
+				$this->tableGateway->update($data, array('draft_set_version_id' => $id));
 			} else {
 				throw new \Exception('Draft set id does not exist');
 			}

@@ -110,6 +110,50 @@ class SetTable
 		return $resultArray;
 	}
 	
+	public function getSetsToHost($userId)
+	{
+		$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('set');
+		//$select->forUpdate();
+		$select->columns(array('set_name' => 'name', 'set_id', 'url_name', 'created_on', 'is_featured', 'set_status' => 'status', 'current_set_version_id', 'set_code' => 'code'));
+		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array('current_set_version_name' => 'name'), 'left');
+		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
+		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
+		$select->join('user', 'set.user_id = user.user_id', array('user_name' => 'name'));
+		$select->where(array(
+				'set.status NOT IN(' . Set::STATUS_UNPLAYABLE . ', ' . Set::STATUS_DISCONTINUED . ')', 
+				'(set.is_private = 0 OR set.user_id = ' . (int)$userId . ')',
+				'current_set_version_id IS NOT NULL'
+		));
+		//$select->where(array();
+		//$select->order('draft.created_on DESC');
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
+	
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+	
+		$resultArray = array();
+		foreach ($resultSet as $result)
+		{
+			$resultArray[] = array(
+					'setId' => $result->set_id,
+					'setName' => $result->set_name,
+					'setCode' => $result->set_code,
+					'setStatus' => $result->set_status,
+					'urlName' => $result->url_name,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0,
+					'userName' => $result->user_name,
+					'createdOn' => $result->created_on,
+					'isFeatured' => $result->is_featured,
+					'currentSetVersionId' => $result->current_set_version_id,
+					'currentSetVersionName' => $result->current_set_version_name,
+			);
+		}
+	
+		return $resultArray;
+	}
+	
 	public function getSet($id)
 	{
 		$id  = (int) $id;

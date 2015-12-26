@@ -298,7 +298,7 @@ form .form-element ul {
 form input[type=radio] {
   width: 15px; }
 
-form input[type=submit] {
+input[type=submit] {
   padding: 5px;
   font-size: 1.2em;
   border: 1px black solid;
@@ -306,7 +306,13 @@ form input[type=submit] {
   cursor: pointer;
   width: 150px; }
 
-form input[type=submit]:hover {
+button.add-button {
+  padding: 5px;
+  border: 1px black solid;
+  background: lightgreen;
+  cursor: pointer; }
+
+form input[type=submit]:hover, button.add-button:hover {
   background: palegreen; }
 
 form input.url-name-input {
@@ -667,5 +673,36 @@ form input.code-input {
   border: lightgray 1px solid;
   padding: 5px;
   word-wrap: break-word; }
+
+.set_status_picker td {
+  padding: 5px; }
+
+.game-mode-picker td {
+  border: 1px black solid;
+  cursor: pointer;
+  *cursor: hand;
+  padding: 5px;
+  background: #eeeeee; }
+.game-mode-picker p {
+  margin: 1px; }
+.game-mode-picker h3 {
+  font-size: 1.5em;
+  margin: 0; }
+
+.host-event #selected-packs {
+  padding: 5px;
+  background: #eeeeee;
+  border: 1px black solid;
+  min-height: 40px; }
+  .host-event #selected-packs .selected-pack {
+    display: inline-block;
+    padding: 5px;
+    margin: 0 4px 4px 0;
+    border: 1px black solid;
+    cursor: pointer;
+    *cursor: hand;
+    background: white; }
+.host-event form {
+  display: none; }
 
 /*# sourceMappingURL=style.css.map */

@@ -15,7 +15,7 @@ use League\OAuth2\Client\Provider;
 use Application\Model\Set;
 use Application\Model\Draft;
 use Application\Model\Pick;
-use Application\Model\DraftSet;
+use Application\Model\DraftSetVersion;
 use Zend\View\Model\JsonModel;
 use Application\Model\DraftPlayer;
 use Application\Model\User;
@@ -366,108 +366,97 @@ class MemberAreaController extends AbstractActionController
 		$mode = (int)$_REQUEST["mode"];
 		
 		$sm = $this->getServiceLocator();
-		$setTable = $sm->get('Application\Model\SetTable');		
-		$form = new \Application\Form\HostDraftForm($setTable, $mode);
+		$setTable = $sm->get('Application\Model\SetTable');	
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');		
+		$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');	
 	
-		if ($this->getRequest()->isPost())
+		if (isset($_POST["setVersionIds"]))
 		{
-			$formData = $this->getRequest()->getPost();
-			$form->setData($formData);
-			if ($form->isValid($formData))
+			$setVersionIds = explode(",", $_POST["setVersionIds"]);
+			
+			if(count($setVersionIds) < 1)
 			{
-				$sm = $this->getServiceLocator();
-				$adapter = $sm->get("Zend\Db\Adapter\Adapter");
-				$adapter->getDriver()->getConnection()->beginTransaction();
-	
-				try
-				{
-					$setTable = $sm->get('Application\Model\SetTable');
-				
-					$setIds = array();
-					$numberOfPacks = (int)$formData['number_of_packs'];
-					switch($mode)
-					{
-						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
-						case \Application\Model\Draft::MODE_SEALED_DECK:
-						case \Application\Model\Draft::MODE_CUBE_DRAFT:
-							for($i = 1; $i <= $numberOfPacks; $i++)
-							{
-								$setIds[] = $formData['pack' . $i];
-							}
-							break;
-						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
-							$setIds = $formData['pack1'];
-							break;
-						default:
-							throw new \Exception("Invalid game mode " . $mode);
-								
-					}
-					
-					switch($mode)
-					{
-						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
-							$modeName = 'booster draft';
-							break;
-						case \Application\Model\Draft::MODE_SEALED_DECK:
-							$modeName = 'sealed deck';
-							break;
-						case \Application\Model\Draft::MODE_CUBE_DRAFT:
-							$modeName = 'cube draft';
-							break;
-						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
-							$modeName = 'chaos draft';
-							break;
-						default:
-							throw new \Exception("Invalid game mode " . $mode);
-					
-					}
-					
-					$sets = array();
-					$setCodes = array();					
-					foreach($setIds as $setId)
-					{
-						$set = $setTable->getSet($setId);
-						$sets[] = $set;
-						$setCodes[] = $set->code;	
-					}
-					
-					$draft = new Draft();
-					$draft->name = join("/", $setCodes) . " " . $modeName;
-					$draft->status = Draft::STATUS_OPEN;
-					$draft->hostId = $_SESSION["user_id"];
-					$draft->createdOn = date("Y-m-d H:i:s");
-					$draft->pickNumber = 1;
-					$draft->packNumber = 1;
-					$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
-					$draft->gameMode = $mode;
-						
-					$draftTable = $sm->get('Application\Model\DraftTable');
-					$draftTable->saveDraft($draft);
-						
-					$draftSetTable = $sm->get('Application\Model\DraftSetTable');
-					foreach($setIds as $index => $setId)
-					{
-						$draftSet = new DraftSet();
-						$draftSet->draftId = $draft->draftId;
-						$draftSet->setId = $setId;
-						$draftSet->packNumber = $index + 1;
-						$draftSetTable->saveDraftSet($draftSet);
-					}
-	
-					$adapter->getDriver()->getConnection()->commit();
-				}
-				catch(Exception $e)
-				{
-					$adapter->getDriver()->getConnection()->rollback();
-					throw $e;
-				}
-				
-				return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'draft-opened'));
+				throw new \Exception("No sets selected");	
 			}
+			
+			$sm = $this->getServiceLocator();
+			$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+			$adapter->getDriver()->getConnection()->beginTransaction();
+
+			try
+			{
+				$setTable = $sm->get('Application\Model\SetTable');
+			
+				switch($mode)
+				{
+					case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
+						$modeName = 'booster draft';
+						break;
+					case \Application\Model\Draft::MODE_SEALED_DECK:
+						$modeName = 'sealed deck';
+						break;
+					case \Application\Model\Draft::MODE_CUBE_DRAFT:
+						$modeName = 'cube draft';
+						break;
+					case \Application\Model\Draft::MODE_CHAOS_DRAFT:
+						$modeName = 'chaos draft';
+						break;
+					default:
+						throw new \Exception("Invalid game mode " . $mode);
+				
+				}
+				
+				$sets = array();
+				$setVersions = array();
+				$setCodes = array();					
+				foreach($setVersionIds as $setVersionId)
+				{
+					$setVersion = $setVersionTable->getSetVersion($setVersionId);
+					$setVersions[] = $setVersion;
+					
+					$set = $setTable->getSet($setVersion->setId);					
+					$sets[] = $set;
+					
+					$setCodes[] = $set->code;	
+				}
+				
+				$draft = new Draft();
+				$draft->name = join("/", $setCodes) . " " . $modeName;
+				$draft->status = Draft::STATUS_OPEN;
+				$draft->hostId = $_SESSION["user_id"];
+				$draft->createdOn = date("Y-m-d H:i:s");
+				$draft->pickNumber = 1;
+				$draft->packNumber = 1;
+				$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
+				$draft->gameMode = $mode;
+					
+				$draftTable = $sm->get('Application\Model\DraftTable');
+				$draftTable->saveDraft($draft);
+					
+				$draftSetTable = $sm->get('Application\Model\DraftSetVersionTable');
+				foreach($setVersionIds as $index => $setVersionId)
+				{
+					$draftSetVersion = new DraftSetVersion();
+					$draftSetVersion->draftId = $draft->draftId;
+					$draftSetVersion->setVersionId = $setVersionId;
+					$draftSetVersion->packNumber = $index + 1;
+					$draftSetVersionTable->saveDraftSetVersion($draftSetVersion);
+				}
+
+				$adapter->getDriver()->getConnection()->commit();
+			}
+			catch(Exception $e)
+			{
+				$adapter->getDriver()->getConnection()->rollback();
+				throw $e;
+			}
+			
+			return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'draft-opened'));
 		}
 	
 		$viewModel = new ViewModel();
-		$viewModel->form = $form;
+		$viewModel->sets = $setTable->getSetsToHost($_SESSION["user_id"]);
+		$viewModel->mode = $mode;
 	
 		return $viewModel;
 	}

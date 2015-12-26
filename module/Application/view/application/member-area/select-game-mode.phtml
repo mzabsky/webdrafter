@@ -1,13 +1,44 @@
+<script>
+$(function(){
+	$('.game-mode-picker tr').click(function(){
+		window.location = $(this).attr('url');
+	});
+});
+</script>
 <?php $this->headTitle()->append("Select game mode"); ?>
 <h2 id="contentTitle">Select game mode</h2>
-<h3><a href="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_BOOSTER_DRAFT)) ?>">Booster draft</a></h3>
-Each player receives packs from the same sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).
 
-<h3><a href="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_CHAOS_DRAFT)) ?>">Chaos draft</a></h3>
-Each player receives packs from a random pool of boosters from various sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).
-
-<h3><a href="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_CUBE_DRAFT)) ?>">Cube draft</a></h3>
-Each card can appear only once in the entire draft. Card rarities are not in effect.
-
-<h3><a href="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_SEALED_DECK)) ?>">Sealed deck</a></h3>
-Players open their packs without drafting them. Each player receives packs from the same sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).
+<table class="game-mode-picker">
+	<tr class='game-mode-booster-draft' url="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_BOOSTER_DRAFT)) ?>">
+		<td class='picker'>
+			<h3>Booster draft</h3>
+			<p>Each player receives packs from the same sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).</p>
+			<p><strong>Recommended number of players</strong>: 4-10</p> 
+			<p><strong>Recommended number of packs</strong>: 3</p>
+		</td>				
+	</tr>
+	<tr class='game-mode-chaos-draft' url="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_CHAOS_DRAFT)) ?>">
+		<td class='picker'>
+			<h3>Chaos draft</h3>
+			<p>Each player receives packs from a random pool of boosters from various sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).</p>
+			<p><strong>Recommended number of players</strong>: 4-10</p> 
+			<p><strong>Recommended number of packs</strong>: 3</p>
+		</td>				
+	</tr>
+	<tr class='game-mode-cube-draft' url="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_CUBE_DRAFT)) ?>">
+		<td class='picker'>
+			<h3>Cube draft</h3>
+			Each card can appear only once in the entire draft. Card rarities are not in effect. Playing sets designed for cube drafting is recommended.
+			<p><strong>Recommended number of players</strong>: 4-10</p> 
+			<p><strong>Recommended number of packs</strong>: 3</p>
+		</td>				
+	</tr>
+	<tr class='game-mode-sealed-deck' url="<?php echo $this->url('member-area', array('action' => 'host-draft'), array('query' => 'mode=' . \Application\Model\Draft::MODE_SEALED_DECK)) ?>">
+		<td class='picker'>
+			<h3>Sealed deck</h3>
+			<p>Players open their packs without drafting them. Each player receives packs from the same sets. All the packs are standard booster packs (they contain a random rare or mythic, three random uncommons and ten random commons).</p>
+			<p><strong>Recommended number of players</strong>: Any number (can be played solitaire)</p> 
+			<p><strong>Recommended number of packs</strong>: 6</p>
+		</td>				
+	</tr>
+</table>

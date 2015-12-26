@@ -114,16 +114,16 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Draft());
                     return new TableGateway('draft', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\DraftSetTable' =>  function($sm) {
-                    $tableGateway = $sm->get('DraftSetTableGateway');
-                    $table = new \Application\Model\DraftSetTable($tableGateway);
+                'Application\Model\DraftSetVersionTable' =>  function($sm) {
+                    $tableGateway = $sm->get('DraftSetVersionTableGateway');
+                    $table = new \Application\Model\DraftSetVersionTable($tableGateway);
                     return $table;
                 },
-                'DraftSetTableGateway' => function ($sm) {
+                'DraftSetVersionTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftSet());
-                    return new TableGateway('draft_set', $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftSetVersion());
+                    return new TableGateway('draft_set_version', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\DraftPlayerTable' =>  function($sm) {
                     $tableGateway = $sm->get('DraftPlayerTableGateway');
