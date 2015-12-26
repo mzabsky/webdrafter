@@ -61,19 +61,6 @@ return array(
         			),
         		),
         	),   
-        	'member-area-with-draft-id' => array(
-        		'type' => 'Segment',
-        		'options' => array(
-        			'route' => '/member-area/draft-admin/:draft_id',
-                    'constraints' => array(
-                        'draft_id' => '[0-9]+'
-                    ),
-       				'defaults' => array(
-      					'controller' => 'Application\Controller\MemberArea',
-       					'action' => 'draft-admin'
-        			),
-        		),
-        	),     
         	'member-area-manage-set' => array(
         		'type' => 'Segment',
         		'options' => array(
@@ -88,6 +75,19 @@ return array(
         			),
         		),
         	),   
+        	'member-area-with-draft-id' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/member-area/draft/:action/:draft_id',
+                    'constraints' => array(
+                        'draft_id' => '[0-9]+'
+                    ),
+       				'defaults' => array(
+      					'controller' => 'Application\Controller\MemberArea',
+       					'action' => 'draft-admin'
+        			),
+        		),
+        	),     
         	'member-area-manage-set-version' => array(
         		'type' => 'Segment',
         		'options' => array(

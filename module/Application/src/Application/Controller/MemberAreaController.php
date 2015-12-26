@@ -542,7 +542,7 @@ class MemberAreaController extends AbstractActionController
 			
 			$draftTable = $sm->get('Application\Model\DraftTable');
 			$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
-			$draftSetTable = $sm->get('Application\Model\DraftSetTable');
+			$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
 			
@@ -568,11 +568,11 @@ class MemberAreaController extends AbstractActionController
 			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
 			{
 				$packGenerator = new BoosterDraftPackGenerator();
-				$draftSets = $draftSetTable->fetchByDraft($draftId);
+				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
 				$picks = array();
-				foreach($draftSets as $setIndex => $draftSet)
+				foreach($draftSetVersions as $setIndex => $draftSetVersion)
 				{		
-					$cards = $cardTable->fetchBySet($draftSet->setId);
+					$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 					$cardArray = array();
 					foreach($cards as $card)
 					{
@@ -601,8 +601,8 @@ class MemberAreaController extends AbstractActionController
 			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT)
 			{
 				$packGenerator = new CubePackGenerator();				
-				$draftSet = $draftSetTable->fetchByDraft($draftId)->current();
-				$cards = $cardTable->fetchBySet($draftSet->setId);
+				$draftSetVersion = $draftSetVersionTable->fetchByDraft($draftId)->current();
+				$cards = $cardTable->fetchBySet($draftSetVersion->setId);
 				
 				$cardArray = array();				
 				foreach($cards as $card)
@@ -636,21 +636,21 @@ class MemberAreaController extends AbstractActionController
 			else if($draft->gameMode == Draft::MODE_CHAOS_DRAFT)
 			{
 				$packGenerator = new BoosterDraftPackGenerator();
-				$draftSets = $draftSetTable->fetchByDraft($draftId);
-				$draftSetArray = array();				
+				$draftSetVersions = $draftSetTable->fetchByDraft($draftId);
+				$draftSetVersionArray = array();				
 				
-				$convertedDraftSets = \Application\resultSetToArray($draftSets);
+				$convertedDraftSetVersionss = \Application\resultSetToArray($draftSetVersions);
 				while(count($draftSetArray) < 3 * $numberOfPlayers)
 				{
-					foreach($convertedDraftSets as $draftSet)
+					foreach($convertedDraftSetVersions as $draftSetVersion)
 					{
-						$draftSetArray[] = $draftSet;		
+						$draftSetVersionArray[] = $draftSetVersion;		
 					}
 					
-					if(count($draftSetArray) == 0) throw new \Exception("No sets selected for this draft");
+					if(count($draftSetVersionArray) == 0) throw new \Exception("No sets selected for this draft");
 				}
 				
-				shuffle($draftSetArray);
+				shuffle($draftSetVersionArray);
 				
 				$picks = array();
 				foreach($draftPlayerArray as $playerIndex => $player)
@@ -658,7 +658,7 @@ class MemberAreaController extends AbstractActionController
 					for($i = 0; $i < 3; $i++)
 					{
 
-						$cards = $cardTable->fetchBySet($draftSetArray[$playerIndex * 3 + $i]->setId);
+						$cards = $cardTable->fetchBySet($draftSetVersionArray[$playerIndex * 3 + $i]->setId);
 						$pack = $packGenerator->generatePacks($cards, 1)[0];
 						
 						foreach ($pack as $card)
