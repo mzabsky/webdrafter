@@ -811,7 +811,7 @@ class MemberAreaController extends AbstractActionController
 						
 						foreach($cards as $card)
 						{
-							$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
+							$cardName = preg_replace("/[^a-zA-Z0-9-. ]/iu", "", $card->name);
 							switch($formData["art_url_format"])
 							{
 								case UploadCardsForm::NAME_DOT_PNG:
