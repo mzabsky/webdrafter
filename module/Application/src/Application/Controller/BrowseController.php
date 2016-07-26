@@ -60,6 +60,39 @@ class BrowseController extends AbstractActionController
     	return $viewModel;
     }
     
+    public function standaloneAction()
+    {
+    	$setUrlName = $this->getEvent()->getRouteMatch()->getParam('url_name');
+    	
+    	$sm = $this->getServiceLocator();
+    	$setTable = $sm->get('Application\Model\SetTable');
+    	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+    	$cardTable = $sm->get('Application\Model\CardTable');
+    	$userTable = $sm->get('Application\Model\UserTable');
+    	
+    	$viewModel = new ViewModel();
+    	$viewModel->set = $setTable->getSetByUrlName($setUrlName);
+    	if($viewModel->set === null){
+    		return $this->notFoundAction();
+    	}
+    	
+    	$viewModel->user = $userTable->getUser($viewModel->set->userId);
+    	if($viewModel->user === null){
+    		return $this->notFoundAction();
+    	}
+    	
+    	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
+    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
+    	$viewModel->cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
+    	
+    	if(isset($_GET["source"])){
+    		echo nl2br (htmlspecialchars($viewModel->set->about));
+    		die();
+    	}
+    	
+    	return $viewModel;
+    }
+    
     public function setVersionAction()
     {
     	$setUrlName = $this->getEvent()->getRouteMatch()->getParam('url_name');

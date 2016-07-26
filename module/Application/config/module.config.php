@@ -141,7 +141,23 @@ return array(
      					'action'     => 'set',
         			),
         		),
-        	),       
+        	),    
+        		
+        		'browse-standalone' => array(
+        				'type' => 'Segment',
+        				'options' => array(
+        						'route' => '/standalone/:url_name',
+        						'constraints' => array(
+        								'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+        								'set_name' => '[a-zA-Z][a-z0-9-]*'
+        						),
+        						'defaults' => array(
+        								'controller' => 'Application\Controller\Browse',
+        								'action'     => 'standalone',
+        						),
+        				),
+        		),
+        		
         	'browse-version' => array(
         		'type' => 'Segment',
         		'options' => array(
