@@ -2,6 +2,7 @@ var Spoiler = function (options){
     this.data = options.data;    
     this.mainElement = options.element;
     this.enableControl = options.enableControl != null ? options.enableControl : true;
+    this.enableLinks = options.enableLinks != null ? options.enableLinks : true;
     this.showVersion = options.showVersion != null ? options.showVersion : false;
     this.initializeStructure();
     this.initializeCardElements();
@@ -111,14 +112,24 @@ Spoiler.prototype.initializeCardElements = function () {
                 "       <td class='card-pt-row card-back'><div class='card-pt'>" + card.ptString2 + "</div></td>" +
                 "   </tr>" : "")
             : "") +
-            "   <tr>" +
-            "       <td class='card-filler-row'>" +
-            "			<a href='javascript:void(0)' onclick='spoiler.copyAsBBCode(\"" + card.name + "\")'>Copy as forum code</a>" + 
-    		"			<a href='javascript:void(0)' onclick='spoiler.copyUrl(\"" + card.name + "\")'>Copy permalink</a>" +
-    		"			<a href='javascript:void(0)' onclick='spoiler.copyArtUrl(\"" + card.name + "\")'>Copy image URL</a>" +
-    		"		</td>" +
-            "   </tr>" +
-            "</table><hr class='card-separator' />");
+            (this.enableLinks ?
+	            "   <tr>" +
+	            "       <td class='card-filler-row'>" +
+	            "			<a href='javascript:void(0)' onclick='spoiler.copyAsBBCode(\"" + card.name + "\")'>Copy as forum code</a>" + 
+	    		"			<a href='javascript:void(0)' onclick='spoiler.copyUrl(\"" + card.name + "\")'>Copy permalink</a>" +
+	    		"			<a href='javascript:void(0)' onclick='spoiler.copyArtUrl(\"" + card.name + "\")'>Copy image URL</a>" +
+	    		"		</td>" +
+	            "   </tr>"
+            : "") +
+            "</table><hr class='card-separator' />"
+
+        );
+        
+        if(!this.enableLinks){
+        	$('a', this.spoilerCardElements[card.cardId]).each(function(){
+                $(this).replaceWith( this.childNodes );
+            });
+        }
     }
 }
 

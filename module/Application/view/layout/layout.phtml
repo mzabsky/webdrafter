@@ -23,6 +23,7 @@
 
         <!-- Scripts -->
         <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/jquery.layout_and_plugins.js'))
             ->prependFile($this->basePath('js/autocard.js'))
             ->prependFile($this->basePath('js/spoiler.js'))
             ->prependFile($this->basePath('js/webdrafter.js'))
@@ -48,7 +49,7 @@
 		</script>
     </head>
     <body>
-        <div class="container">
+        <div class="container <?php echo $this->wideMode() ? 'wide-mode' : 'column-mode'?>">
         	<div id="header-wrapper">
 	        	<div id="header">
 	        		<?php if($this->config('devRealm')){?>
@@ -80,10 +81,12 @@
         	<div id="body">
             	<?php echo $this->content; ?>
             </div>
-            <footer>
-                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky. All dates and times are in CEST.</p> 
-                <p>WebDrafter is <a href="https://github.com/mzabsky/webdrafter" title="WebDrafter at GitHub"/>open source</a>. <a href="https://trello.com/b/olnCSJQC/webdrafter">View known issues and TODO</a>.</p>
-            </footer>
+            <?php if(!$this->wideMode()){ ?>
+	            <footer>
+	                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky. All dates and times are in CEST.</p> 
+	                <p>WebDrafter is <a href="https://github.com/mzabsky/webdrafter" title="WebDrafter at GitHub"/>open source</a>. <a href="https://trello.com/b/olnCSJQC/webdrafter">View known issues and TODO</a>.</p>
+	            </footer>
+            <?php } ?>
         </div> <!-- /container -->
         <?php echo $this->inlineScript() ?>
     </body>

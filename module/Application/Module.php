@@ -202,6 +202,10 @@ class Module
      					'symbols' => function($sm) {
      						$helper = new \Application\View\Helper\Symbols() ;
      						return $helper;
+     					},
+     					'wideMode' => function($sm) {
+     						$helper = new \Application\View\Helper\WideMode() ;
+     						return $helper;
      					}
      			)
      	);
