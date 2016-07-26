@@ -209,6 +209,7 @@ class IsochronDrafterSetParser
  		$str = str_replace("<img src='magic-mana-small-T.png' alt='T' width='14' height='14'>", '[T]', $str);
  		$str = str_replace("<img src='magic-mana-small-Q.png' alt='Q' width='14' height='14'>", '[Q]', $str);
 		$str = str_replace("<img src='magic-mana-small-S.png' alt='S' width='14' height='14'>", '[S]', $str);
+		$str = str_replace("<img src='magic-mana-small-C.png' alt='C' width='14' height='14'>", '[C]', $str);
 		
 		$str = str_replace("<img src='magic-mana-small-X.png' alt='X' width='14' height='14'>", '[X]', $str);
 		$str = str_replace("<img src='magic-mana-small-Y.png' alt='Y' width='14' height='14'>", '[Y]', $str);
