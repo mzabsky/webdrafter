@@ -36,4 +36,15 @@ class Draft
         $this->lobbyKey = $data['lobby_key'];
         $this->gameMode = $data['game_mode'];
     }
+    
+    public static function getGameModeName($gameMode)
+    {
+    	switch($gameMode)
+    	{
+    		case Draft::MODE_BOOSTER_DRAFT: return "Booster draft";
+    		case Draft::MODE_CUBE_DRAFT: return "Cube draft";
+    		case Draft::MODE_CHAOS_DRAFT: return "Chaos draft";
+    		case Draft::MODE_SEALED_DECK: return "Sealed deck";
+    	}
+    }
 }

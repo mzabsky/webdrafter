@@ -34,7 +34,7 @@ $(function(){
 </script>
 <?php $this->headTitle()->append("Host event"); ?>
 <div class="host-event">
-	<h2 id="contentTitle">Host event</h2>
+	<h2 id="contentTitle">Host event - <?php echo Application\Model\Draft::getGameModeName($this->mode)?></h2>
 	<p>Selected packs (click to remove):</p>
 	<div id="selected-packs"></div>
 
@@ -80,6 +80,6 @@ $(function(){
 		<input name="mode" type="hidden" value="<?php echo $this->mode?>"/>
 		<input name="setVersionIds" type="hidden"/>
 		<input type="submit" value="Open the event"/>
-		<p>Once you open the event, you will be able to generate invitation links for the players.</p>
+		<p>Once you open the event, you will be to invite players to join.</p>
 	</form>
 </div>

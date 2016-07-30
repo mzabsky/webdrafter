@@ -1,5 +1,5 @@
 <?php $this->headTitle()->append("Manage " . $this->draft->name); ?>
-<h2 id="contentTitle"><?php echo $this->draft->name; ?></h2>
+<h2 id="contentTitle"><?php echo $this->draft->name; ?> <img src="<?php echo $this->basePath('images/spinner.svg')?>" alt="Spinner" class="spinner headerSpinner"/></h2>
 <?php 
 if($this->draftOpened)
 {
@@ -13,57 +13,81 @@ if($this->draftOpened)
 
 <script>
 var draftStatuses = {"open":1, "running":2, "finished":3};
+var lastData = null;
+var xhr = null;
+var timer = null;
 
 $(document).ready(function(){
-	$("#draft_players").html("Loading...");
-	refreshPlayersList();
+	refreshPlayersListExplicit();
 });
 
 function addDraftPlayer()
 {
 	$("#draft_players").html("Loading...");
 	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'add-draft-player', 'draft_id' => $this->draft->draftId));?>", function( data ) {		
-		refreshPlayersList();
+		refreshPage();
 	});
 }
 
 function refreshPlayersListExplicit()
 {
+	lastData = null;
 	$("#draft_players").html("Loading...");
-	refreshPlayersList();
+	refreshPage();
 }
 
-function refreshPlayersList()
+function refreshPage()
 {
-	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'get-draft-players', 'draft_id' => $this->draft->draftId));?>", function( data ) {
+	if(timer != null)
+	{
+		clearTimeout(timer);
+	}
+	
+	if(xhr != null)
+	{
+		xhr.abort();
+		xhr = null;
+
+	}
+	
+	$('.spinner').show();
+	xhr = $.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'get-draft-players', 'draft_id' => $this->draft->draftId));?>", function( data ) {
+		$('.spinner').hide();
+		if(lastData == data){
+			timer = setTimeout(function(){ refreshPage(); }, 1000);
+			return;
+		}
+		
 		$("#draft_players").empty();
 		if(data["draft"]["status"] == draftStatuses.open)
 		{
-			$("#draft_players").append("<p>The event is now open for players to join. Link to open lobby for this event:</p>");
-			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br /><a href='<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey));?>' target='blank'>Join event as player</a><br/>");
-			$("#draft_players").append("<p>Share this link with the players - each player will be able to join at their own leisure.</p>")
-			$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name (or log in) and click \"Join\". </p>");
-			$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
+			$("#draft_players").append("<p>The event is now open for players to join. Link to lobby for this event:</p>");
+			$("#draft_players").append("<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br />");
+			$("#draft_players").append("<a href='<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey));?>' target='blank'>Join event as player</a><br/>");
+			$("#draft_players").append("<p>Share this link with the players. Below, you can find the list of joined players along with their personal draft links (you can resend the link to the player, in case they lose it).</p>")
+			$("#draft_players").append("<p>Joined players:</p>")
+			//$("#draft_players").append("<p>Alternatively, you can generate individual links for each player by clicking the \"Add player\" button. The player has to open the link, fill in his player name (or log in) and click \"Join\". </p>");
+			//$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
 
 			var items = [];
 			$.each( data["draftPlayers"], function( key, val ) {
-				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? "JOINED as " + val["name"] : "PENDING");
+				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) : "<i>&lt;PENDING&gt;</i>");
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 			
-			$("#draft_players").append("<p>Once all the players have joined, you can start the event by clicking \"Start event\". Once the event is started, players that haven't joined yet won't be able to join anymore. Places at the table will only be created for the players that have joined.");
-			$("#draft_players").append("<button onclick=\"startDraft()\">Start event</button>");
+			$("#draft_players").append("<p>Once all the players have joined, you can start the event by clicking \"Start event\". Once the event is started, players won't be able to join anymore.");
+			$("#draft_players").append("<input type='submit' onclick=\"startDraft()\" value='Start event' />");
 		}
 		else if(data["draft"]["status"] == draftStatuses.running || data["draft"]["status"] == draftStatuses.finished)
 		{
 			if(data["draft"]["status"] == draftStatuses.running)
 			{
 				$("#draft_players").append("<p>The event is now running and players can make their picks. You can obtain their pick/pool lists here. If you are playing in the draft, please don't use this to get an unfair advantage, please :)</p>");
-				$("#draft_players").append("<button onclick=\"refreshPlayersListExplicit()\">Refresh</button><br/>");
-				$("#draft_players").append("Pack: " + data["draft"]["packNumber"] + ", pick: " + data["draft"]["pickNumber"] + "<br/>");
+				//$("#draft_players").append("<button onclick=\"refreshPlayersListExplicit()\">Refresh</button><br/>");
+				$("#draft_players").append("<p><strong>Pack: " + data["draft"]["packNumber"] + ", pick: " + data["draft"]["pickNumber"] + "</b></p>");
 			}
 			else {
-				$("#draft_players").append("<p>The event has concluded. You can obtain the pick lists here.</p>");
+				$("#draft_players").append("<p>The event has concluded. You can obtain players' pick/pool lists here.</p>");
 			}
 			
 			var items = [];
@@ -72,11 +96,13 @@ function refreshPlayersList()
 				{
 					return;
 				}
-				
-				var url = "<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>/draft/" + val["inviteKey"] + "/pick-list'>" + val["name"] + "</a>";
+
+				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) + " <small>(<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "/pick-list' target='blank'>pick list</a>)</small>";
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 		}
+
+		timer = setTimeout(function(){ refreshPage(); }, 1000);
 	});
 }
 
@@ -84,7 +110,7 @@ function startDraft()
 {
 	$("#draft_players").html("Loading...");
 	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'start-draft', 'draft_id' => $this->draft->draftId));?>", function( data ) {		
-		refreshPlayersList();
+		refreshPlayersListExplicit();
 	});
 }
 
