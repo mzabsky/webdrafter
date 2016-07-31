@@ -5,13 +5,13 @@ use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
 class FullFormInput extends AbstractHelper implements ServiceLocatorAwareInterface
 {
-    public function __invoke($input, $prefix = null, $postfix = null)
+    public function __invoke($input, $prefix = null, $postfix = null, $delinkify = false)
     {
     	$str = '';
     	$str .= '<div class="form-element ' . (count($input->getMessages()) > 0 ? 'has-error' : '') . '">';
     	$str .= $this->view->formLabel($input);
         $str .= '<span class="description">' . $input->getOption('description') . '</span>';
-    	$str .= $prefix;
+    	$str .= $this->delinkyfy($prefix, $delinkify);
     	//$str .= '<div class="input-and-errors">';
     	if($input instanceof \Zend\Form\Element\TextArea)
     	{
@@ -38,6 +38,17 @@ class FullFormInput extends AbstractHelper implements ServiceLocatorAwareInterfa
     	$str .= $this->view->formElementErrors($input);    	
         $str .= '</div>';
         return $str;
+    }
+    
+    // Prevent linkify-style browser plugin from highlighting this
+    private function delinkyfy($str, $delinkify){
+    	if(!$delinkify) return $str;
+    	
+    	$strNew = "";
+    	for($i = 0; $i < strlen($str); $i++){
+    		$strNew .= '<font>' . $str[$i]. '</code>';
+    	}
+    	return $strNew;
     }
     
     /*

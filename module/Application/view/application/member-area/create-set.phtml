@@ -24,7 +24,7 @@ $url = substr($url, 0, strpos($url, $replacementToken));
 
 echo $this->form()->openTag($form);
 echo $this->fullFormInput($form->get('name'));
-echo $this->fullFormInput($form->get('url_name'), $url);
+echo $this->fullFormInput($form->get('url_name'), $url, null, true);
 echo $this->fullFormInput($form->get('code'));
 echo $this->fullFormInput($form->get('about'));
 ?>

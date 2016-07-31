@@ -28,7 +28,7 @@ $url = $this->url('browse-version', array('url_name' => $set->urlName, 'version_
 $url = substr($url, 0, strpos($url, $replacementToken));
 
 echo $this->fullFormInput($form->get('name'));
-echo $this->fullFormInput($form->get('url_name'), $url);
+echo $this->fullFormInput($form->get('url_name'), $url, null, true);
 echo $this->fullFormInput($form->get('about'));
 
 ?>
