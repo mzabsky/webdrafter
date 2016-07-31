@@ -1,401 +1,464 @@
-<?php $this->headTitle()->append($this->draft->name); ?>
-<audio id="audio_notification" src="/audio/267337__gkillhour__ding-4.wav" preload="auto"></audio>
-<h2 id="contentTitle"><?php echo $this->draft->name; ?></h2>
-<div id="cardSizeSlider"></div>
-<div id="draft">Loading...</div>
-<div style="display:none" id="cardpool">
-<?php
-foreach ($this->cards as $card)
-{
-	echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card'/>\n"; 	
-}
-?>
-</div>
-<script>
-var draftStatuses = {"open":1, "running":2, "finished":3};
-var pickZones = {"maindeck":0, "sideboard":1, "hidden":2};
-var timer = null;
-var xhr = null;
-var lastPackPick = null;
-var lastDraftInfo = null;
-var existingBasics = {
-	<?php
-	foreach($this->basics as $basic)
-	{
-		echo '"' . $basic->color . '": ' . $basic->count . ',';
-	}?>
-};
-/*var lastDraftInfos = {
-	all: null,
-	draftPlayers: null,
-	booster: null,
-	picks: null
-}*/
-
-$(document).ready(function(){
-	$("#draft").html("Loading...");
-	refreshDraft();
-});
-
-/*function (spoiler, a, b) {
-    var rate = function (x) {
-        if (x.rarity == 'C') return 4;
-        else if (x.rarity == 'U') return 3;
-        else if (x.rarity == 'R') return 2;
-        else if (x.rarity == 'M') return 1;
-        else throw "Not reached";
-    }
-
-    var ratingA = rate(a);
-    var ratingB = rate(b);
-
-    if (ratingA == ratingB) return spoiler.sortFunctions["color"](spoiler, a, b);
-    else return ratingA - ratingB;
-}*/
-
-function joinDraft()
-{
-	var playerName = $("#player_name").val();
-	if(playerName.length == 0)
-	{
-		alert("Please fill in player name before joining.");
-		return;
-	}
+<?php $this->headTitle()->append($this->draft->name); $this->wideMode(true); ?>
+<div class="draft-screen">
+	<audio id="audio_notification" src="/audio/267337__gkillhour__ding-4.wav" preload="auto"></audio>
+	<div class="draft-bar">
+		<span class="draft-name"><?php echo $this->draft->name; ?></span>
+		<!-- <i class="fa fa-question-circle"></i> -->
+		hosted by <a href="<? echo $this->url('browse-user', array('user_id' => $this->host->hostId))?>"><?php echo $this->host->name?></a>
+		<span class='draft-pick-display'>at pack <span class="draft-pack-number">?</span>, pick <span class="draft-pick-number">?</span></span>
+		<img src="<?php echo $this->basePath('images/spinner.svg')?>" alt="Spinner" class="spinner"/>
+		<div class="card-size">
+			<i class="fa fa-search-plus"></i>
+			<div id="card-size-slider"></div>
+			<i class="fa fa-search-minus"></i>
+		</div>
+	</div>
+	<div class="draft-bar" id="players-list">
+	</div>
 	
-	$("#draft").html("Loading...");
-	$.getJSON( "<?php echo $this->url('draft', array('action' => 'join', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?name=" + playerName, function( data ) {		
+	<div id="draft"></div>
+	<div style="display:none" id="cardpool">
+	<?php
+	foreach ($this->cards as $card)
+	{
+		echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card'/>\n"; 	
+	}
+	?>
+	</div>
+	<script>
+	var draftStatuses = {"open":1, "running":2, "finished":3};
+	var pickZones = {"maindeck":0, "sideboard":1, "hidden":2};
+	var timer = null;
+	var xhr = null;
+	var lastPackPick = null;
+	var lastDraftInfo = null;
+	var lastStatus = null;
+	var existingBasics = {"W": 0, "U": 0, "B": 0, "R": 0, "G": 0, 
+		<?php
+		foreach($this->basics as $basic)
+		{
+			echo '"' . $basic->color . '": ' . $basic->count . ',';
+		}?>
+	};
+	/*var lastDraftInfos = {
+		all: null,
+		draftPlayers: null,
+		booster: null,
+		picks: null
+	}*/
+	
+	$(document).ready(function(){
+		$("#draft").html("<img src='<?php echo $this->basePath('images/spinner.svg')?>' class='spinner-large'/>");
 		refreshDraft();
 	});
-}
-
-function refreshDraftExplicit()
-{
-	$("#draft").html("Loading...");
-	refresh();
-}
-
-function refreshCardCounts()
-{
-	var total = 0;
-	$("#deckbuilder .cardcount" ).each(function(index) {
-		  var count = $("#deckbuilder tbody td:eq(" + index + ") img.card").filter(function(){
-	          return $(this).css("position") == "static"; // At the end of a drag-drop operation, the object is actually both in the original and the target columns (the original has position absolute and shouldn't be counted) 
-		  }).size();
-		  total += count;
-		  $(this).html(count);
-	});
-	$("#totalcount").html(total);
-}
-
-var basicXhr = null;
-function changeBasicCount(color, change)
-{
-	var oldValue = parseInt($(".basics_mid_row td[basicColor='" + color + "'] span").html());
-	var newValue = Math.max(oldValue + change, 0);
-	$(".basics_mid_row td[basicColor='" + color + "'] span").html(newValue);
-
-	if(basicXhr != null)
-	{
-		basicXhr.abort();
-		basicXhr = null;
-	}
 	
-	basicXhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'update-basic', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?color=" + color + "&count=" + newValue);
-}
-
-function refreshDraft()
-{
-	if(timer != null)
-	{
-		clearTimeout(timer);
-	}
-
-	if(xhr != null)
-	{
-		xhr.abort();
-		xhr = null;
-	}
+	/*function (spoiler, a, b) {
+	    var rate = function (x) {
+	        if (x.rarity == 'C') return 4;
+	        else if (x.rarity == 'U') return 3;
+	        else if (x.rarity == 'R') return 2;
+	        else if (x.rarity == 'M') return 1;
+	        else throw "Not reached";
+	    }
 	
-	xhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'get-draft-info', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", function( data ) {		
-		xhr = null;
-
-		var str = JSON.stringify(data);
-		if(lastDraftInfo == str)
+	    var ratingA = rate(a);
+	    var ratingB = rate(b);
+	
+	    if (ratingA == ratingB) return spoiler.sortFunctions["color"](spoiler, a, b);
+	    else return ratingA - ratingB;
+	}*/
+	
+	function joinDraft()
+	{
+		var playerName = $("#player_name").val();
+		if(playerName.length == 0)
 		{
-			timer = setTimeout(function(){ refreshDraft(); }, 1000);
+			alert("Please fill in player name before joining.");
 			return;
 		}
-
-		lastDraftInfo = str;
 		
-		$("#draft").empty();
-		if(data["draftStatus"] == draftStatuses.open)
+		$("#draft").html("Loading...");
+		$.getJSON( "<?php echo $this->url('draft', array('action' => 'join', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?name=" + playerName, function( data ) {		
+			refreshDraft();
+		});
+	}
+	
+	function refreshDraftExplicit()
+	{
+		$("#draft").html("Loading...");
+		refresh();
+	}
+	
+	function refreshCardCounts()
+	{
+		var total = 0;
+		$("#deckbuilder .cardcount" ).each(function(index) {
+			  var count = $("#deckbuilder tbody td:eq(" + index + ") img.card").filter(function(){
+		          return $(this).css("position") == "static"; // At the end of a drag-drop operation, the object is actually both in the original and the target columns (the original has position absolute and shouldn't be counted) 
+			  }).size();
+			  total += count;
+			  $(this).html(count);
+		});
+		$("#totalcount").html(total);
+	}
+	
+	var basicXhr = null;
+	function changeBasicCount()
+	{
+		if(basicXhr != null)
 		{
-			if(data["hasJoined"]){
-				$("#draft").html("<p>You have joined this draft. Please wait until the host starts it.</p>");
-				$("#draft").append("<p><b>Joined players<b>: </p>");
-				$.each( data["draftPlayers"], function( key, val ) {
-					if(val["userId"] == null)
+			basicXhr.abort();
+		}
+		
+		basicXhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'update-basic', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?w=" + $("input[basicColor='W']").val() + "&u=" + $("input[basicColor='U']").val() + "&b=" + $("input[basicColor='B']").val() + "&r=" + $("input[basicColor='R']").val() + "&g=" + $("input[basicColor='G']").val());
+	}
+	
+	function refreshDraft()
+	{
+		if(timer != null)
+		{
+			clearTimeout(timer);
+		}
+	
+		if(xhr != null)
+		{
+			xhr.abort();
+			xhr = null;
+
+		}
+
+		$('.spinner').show();	
+			
+		xhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'get-draft-info', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", function( data ) {		
+			xhr = null;
+			$('.spinner').hide();
+	
+			var str = JSON.stringify(data);
+			if(lastDraftInfo == str)
+			{
+				timer = setTimeout(function(){ refreshDraft(); }, 1000);
+				return;
+			}
+	
+			lastDraftInfo = str;
+			
+			if(data["draftStatus"] == draftStatuses.open)
+			{
+				$("#draft").empty();
+				if(data["hasJoined"]){
+					var html = "<div class='centered-box'><p>You have joined this draft. Please wait until the host starts it.</p>";
+					html += "<p><b>Joined players<b>: </p>";					
+					
+					$.each( data["draftPlayers"], function( key, val ) {
+						if(val["userId"] == null)
+						{
+							html += val["name"] + "<br/>";
+						}
+						else 
+						{
+							html += "<a href='/user/" + val["urlName"] +"' target='_blank'>" + val["name"] + "</a><br/>";
+						}
+					});
+
+					html += "</div>";
+					
+					$("#draft").append(html)
+
+					timer = setTimeout(function(){ refreshDraft(); }, 1000);
+				}
+				else {
+					$("#draft").html("You have not joined this draft yet. If the host starts it now, you will not be opart of the draft. Click the button below to join.<br /><br />");
+					
+	<?php if($this->auth()->getStatus() != \Application\GoogleAuthentication::STATUS_LOGGED_IN){ ?>
+					$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' />");
+					$("#draft").append("<button onclick='joinDraft()'>Join draft</button>");
+	<?php } else { ?>
+					$("#draft").append("Player name: <?php echo $this->auth()->getUser()->name ?>  <button onclick='joinDraft()'>Join draft</button>");
+	<?php } ?>
+				}
+			}
+			else if(data["draftStatus"] == draftStatuses.running)
+			{
+				$('.draft-pick-display').show();
+				$('.draft-pack-number').html(data["packNumber"]);
+				$('.draft-pick-number').html(data["pickNumber"]);
+
+				/*$('.draft-picks').resizable({
+				    handles: "n",
+				    //containment: "#draft"
+				});*/
+				
+				// Construct the drafting window, if it wasn't constructed yet
+				if(lastStatus != draftStatuses.running){
+					$("#draft").empty();
+					$("#draft").html("<div class='draft-booster'></div><div class='draft-picks'></div>");
+					//$("#draft").layout({ applyDefaultStyles: true, livePaneResizing: true });
+				}
+
+				$(".draft-booster").empty().append('<div class="draft-area-label">DRAFT PACK</div>');
+				$(".draft-picks").empty().append('<div class="draft-area-label">YOUR PICKS</div>');
+
+				$('#players-list').show();
+				var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";
+				$("#players-list").empty();	
+				$("#players-list").append(directionArrow);
+				$.each( data["pickIndicators"], function( key, val ) {
+					var link;
+					if(val['userId'] == null)
 					{
-						$("#draft").append(val["name"] + "<br/>");
+						link = key;
+					}
+					else {
+						link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
+					}
+	
+					if(val['hasPicked'])
+					{
+						$("#draft").append("<span style='display: inline-block; background: #33FF33'>" + link + "</span>" + directionArrow);
 					}
 					else 
 					{
-						$("#draft").append("<a href='/user/" + val["userId"] +"'>" + val["name"] + "</a><br/>");
+						$("#players-list").append(link + directionArrow);
 					}
 				});
-				timer = setTimeout(function(){ refreshDraft(); }, 1000);
-			}
-			else {
-				$("#draft").html("You have not joined this draft yet. If the host starts it now, you will not be opart of the draft. Click the button below to join.<br /><br />");
-				$("#draft").append("Player name: <button onclick='joinDraft()'>Join draft</button>");
-<?php if($this->auth()->getStatus() != \Application\GoogleAuthentication::STATUS_LOGGED_IN){ ?>
-				$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' />");
-<?php } ?>
-				$("#draft").append("<button onclick='joinDraft()'>Join draft</button>");
-			}
-		}
-		else if(data["draftStatus"] == draftStatuses.running)
-		{
-			var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";	
-			$("#draft").append(directionArrow);
-			$.each( data["pickIndicators"], function( key, val ) {
-				var link;
-				if(val['userId'] == null)
-				{
-					link = key;
+				
+				if(data['hasPicked']){
+					$(".draft-booster").append("<p>You have already picked a card. Please wait until other players make a pick as well.</p>");
 				}
 				else {
-					link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
-				}
+					var packPick = "P" + data["packNumber"] + "P" + data["pickNumber"];					
+					$('.draft-pack-number').html(data["packNumber"]);
+					$('.draft-pick-number').html(data["pickNumber"]);
 
-				if(val['hasPicked'])
-				{
-					$("#draft").append("<span style='display: inline-block; background: #33FF33'>" + link + "</span>" + directionArrow);
+					if(lastPackPick != packPick)
+					{
+						document.getElementById('audio_notification').play();
+						lastPackPick = packPick;
+					}
+					
+					$.each( data["booster"], function( key, val ) {
+						$(".draft-booster").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone().attr("pickId", val["pickId"]));
+					});
+										
+					$(".draft-booster img").dblclick(function() {
+						if(xhr != null)
+						{
+							xhr.abort();
+							xhr = null;
+						}
+						if(timer != null)
+						{
+							clearTimeout(timer);
+						}
+						$('.spinner').show();
+						$('.draft-booster .card').css('visibility', 'hidden');
+						$.getJSON( "<?php echo $this->url('draft', array('action' => 'pick', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pickId=" + $(this).attr("pickId"), function( data ) {
+							refreshDraft();
+						});
+					});
 				}
-				else 
-				{
-					$("#draft").append(link + directionArrow);
-				}
-			});
-			
-			$("#draft").append("<p><b>Pack: " + data["packNumber"] + ", pick: " + data["pickNumber"] + "</b></p>");
-			if(data['hasPicked']){
-				$("#draft").append("<p>You have already picked a card. Please wait until other players make a pick as well.</p>");
-			}
-			else {
-				var packPick = "P" + data["packNumber"] + "P" + data["pickNumber"];
-				if(lastPackPick != packPick)
-				{
-					document.getElementById('audio_notification').play();
-					lastPackPick = packPick;
-				}
+	
 				
-				$("#draft").append("Double click a card to make a pick.<div id='booster'></div>");
-				$.each( data["booster"], function( key, val ) {
-					$("#booster").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone().attr("pickId", val["pickId"]));
+				$.each( data["picks"], function( key, val ) {
+					$(".draft-picks").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone());
 				});
-				$("#draft").append("<hr />");
-				$("#booster img").dblclick(function() {
-					if(xhr != null)
+	
+				timer = setTimeout(function(){ refreshDraft(); }, 1000);
+			}
+			else if(data["draftStatus"] == draftStatuses.finished)
+			{
+				$('.draft-pick-display').hide();
+				$('#players-list').hide();
+				$("#draft").empty();//.append('<div id="deckbuilder-screen"></div>');
+				
+				/*$("#deckbuilder-screen").append("<p>The draft has concluded. You can now build your deck.</p>");*/
+				//$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=cockatrice'>Export deck for Cockatrice</a>.</p>");
+				//$("#deckbuilder-screen").append("<p></p>");
+				$("#draft").append("<table id='deckbuilder'><thead><tr id='buttons-row'></tr><tr id='labels-row'></tr></thead><tbody><tr></tr></tbody></table>");
+	
+				/*$("#deckbuilder").after("<p>Basic lands:</p><table id='basics'><tr class='basics_up_row'></tr><tr class='basics_mid_row'></tr><tr class='basics_down_row'></tr></table>");
+	
+				$.each(["W", "U", "B", "R", "G"], function( key, val ) {
+					$(".basics_up_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",1)'>+</button></td>");
+					$(".basics_mid_row").append("<td basicColor='" + val + "'>" + val + ": <span class='basics_number'>" + (existingBasics[val] != null ? existingBasics[val] : 0) + "</span></td>");
+					$(".basics_down_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",-1)'>-</button></td>");
+				});*/
+
+				$("#buttons-row").append("<td colspan='8'></td>");
+				$("#buttons-row td").append("Cards in deck: <span id='totalcount'></span>&nbsp;&nbsp;&nbsp;&nbsp;");
+				$("#buttons-row td").append("<a href='#' id='sort-by-color'>Sort by color</a>&nbsp;&nbsp;&nbsp;&nbsp;");
+				$("#buttons-row td").append("<a href='#' id='sort-by-cmc'>Sort by CMC</a>&nbsp;&nbsp;&nbsp;&nbsp;");
+				$("#buttons-row td").append("<a href='#' id='sort-by-rarity'>Sort by rarity</a>&nbsp;&nbsp;&nbsp;&nbsp;");
+				$("#buttons-row td").append('<span class="basics">Basics: <span class="icon-wrapper"><i class="mtg white"></i></span><input type="text" basicColor="W" value="' + existingBasics.W + '"> <span class="icon-wrapper"><i class="mtg blue"></i></span><input type="text" basicColor="U" value="' + existingBasics.U + '"> <span class="icon-wrapper"><i class="mtg black"></i></span><input type="text" basicColor="B" value="' + existingBasics.B + '"> <span class="icon-wrapper"><i class="mtg red"></i></span><input type="text" basicColor="R" value="' + existingBasics.R + '"> <span class="icon-wrapper"><i class="mtg green"></i></span><input type="text" basicColor="G" value="' + existingBasics.G + '"></span>&nbsp;&nbsp;&nbsp;&nbsp;');
+				$("#buttons-row td").append("<a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=text' target='blank'>Export deck</a>");
+
+				$("input[basicColor]").change(function(){
+					changeBasicCount();
+				});
+				
+				var maxColumns = 7;
+				for(var i = 0; i < maxColumns; i++)
+				{
+					$("#labels-row").append("<td>" + (i + 1) + " - <span class='cardcount'></span></td>");	
+				}
+	
+				$("#labels-row").append("<td>Sideboard</td>");
+				
+				for(var i = 0; i < maxColumns; i++)
+				{
+					$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_MAINDECK?>' zoneColumn='" + i + "'></td>");
+				}
+	
+				$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_SIDEBOARD?>' zoneColumn='0'></td>");
+				
+				$.each( data["picks"], function( key, val ) {
+					var card = $("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone();
+					//card.css("vertical-align", "top");
+					card.attr("pickId", val["pickId"]);
+					
+					var column;
+					switch(val["zone"])
 					{
-						xhr.abort();
-						xhr = null;
+					case pickZones.maindeck:
+						column = val["zoneColumn"];
+						break;	
+					case pickZones.sideboard:
+						column = maxColumns;
+						break;
+					default:
+						column = -1;
 					}
-					if(timer != null)
-					{
-						clearTimeout(timer);
-					}
-					$("#draft").html("Loading...");
-					$.getJSON( "<?php echo $this->url('draft', array('action' => 'pick', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pickId=" + $(this).attr("pickId"), function( data ) {
-						refreshDraft();
+	
+					$("#deckbuilder tbody td:eq(" + column + ")").append(card);
+					card.draggable({
+						helper: "clone",
+						containment: $("#deckbuilder"),
+						revert: "invalid"
+					});
+	
+					card.click(function(){
+						$(this).toggleClass("selectedCard");
+					});
+					
+					$("#deckbuilder tbody td").droppable({
+						drop: function(e, droppedCard)
+						{
+							var droppable = $(this);
+	
+							console.log(droppable.attr("zoneColumn") );
+							console.log(droppedCard.draggable.parent().attr("zoneColumn"));
+							if(droppable.attr("zoneColumn") == droppedCard.draggable.attr("zoneColumn")) {
+								
+								console.log("skip");
+								return;
+							}					
+							
+							var pickId = droppedCard.draggable.attr("pickId");
+							droppedCard.draggable.detach().appendTo($(this));
+	
+	
+							var zoneSettings = new Array();
+													
+							$.each( $("#deckbuilder .selectedCard"), function( index, selectedCard ) {
+								//console.log($(selectedCard).attr("pickId"));
+								if($(selectedCard).attr("pickId") != pickId)
+								{
+									var selectedCardPickId = $(selectedCard).attr("pickId");
+									//console.log(selectedCard);
+									$(selectedCard).detach().appendTo(droppable);
+	
+									zoneSettings.push({pick_id: selectedCardPickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
+									
+									//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + selectedCardPickId + "&zone=" + droppable.attr("zone") + "&zone_column=" + droppable.attr("zoneColumn"));
+								}
+							});
+	
+							$("#deckbuilder .selectedCard").removeClass("selectedCard");
+	
+	
+							zoneSettings.push({pick_id: pickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
+							//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
+	
+							$.post( "<?php echo $this->url('draft', array('action' => 'sync-pick-zones', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", { zone_settings: zoneSettings });
+							
+							refreshCardCounts();
+						}
 					});
 				});
-			}
-							
-			$("#draft").append("Picked cards: <div id='picks'></div>");
-
-			
-			$.each( data["picks"], function( key, val ) {
-				$("#picks").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone());
-			});
-
-			timer = setTimeout(function(){ refreshDraft(); }, 1000);
-		}
-		else if(data["draftStatus"] == draftStatuses.finished)
-		{
-			$("#draft").append("<p>The draft has concluded.</p>");
-			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=text'>Export deck as text</a>.</p>");
-			$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=cockatrice'>Export deck for Cockatrice</a>.</p>");
-			$("#draft").append("<p>Picked cards:</p><p>Cards in deck: <span id='totalcount'></span></p>");
-			$("#draft").append("<p><button id='sort-by-color'>Sort by color</button><button id='sort-by-cmc'>Sort by CMC</button><button id='sort-by-rarity'>Sort by rarity</button></p>");
-			$("#draft").append("<table id='deckbuilder' border style='table-layout: fixed; width: 0px;'><thead><tr></tr></thead><tbody><tr></tr></tbody></table>");
-
-			$("#deckbuilder").after("<p>Basic lands:</p><table id='basics'><tr class='basics_up_row'></tr><tr class='basics_mid_row'></tr><tr class='basics_down_row'></tr></table>");
-
-			$.each(["W", "U", "B", "R", "G"], function( key, val ) {
-				$(".basics_up_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",1)'>+</button></td>");
-				$(".basics_mid_row").append("<td basicColor='" + val + "'>" + val + ": <span class='basics_number'>" + (existingBasics[val] != null ? existingBasics[val] : 0) + "</span></td>");
-				$(".basics_down_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",-1)'>-</button></td>");
-			});
-			
-			var maxColumns = 7;
-			for(var i = 0; i < maxColumns; i++)
-			{
-				$("#deckbuilder thead tr").append("<td>" + (i + 1) + " - <span class='cardcount'></span></td>");	
-			}
-
-			$("#deckbuilder thead tr").append("<td>Sideboard</td>");
-			
-			for(var i = 0; i < maxColumns; i++)
-			{
-				$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_MAINDECK?>' zoneColumn='" + i + "'></td>");
-			}
-
-			$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_SIDEBOARD?>' zoneColumn='0'></td>");
-			
-			$.each( data["picks"], function( key, val ) {
-				var card = $("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone();
-				//card.css("vertical-align", "top");
-				card.attr("pickId", val["pickId"]);
-				
-				var column;
-				switch(val["zone"])
-				{
-				case pickZones.maindeck:
-					column = val["zoneColumn"];
-					break;	
-				case pickZones.sideboard:
-					column = maxColumns;
-					break;
-				default:
-					column = -1;
-				}
-
-				$("#deckbuilder tbody td:eq(" + column + ")").append(card);
-				card.draggable({
-					helper: "clone",
-					containment: $("#deckbuilder"),
-					revert: "invalid"
+	
+				$('#sort-by-color').click(function(){
+					$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=color", function() { location.reload(); });
 				});
-
-				card.click(function(){
-					$(this).toggleClass("selectedCard");
+	
+				$('#sort-by-cmc').click(function(){
+					$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=cmc", function() { location.reload(); });
+				});
+	
+				$('#sort-by-rarity').click(function(){
+					$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=rarity", function() { location.reload(); });
+				});
+	
+				$("#labels-row td").click(function(){
+					//
+					//console.log($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size());
+					if($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size() != 0){
+						$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").addClass("selectedCard");
+					}
+					else {
+						$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").removeClass("selectedCard");
+					}	
 				});
 				
-				$("#deckbuilder tbody td").droppable({
-					drop: function(e, droppedCard)
-					{
-						var droppable = $(this);
-
-						console.log(droppable.attr("zoneColumn") );
-						console.log(droppedCard.draggable.parent().attr("zoneColumn"));
-						if(droppable.attr("zoneColumn") == droppedCard.draggable.attr("zoneColumn")) {
-							
-							console.log("skip");
-							return;
-						}					
-						
-						var pickId = droppedCard.draggable.attr("pickId");
-						droppedCard.draggable.detach().appendTo($(this));
-
-
-						var zoneSettings = new Array();
-												
-						$.each( $("#deckbuilder .selectedCard"), function( index, selectedCard ) {
-							//console.log($(selectedCard).attr("pickId"));
-							if($(selectedCard).attr("pickId") != pickId)
-							{
-								var selectedCardPickId = $(selectedCard).attr("pickId");
-								//console.log(selectedCard);
-								$(selectedCard).detach().appendTo(droppable);
-
-								zoneSettings.push({pick_id: selectedCardPickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
-								
-								//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + selectedCardPickId + "&zone=" + droppable.attr("zone") + "&zone_column=" + droppable.attr("zoneColumn"));
-							}
-						});
-
-						$("#deckbuilder .selectedCard").removeClass("selectedCard");
-
-
-						zoneSettings.push({pick_id: pickId, zone: droppable.attr("zone"), zone_column: droppable.attr("zoneColumn")});
-						//$.getJSON( "<?php echo $this->url('draft', array('action' => 'save-pick-zone', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pick_id=" + pickId + "&zone=" + $(this).attr("zone") + "&zone_column=" + $(this).attr("zoneColumn"));
-
-						$.post( "<?php echo $this->url('draft', array('action' => 'sync-pick-zones', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", { zone_settings: zoneSettings });
-						
-						refreshCardCounts();
+				refreshCardCounts();
+	
+				$(document).tooltip({
+					items: "#deckbuilder .card",
+					track: true,
+					show: false,
+					hide: false,
+					content: function(){
+						var element = $(this);
+						return "<img src='" + element.attr("src") + "'>";
 					}
 				});
-			});
 
-			$('#sort-by-color').click(function(){
-				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=color", function() { location.reload(); });
-			});
-
-			$('#sort-by-cmc').click(function(){
-				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=cmc", function() { location.reload(); });
-			});
-
-			$('#sort-by-rarity').click(function(){
-				$.getJSON( "<?php echo $this->url('draft', array('action' => 'sort-picks', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?sort_by=rarity", function() { location.reload(); });
-			});
-
-			$("#deckbuilder thead tr td").click(function(){
-				//
-				//console.log($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size());
-				if($("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img:not(.selectedCard)").size() != 0){
-					$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").addClass("selectedCard");
+				
+				if(data["draftStatus"] != draftStatuses.finished)
+				{
+					timer = setTimeout(function(){ refreshDraft(); }, 1000);
 				}
-				else {
-					$("#deckbuilder tbody tr td:eq(" + $(this).index() + ") img").removeClass("selectedCard");
-				}	
-			});
+			}		
 			
-			refreshCardCounts();
-
-			$(document).tooltip({
-				items: "#deckbuilder .card",
-				track: true,
-				show: false,
-				hide: false,
-				content: function(){
-					var element = $(this);
-					return "<img src='" + element.attr("src") + "'>";
-				}
-			});
-
-			if(data["draftStatus"] != draftStatuses.finished)
-			{
-				timer = setTimeout(function(){ refreshDraft(); }, 1000);
-			}
-		}		
-
-		// Make the newly constructed UI elements are properly sized
-		updateSizes($("#cardSizeSlider").slider("value")); 
+			var lastStatus = data["draftStatus"]; 
+	
+			// Make the newly constructed UI elements are properly sized
+			updateSizes($("#card-size-slider").slider("value")); 
+		});
+	}
+	
+	function sliderCallback (event, ui)
+	{
+		updateSizes(ui.value); 
+	};
+	
+	function updateSizes(size)
+	{
+		//console.log(size);
+		//console.log($("#deckbuilder td"));
+		$(".card").height(size);
+		var cellWidth = 218 * size / 300 + 12;
+		$("#deckbuilder #buttons-row td").width(8 * cellWidth);
+		$("#deckbuilder #labels-row td, #deckbuilder tbody td").width(cellWidth);
+		$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));		
+	}
+	
+	$("#card-size-slider").slider({
+		  range: "min",
+	      min: 100,
+	      max: 600,
+	      value: 200,
+	      slide: sliderCallback,
+	      change: sliderCallback
 	});
-}
-
-function sliderCallback (event, ui)
-{
-	updateSizes(ui.value); 
-};
-
-function updateSizes(size)
-{
-	//console.log(size);
-	//console.log($("#deckbuilder td"));
-	$(".card").height(size);
-	$("#deckbuilder td").width(218 * size / 300 + 12);
-	$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));
-}
-
-$("#cardSizeSlider").slider({
-	  range: "min",
-      min: 100,
-      max: 600,
-      value: 200,
-      slide: sliderCallback,
-      change: sliderCallback
-});
-</script>
+	</script>
+</div>

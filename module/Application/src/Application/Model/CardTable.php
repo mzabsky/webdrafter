@@ -31,7 +31,7 @@ class CardTable
 	public function fetchByDraft($draftId)
 	{
 		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($draftId){
-			$select->join('draft_set', 'draft_set.set_id = card.set_id');
+			$select->join('draft_set_version', 'draft_set_version.set_version_id = card.set_version_id');
 			$select->where(array('draft_id' => $draftId));
 			$select->order("card.name ASC");
 		});

@@ -27,6 +27,7 @@ class DraftController extends AbstractActionController
 	private $cardTable;
 	private $draft;
 	private $draftPlayer;
+	private $userPlayer;
 	
 
 	private function init()
@@ -35,8 +36,9 @@ class DraftController extends AbstractActionController
 		$this->sm = $this->getServiceLocator();
 		$this->draftTable = $this->sm->get('Application\Model\DraftTable');
 		$this->draftPlayerTable = $this->sm->get('Application\Model\DraftPlayerTable');
-		$this->draftSetTable = $this->sm->get('Application\Model\DraftSetTable');
+		$this->draftSetVersionTable = $this->sm->get('Application\Model\DraftSetVersionTable');
 		$this->pickTable = $this->sm->get('Application\Model\PickTable');
+		$this->userTable = $this->sm->get('Application\Model\UserTable');
 		$this->cardTable = $this->sm->get('Application\Model\CardTable');
 		$this->draftPlayer = $this->draftPlayerTable->getDraftPlayerByInviteKey($this->inviteKey);		
 		$this->draft = $this->draftTable->getDraft($this->draftPlayer->draftId);
@@ -50,6 +52,8 @@ class DraftController extends AbstractActionController
 		$viewModel->draft = $this->draft;	
 		$viewModel->draftPlayer = $this->draftPlayer;	
 		$viewModel->allPlayers = $this->draftPlayerTable->fetchByDraft($this->draft->draftId);
+		$viewModel->host = $this->userTable->getUser($this->draft->hostId);
+		
 		$allCards = $this->cardTable->fetchByDraft($this->draft->draftId);
 		$cardArray = array();
 		
@@ -181,7 +185,7 @@ class DraftController extends AbstractActionController
 			//var_dump($picksMade, $picksRequired); die();
 			if($picksMade + 1 == $picksRequired)
 			{
-				$draftSets = \Application\resultSetToArray($this->draftSetTable->fetchByDraft($this->draft->draftId));
+				$draftSets = \Application\resultSetToArray($this->draftSetVersionTable->fetchByDraft($this->draft->draftId));
 				
 				switch($this->draft->gameMode)
 				{
@@ -547,28 +551,25 @@ class DraftController extends AbstractActionController
 	public function updateBasicAction()
 	{
 		$this->init();
+
+		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');
 		
 		$colors = array("W", "U", "B", "R", "G");
-		if(!isset($_GET["color"]) || !in_array($_GET["color"], $colors)){
-			throw new Exception("Invalid color");
+		foreach($colors as $color){
+			$n = (int)$_GET[strtolower($color)];
+			
+			$basic = $basicTable->getByDraftPlayerAndColor($this->draftPlayer->draftPlayerId, $color);
+			
+			if($basic == null)
+			{
+				$basic = new \Application\Model\DraftPlayerBasic();
+				$basic->draftPlayerId = $this->draftPlayer->draftPlayerId;
+				$basic->color = $color;
+			}
+			
+			$basic->count = $n;
+			$basicTable->saveDraftPlayerBasic($basic);
 		}
-		
-		if(!isset($_GET["count"]) || (int)$_GET["count"] < 0){
-			throw new Exception("Invalid count");
-		}
-		
-		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');
-		$basic = $basicTable->getByDraftPlayerAndColor($this->draftPlayer->draftPlayerId, $_GET["color"]);
-		
-		if($basic == null)
-		{
-			$basic = new \Application\Model\DraftPlayerBasic();
-			$basic->draftPlayerId = $this->draftPlayer->draftPlayerId;
-			$basic->color = $_GET["color"];
-		}
-		
-		$basic->count = (int)$_GET["count"];
-		$basicTable->saveDraftPlayerBasic($basic);
 
 		$jsonModel = new JsonModel();
 		return $jsonModel;

@@ -1,10 +1,16 @@
-body {
-  padding-bottom: 40px;
+html, body {
+  /*padding-bottom: 40px;*/
   font-family: Lucida Grande, sans-serif;
   font-size: 1.05em;
   line-height: 1.47;
   margin: 0;
+  height: 100%;
   /*word-spacing: 0.15em;*/ }
+
+.container {
+  display: flex;
+  flex-flow: column;
+  height: 100%; }
 
 a {
   color: #444;
@@ -30,12 +36,15 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px black solid;
   height: 45px;
   padding: 5px;
-  margin-bottom: 10px; }
+  margin-bottom: 10px;
+  flex: 0 1 45px; }
+
+.column-mode #header {
+  margin: 0 auto;
+  width: 1400px;
+  max-width: 90%; }
 
 #header {
-  margin: 0 auto;
-  max-width: 1400px;
-  min-width: 800px;
   margin-bottom: 200px; }
   #header a {
     text-decoration: none;
@@ -104,11 +113,20 @@ h5 {
   margin: 3px 0 3px 0;
   font-weight: normal; }
 
+.column-mode #body {
+  width: 1400px;
+  max-width: 90%;
+  padding: 8px 15px 50px 15px; }
+
+.wide-mode #body {
+  width: 100%;
+  padding: 8px 0 0 0;
+  display: flex;
+  flex-flow: column; }
+
 #body {
   margin: -10px auto 0 auto;
-  max-width: 1400px;
-  min-width: 800px;
-  padding: 8px 15px 50px 15px;
+  flex: 1 1 auto;
   /*margin: 0 15px 50px 15px;*/ }
 
 #homepage h2 {
@@ -304,7 +322,7 @@ input[type=submit] {
   border: 1px black solid;
   background: lightgreen;
   cursor: pointer;
-  width: 150px; }
+  width: 200px; }
 
 button.add-button {
   padding: 5px;
@@ -312,8 +330,12 @@ button.add-button {
   background: lightgreen;
   cursor: pointer; }
 
-form input[type=submit]:hover, button.add-button:hover {
-  background: palegreen; }
+input[type=submit]:hover, button.add-button:hover {
+  /*background: palegreen;*/
+  background: #BDF8BD;
+  -moz-box-shadow: 0 0 8px gray;
+  -webkit-box-shadow: 0 0 8px gray;
+  box-shadow: 0px 0px 8px gray; }
 
 form input.url-name-input {
   border-width: 0 0 1px 0;
@@ -682,7 +704,12 @@ form input.code-input {
   cursor: pointer;
   *cursor: hand;
   padding: 5px;
-  background: #eeeeee; }
+  background: #ddd; }
+.game-mode-picker td:hover {
+  background: #eee;
+  -moz-box-shadow: 0 0 8px gray;
+  -webkit-box-shadow: 0 0 8px gray;
+  box-shadow: 0px 0px 8px gray; }
 .game-mode-picker p {
   margin: 1px; }
 .game-mode-picker h3 {
@@ -702,7 +729,112 @@ form input.code-input {
     cursor: pointer;
     *cursor: hand;
     background: white; }
+  .host-event #selected-packs .selected-pack:hover {
+    -moz-box-shadow: 0 0 8px gray;
+    -webkit-box-shadow: 0 0 8px gray;
+    box-shadow: 0px 0px 8px gray; }
 .host-event form {
   display: none; }
+
+.draft-screen {
+  flex: 1 1 auto;
+  height: 100%;
+  display: flex;
+  flex-flow: column; }
+  .draft-screen .draft-bar {
+    border-bottom: 1px black solid;
+    padding: 0 4px; }
+    .draft-screen .draft-bar .draft-name {
+      font-weight: bold; }
+    .draft-screen .draft-bar .draft-pick-display {
+      display: none; }
+    .draft-screen .draft-bar .card-size {
+      float: right;
+      width: 270px; }
+      .draft-screen .draft-bar .card-size #card-size-slider {
+        float: right;
+        width: 200px;
+        margin: 0 10px; }
+      .draft-screen .draft-bar .card-size .fa {
+        float: right;
+        width: 1em; }
+    .draft-screen .draft-bar .spinner {
+      height: 20px;
+      margin-bottom: -3px; }
+  .draft-screen #players-list {
+    display: none;
+    font-size: 80%; }
+  .draft-screen #draft {
+    flex: 1 1 auto;
+    /*position: relative;*/
+    display: flex;
+    flex-flow: column;
+    flex-direction: column;
+    height: 100%;
+    /*margin: 0 10px 0 10px;*/ }
+    .draft-screen #draft .draft-booster {
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAJ37979zwjjgzjKysqMYAEYB8RmROaABAAFug+bVs5NCQAAAABJRU5ErkJggg==) repeat;
+      flex: 1 1 auto; }
+      .draft-screen #draft .draft-booster .card {
+        cursor: pointer;
+        *cursor: hand;
+        margin: 5px; }
+      .draft-screen #draft .draft-booster .card:hover {
+        -webkit-box-shadow: 0px 0px 30px -5px black;
+        -moz-box-shadow: 0px 0px 30px -5px black;
+        box-shadow: 0px 0px 30px -5px black; }
+    .draft-screen #draft .draft-picks {
+      flex: 0 1 300px;
+      border-top: 1px black solid;
+      /*position:relative!important;
+      bottom:0!important;
+      top:auto!important;*/ }
+      .draft-screen #draft .draft-picks .card {
+        margin: 5px; }
+    .draft-screen #draft .draft-area-label {
+      margin: 5px 5px 0 5px;
+      font-size: 80%; }
+    .draft-screen #draft #deckbuilder {
+      /*flex: 1;*/
+      table-layout: fixed;
+      width: 0px;
+      /*width: 100%;*/
+      /*height: 100%;*/
+      border-collapse: collapse; }
+      .draft-screen #draft #deckbuilder td {
+        border: 1px gray solid; }
+      .draft-screen #draft #deckbuilder thead td {
+        background: #ddd;
+        padding: 4px; }
+      .draft-screen #draft #deckbuilder .card {
+        cursor: pointer;
+        *cursor: hand; }
+      .draft-screen #draft #deckbuilder .basics input {
+        width: 15px; }
+      .draft-screen #draft #deckbuilder .mtg {
+        font-size: 80%; }
+      .draft-screen #draft #deckbuilder #buttons-row td {
+        border-top: 0;
+        width: 100%; }
+      .draft-screen #draft #deckbuilder #labels-row td:last-child {
+        width: auto; }
+      .draft-screen #draft #deckbuilder tbody td:last-child {
+        width: auto; }
+  .draft-screen .centered-box {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    max-width: 600px;
+    height: 400px; }
+  .draft-screen .spinner-large {
+    display: block;
+    margin: 150px auto; }
+
+.headerSpinner {
+  height: 40px;
+  margin-bottom: -3px; }
 
 /*# sourceMappingURL=style.css.map */
