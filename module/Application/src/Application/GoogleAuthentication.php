@@ -32,7 +32,7 @@ class GoogleAuthentication
 			
 			$refreshToken = $this->googleClient->getRefreshToken();
 			if($refreshToken == null){
-				session_destroy();
+				@session_destroy();
 				$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 				return;
 			}
