@@ -168,6 +168,7 @@ class DraftTable
 			'pick_number'  => $draft->pickNumber,
 			'lobby_key'  => $draft->lobbyKey,
 			'game_mode'  => $draft->gameMode,
+			'rarity_mode'  => $draft->rarityMode,
 		);
 	
 		$id = (int) $draft->draftId;

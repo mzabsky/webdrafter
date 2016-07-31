@@ -733,7 +733,7 @@ form input.code-input {
     -moz-box-shadow: 0 0 8px gray;
     -webkit-box-shadow: 0 0 8px gray;
     box-shadow: 0px 0px 8px gray; }
-.host-event form {
+.host-event input[type='submit'] {
   display: none; }
 
 .draft-screen {

@@ -363,7 +363,8 @@ class MemberAreaController extends AbstractActionController
 			throw new \Exception("Game mode not set");
 		}
 		
-		$mode = (int)$_REQUEST["mode"];
+		$mode = (int)@$_REQUEST["mode"];
+		$rarityMode = (int)@$_REQUEST["rarity_mode"];
 		
 		$sm = $this->getServiceLocator();
 		$setTable = $sm->get('Application\Model\SetTable');	
@@ -429,6 +430,7 @@ class MemberAreaController extends AbstractActionController
 				$draft->packNumber = 1;
 				$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
 				$draft->gameMode = $mode;
+				$draft->rarityMode = $rarityMode;
 					
 				$draftTable = $sm->get('Application\Model\DraftTable');
 				$draftTable->saveDraft($draft);
@@ -564,6 +566,23 @@ class MemberAreaController extends AbstractActionController
 			}
 			$numberOfPlayers = count($draftPlayerArray);
 			
+			$allowedRarities = array();
+			var_dump($draft->rarityMode);
+			switch($draft->rarityMode)
+			{
+				case Draft::RARITY_MODE_MRUC:
+					$allowedRarities[] = 'M';
+				case Draft::RARITY_MODE_RUC:
+					$allowedRarities[] = 'R';
+				case Draft::RARITY_MODE_UC:
+					$allowedRarities[] = 'U';
+				case Draft::RARITY_MODE_C:
+					$allowedRarities[] = 'C';
+					break;
+				default:
+					throw new \Exception("Invalid rarity mode " . $draft->rarityMode);
+			}
+			var_dump($allowedRarities);
 			// Create packs
 			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
 			{
@@ -576,7 +595,10 @@ class MemberAreaController extends AbstractActionController
 					$cardArray = array();
 					foreach($cards as $card)
 					{
-						$cardArray[] = $card;
+						var_dump($card->rarity);
+						if(in_array($card->rarity, $allowedRarities)){
+							$cardArray[] = $card;
+						}
 					}
 					
 					$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers);
@@ -607,7 +629,9 @@ class MemberAreaController extends AbstractActionController
 				$cardArray = array();				
 				foreach($cards as $card)
 				{
-					$cardArray[] = $card;
+					if(in_array($card->rarity, $allowedRarities)){
+						$cardArray[] = $card;
+					}
 				}
 				
 				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * 3);
