@@ -262,7 +262,18 @@
 				$.each( data["picks"], function( key, val ) {
 					$(".draft-picks").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone());
 				});
-	
+
+				$(document).tooltip({
+					items: ".draft-booster .card, .draft-picks .card",
+					track: true,
+					show: false,
+					hide: false,
+					content: function(){
+						var element = $(this);
+						return "<img src='" + element.attr("src") + "'>";
+					}
+				});
+				
 				timer = setTimeout(function(){ refreshDraft(); }, 1000);
 			}
 			else if(data["draftStatus"] == draftStatuses.finished)
