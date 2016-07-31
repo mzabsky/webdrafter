@@ -5,6 +5,17 @@ use Application\Model\Card;
 
 class BoosterDraftPackGenerator
 {
+	private function mtShuffle(&$array) {
+		$array = array_values($array);
+		for($i = count($array) - 1; $i > 0; --$i) {
+			$j = mt_rand(0, $i);
+			if($i !== $j) {
+				list($array[$i], $array[$j]) = array($array[$j], $array[$i]);
+			}
+		}
+		return true;
+	}
+	
 	public function GeneratePacks($cards, $numberOfPacks)
 	{
 		// Resultset can't be iterated over repeatedly
@@ -32,7 +43,7 @@ class BoosterDraftPackGenerator
 		$numberOfCommons = 10;
 		$numberOfUncommons = 3;
 		
-		shuffle($cards);
+		$this->mtShuffle($cards);
 		
 		$pack = array();		
 		
@@ -69,7 +80,7 @@ class BoosterDraftPackGenerator
 		{
 			return $card->rarity == "U";
 		});
-		shuffle($uncommons);
+		$this->mtShuffle($cards);
 		while(count($pack) < $numberOfUncommons + 1 && count($uncommons) > 0)
 		{
 			$pack[] = array_pop($uncommons);
@@ -94,7 +105,7 @@ class BoosterDraftPackGenerator
 			return $card->rarity == "C";
 		});
 		$commons = array_diff($commons, $pack);
-		shuffle($commons);
+		$this->mtShuffle($cards);
 		while(count($pack) < $numberOfCommons + $numberOfUncommons + 1 && count($commons) > 0)
 		{
 			$pack[] = array_pop($commons);
@@ -106,7 +117,7 @@ class BoosterDraftPackGenerator
 		}
 		
 		// Make sure initial five commons are not the pre-planned WUBRG commons
-		shuffle($pack);
+		$this->mtShuffle($cards);
 				
 		return $pack;
 	}
