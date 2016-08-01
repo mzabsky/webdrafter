@@ -567,7 +567,6 @@ class MemberAreaController extends AbstractActionController
 			$numberOfPlayers = count($draftPlayerArray);
 			
 			$allowedRarities = array();
-			var_dump($draft->rarityMode);
 			switch($draft->rarityMode)
 			{
 				case Draft::RARITY_MODE_MRUC:
@@ -582,7 +581,6 @@ class MemberAreaController extends AbstractActionController
 				default:
 					throw new \Exception("Invalid rarity mode " . $draft->rarityMode);
 			}
-			var_dump($allowedRarities);
 			// Create packs
 			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
 			{
@@ -595,7 +593,6 @@ class MemberAreaController extends AbstractActionController
 					$cardArray = array();
 					foreach($cards as $card)
 					{
-						var_dump($card->rarity);
 						if(in_array($card->rarity, $allowedRarities)){
 							$cardArray[] = $card;
 						}

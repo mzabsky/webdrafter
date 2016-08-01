@@ -26,6 +26,7 @@
 	?>
 	</div>
 	<script>
+	var isDraftHost = <?php echo $this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->draft->hostId == $this->auth()->getUser()->userId ? 'true' : 'false' ?>;
 	var draftStatuses = {"open":1, "running":2, "finished":3};
 	var pickZones = {"maindeck":0, "sideboard":1, "hidden":2};
 	var timer = null;
@@ -77,16 +78,25 @@
 			return;
 		}
 		
-		$("#draft").html("Loading...");
+		$("#draft").html("<img src='<?php echo $this->basePath('images/spinner.svg')?>' class='spinner-large'/>");
 		$.getJSON( "<?php echo $this->url('draft', array('action' => 'join', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?name=" + playerName, function( data ) {		
 			refreshDraft();
+		});
+	}
+
+	function startDraft() {
+		if(xhr != null) xhr.abort();
+		if(timer != null) clearTimeout(timer);
+		$("#draft").html("<img src='<?php echo $this->basePath('images/spinner.svg')?>' class='spinner-large'/>");
+		$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'start-draft', 'draft_id' => $this->draft->draftId));?>", function( data ) {
+			refreshDraftExplicit();
 		});
 	}
 	
 	function refreshDraftExplicit()
 	{
-		$("#draft").html("Loading...");
-		refresh();
+		$("#draft").html("<img src='<?php echo $this->basePath('images/spinner.svg')?>' class='spinner-large'/>");
+		refreshDraft();
 	}
 	
 	function refreshCardCounts()
@@ -146,8 +156,19 @@
 			{
 				$("#draft").empty();
 				if(data["hasJoined"]){
-					var html = "<div class='centered-box'><p>You have joined this draft. Please wait until the host starts it.</p>";
-					html += "<p><b>Joined players<b>: </p>";					
+					var html = "<div class='centered-box'>";
+					if(isDraftHost)
+					{
+						html += "<p>You have joined this draft. Other players can use this link to join:</p>";
+						html += "<input type='text' readonly value='<?php echo $this->url('lobby', array('lobby_key' => $this->draft->lobbyKey), array('force_canonical' => true));?>' class='linkBox' onClick='selectAll(this)'/><br />";
+						html += "<p>When all the players have joined, you can start the event. Once the event is started, players won't be able to join anymore.</p>"
+					}
+					else 
+					{
+						html += "<p>You have joined this draft. Please wait until the host starts it.</p>";
+					}
+					
+					html += "<p><b>Joined players</b>: </p>";					
 					
 					$.each( data["draftPlayers"], function( key, val ) {
 						if(val["userId"] == null)
@@ -160,6 +181,11 @@
 						}
 					});
 
+					if(isDraftHost)
+					{
+						html += "<br/><br/><input type='submit' onclick='startDraft()' value='Start draft' />";
+					}
+					
 					html += "</div>";
 					
 					$("#draft").append(html)
@@ -171,12 +197,12 @@
 					
 	<?php if($this->auth()->getStatus() != \Application\GoogleAuthentication::STATUS_LOGGED_IN){ ?>
 					$("#draft").append("Player name: <input type='text' name='player_name' id='player_name' />");
-					$("#draft").append("<button onclick='joinDraft()'>Join draft</button>");
+					$("#draft").append("<input type='submit' onclick='joinDraft()'>Join draft</button>");
 	<?php } else { ?>
 					$("#draft").append("Player name: <?php echo $this->auth()->getUser()->name ?>  <button onclick='joinDraft()'>Join draft</button>");
 	<?php } ?>
-				}
-			}
+				}				
+							}
 			else if(data["draftStatus"] == draftStatuses.running)
 			{
 				$('.draft-pick-display').show();
