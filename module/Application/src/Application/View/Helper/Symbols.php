@@ -32,6 +32,7 @@ class Symbols extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace('[B]', '<span class="icon-wrapper"><i class="mtg black"></i></span>', $str);
     	$str = str_replace('[R]', '<span class="icon-wrapper"><i class="mtg red"></i></span>', $str);
     	$str = str_replace('[G]', '<span class="icon-wrapper"><i class="mtg green"></i></span>', $str);
+    	$str = str_replace('[C]', '<span class="icon-wrapper"><i class="mtg colorless"></i></span>', $str);
     	
     	$str = str_replace('[0]', '<span class="icon-wrapper"><i class="mtg mana-0"></i></span>', $str);
     	$str = str_replace('[1]', '<span class="icon-wrapper"><i class="mtg mana-1"></i></span>', $str);
