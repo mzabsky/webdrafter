@@ -40,8 +40,6 @@ class BoosterDraftPackGenerator
 	
 	private function GeneratePack($cards)
 	{
-		var_dump($cards);
-		
 		$hasMythics = false;
 		$hasRares = false;
 		$hasUncommons = false;
@@ -129,9 +127,7 @@ class BoosterDraftPackGenerator
 		{
 			$pack[] = array_pop($commons);
 		}
-		
-		echo count($pack);
-		
+
 		if(count($pack) != $numberOfCommons + $numberOfUncommons + 1)
 		{
 			throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
