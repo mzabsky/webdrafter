@@ -76,7 +76,7 @@ class UploadCardsForm extends Form
 			'allow_empty' => false,
 			'options' => array(
 				'label' => 'Set file: ',
-				'description' => 'Text file containing the cards. Exported using <a href="/download/magic-planesculptors.mse-export-template.zip">WebDrafter MSE2 set exporter</a> .'
+				'description' => 'Text file containing the cards. Exported using <a href="/download/magic-planesculptors.mse-export-template.zip">PlaneSculptors MSE2 set exporter</a> .'
 			),
 			'filters' => array(
 				array(
