@@ -17,10 +17,14 @@ $form = $this->form;
 $formLabel = $this->plugin('formLabel');
 $form->prepare();
 
+$replacementToken = 'XYZ1234';
+$url = $this->url('browse-user', array('url_name' => $replacementToken), array('force_canonical' => true));
+$url = substr($url, 0, strpos($url, $replacementToken));
+
 echo $this->form()->openTag($form);
 if($this->registrationMode){
 	echo $this->fullFormInput($form->get('name'));
-	echo $this->fullFormInput($form->get('url_name'));
+	echo $this->fullFormInput($form->get('url_name'), $url, null, true);
 }
 echo $this->fullFormInput($form->get('email_privacy'));
 echo $this->fullFormInput($form->get('about'));
