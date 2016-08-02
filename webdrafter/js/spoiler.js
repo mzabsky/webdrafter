@@ -51,6 +51,7 @@ Spoiler.prototype.initializeStructure = function () {
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Sorcery\")' filter='Sorcery' title='Sorceries only'>Sorcery</a>" +
 	        "   </div>" +
 	        "</div>" +
+	        "<br />" +
 	        "<hr class='card-separator' />" +
 	        "<div class='spoiler-cards'></div>");
 	}
