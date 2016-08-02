@@ -24,21 +24,27 @@ function toUrlName(str){
 	return str;
 }
 
+var currentTab = null;
 function makeTabs(element)
 {
 	element.tabs();
 
-	$.address.change(function(event){
+	/*$.address.change(function(event){
+		//console.log(event);
+		console.log("$.address.change " + window.location.hash);
 		if(window.location.hash != "" && window.location.hash != null){
-			element.tabs("option", "active", element.find(window.location.hash).index()-1 );
+			element.tabs("option", "active", element.find(window.location.hash.substring(1)).index()-1 );			
 		}
-		
-    })
+    })*/
 
     // when the tab is selected update the url with the hash
     element.bind("tabsactivate", function(event, ui) {
     	//alert("bb");
+    	//console.log("pushState " + ui.newTab.children().attr("href"))
+    	//currentTab = ui.newTab.children().attr("href");
     	history.pushState(null,null,ui.newTab.children().attr("href"));
+    	
+    	//$.address.value(ui.newTab.children().attr("href"));
     })
 }
 
