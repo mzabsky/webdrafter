@@ -240,7 +240,7 @@
 	
 					if(val['hasPicked'])
 					{
-						$("#draft").append("<span style='display: inline-block; background: #33FF33'>" + link + "</span>" + directionArrow);
+						$("#players-list").append("<span class='player-picked'>" + link + "</span>" + directionArrow);
 					}
 					else 
 					{
@@ -249,7 +249,7 @@
 				});
 				
 				if(data['hasPicked']){
-					$(".draft-booster").append("<p>You have already picked a card. Please wait until other players make a pick as well.</p>");
+					$(".draft-booster").append("<div class='centered-box already-picked'><p>You have already picked a card.</p><p>Please wait until other players make a pick as well.</p></div>");
 				}
 				else {
 					var packPick = "P" + data["packNumber"] + "P" + data["pickNumber"];					

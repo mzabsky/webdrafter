@@ -764,6 +764,10 @@ form input.code-input {
   .draft-screen #players-list {
     display: none;
     font-size: 80%; }
+    .draft-screen #players-list .player-picked {
+      background: lightgray;
+      display: inline-block;
+      text-shadow: 0 0 0.2em white; }
   .draft-screen #draft {
     flex: 1 1 auto;
     /*position: relative;*/
@@ -827,8 +831,11 @@ form input.code-input {
     left: 0;
     bottom: 0;
     right: 0;
-    max-width: 600px;
+    max-width: 800px;
     height: 400px; }
+  .draft-screen .already-picked {
+    font-size: 120%;
+    text-align: center; }
   .draft-screen .spinner-large {
     display: block;
     margin: 150px auto; }
