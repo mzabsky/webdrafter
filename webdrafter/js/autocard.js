@@ -33,7 +33,7 @@ function bindAutocard(){
 		hide: false,
 		content: function(){
 			var element = $(this);
-			var image = $("<img src='" + (element.attr("href") != null ? element.attr("href") : element.attr("src")) + "&image' class='autocard-image-content'>");
+			var image = $("<img src='" + (element.attr("href") != null ? element.attr("href") : element.attr("src")) + "&image' style='background: url(/images/spinner.svg); min-width: 160px; min-height: 160px; ' class='autocard-image-content'>");
 			//image.
 			return image;
 		},
