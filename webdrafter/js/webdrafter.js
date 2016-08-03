@@ -24,7 +24,6 @@ function toUrlName(str){
 	return str;
 }
 
-var currentTab = null;
 function makeTabs(element)
 {
 	element.tabs();
@@ -53,3 +52,20 @@ function showCopyable (str) {
 
     $(".show-copyable-dialog textarea").select();
 }
+
+$( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
+	var report = "A background HTTP request has unexpectedly failed. Please send this error report to mzabsky@gmail.com, along with any additional information pertaining to the error.\n\n"; 
+	report += "You may try to reload the page and to retry the action which has failed.\n\n";		
+	report += "WebDrafter Error Report (XHR request failed)\n";
+	report += "Timestamp: " + Date.now() + "\n";  
+	report += "Client: " + navigator.userAgent + "\n";
+	report += "Location: " + window.location + "\n";
+	report += "Method: " + settings.type + "\n";
+	report += "Request URL: " + settings.url + "\n";
+	report += "Response Status: " + jqxhr.status + " (" + jqxhr.statusText +")\n";
+	report += "Response Body: \n";
+	report += jqxhr.responseText;
+
+	showCopyable(report);
+	console.log(report);	
+});
