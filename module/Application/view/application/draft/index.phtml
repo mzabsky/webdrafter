@@ -321,7 +321,7 @@
 					$(".basics_down_row").append("<td><button onclick='changeBasicCount(\"" + val + "\",-1)'>-</button></td>");
 				});*/
 
-				$("#buttons-row").append("<td colspan='8'></td>");
+				$("#buttons-row").append("<td colspan='9'></td>");
 				$("#buttons-row td").append("Cards in deck: <span id='totalcount'></span>&nbsp;&nbsp;&nbsp;&nbsp;");
 				$("#buttons-row td").append("<a href='#' id='sort-by-color'>Sort by color</a>&nbsp;&nbsp;&nbsp;&nbsp;");
 				$("#buttons-row td").append("<a href='#' id='sort-by-cmc'>Sort by CMC</a>&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -333,10 +333,10 @@
 					changeBasicCount();
 				});
 				
-				var maxColumns = 7;
+				var maxColumns = 8;
 				for(var i = 0; i < maxColumns; i++)
 				{
-					$("#labels-row").append("<td>" + (i + 1) + " - <span class='cardcount'></span></td>");	
+					$("#labels-row").append("<td>" + i + " - <span class='cardcount'></span></td>");	
 				}
 	
 				$("#labels-row").append("<td>Sideboard</td>");
@@ -484,7 +484,7 @@
 		//console.log($("#deckbuilder td"));
 		$(".card").height(size);
 		var cellWidth = 218 * size / 300 + 12;
-		$("#deckbuilder #buttons-row td").width(8 * cellWidth);
+		$("#deckbuilder #buttons-row td").width(9 * cellWidth);
 		$("#deckbuilder #labels-row td, #deckbuilder tbody td").width(cellWidth);
 		$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));		
 	}

@@ -458,7 +458,7 @@ class DraftController extends AbstractActionController
 			$cardsById[$card->cardId] = $card;
 		}
 		
-		$picks = $this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId);		
+		$picks = $this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId, true);		
 		
 		foreach($picks as $pick)
 		{
@@ -505,12 +505,12 @@ class DraftController extends AbstractActionController
 					}
 					break;
 				case "cmc":
-					if($card->cmc < 6)
+					if($card->cmc < 7)
 					{
 						$pick->zoneColumn = (int)$card->cmc;
 					}
 					else {
-						$pick->zoneColumn = 6;
+						$pick->zoneColumn = 7;
 					}
 					break;
 				case "rarity":
