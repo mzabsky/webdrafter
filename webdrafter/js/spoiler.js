@@ -153,7 +153,7 @@ Spoiler.prototype.initializeSorting = function () {
                 else if (x.colors[0] == 'B') return 2;
                 else if (x.colors[0] == 'U') return 1;
                 else if (x.colors[0] == 'W') return 0;
-                else throw "Not reached";
+                else throw "Not reached " + x.colors[0];
             }
 
             var ratingA = rate(a);
@@ -164,11 +164,12 @@ Spoiler.prototype.initializeSorting = function () {
         },
         "rarity": function (spoiler, a, b) {
             var rate = function (x) {
-                if (x.rarity == 'C') return 4;
+                if (x.rarity == 'B') return 5;
+                else if (x.rarity == 'C') return 4;
                 else if (x.rarity == 'U') return 3;
                 else if (x.rarity == 'R') return 2;
                 else if (x.rarity == 'M') return 1;
-                else throw "Not reached";
+                else throw "Not reached \"" + x.rarity + "\"";
             }
 
             var ratingA = rate(a);
