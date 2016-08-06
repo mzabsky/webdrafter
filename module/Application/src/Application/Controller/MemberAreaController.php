@@ -62,6 +62,30 @@ class MemberAreaController extends AbstractActionController
 		$client->setAccessType('offline');
 		$client->setRedirectUri($redirectUri);
 		
+		//var_dump($client->isAccessTokenExpired());
+		
+		$token = @$_COOKIE['ACCESSTOKEN'];  // fetch from cookie
+		if($token){
+			// use the same token
+			$client->setAccessToken($token);
+			//echo "token from cookie";
+		}
+		else {
+			$token = $client->getAccessToken();
+			//var_dump($token);
+			//echo "token from get";
+		}
+
+		$_COOKIE['ACCESSTOKEN'] = $token;
+		
+		if($token && $client->isAccessTokenExpired()){  // if token expired
+			$refreshToken = json_decode($token)->refresh_token;
+		
+			// refresh the token
+			$client->refreshToken($refreshToken);
+		}
+		
+		
 		return $client;
 	}
 	
