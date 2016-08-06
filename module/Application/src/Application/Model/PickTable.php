@@ -77,12 +77,13 @@ class PickTable
 		return 0;
 	}
 	
-	public function fetchPicksForPlayer($draftPlayerId)
+	public function fetchPicksForPlayer($draftPlayerId, $orderByName)
 	{
-		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($draftPlayerId){
+		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($draftPlayerId, $orderByName){
 			$select->join('draft_player', 'draft_player.draft_player_id = pick.current_player_id', array());
+			$select->join('card', 'card.card_id = pick.card_id', array());
 			$select->where(array('draft_player.draft_player_id' => $draftPlayerId, 'is_picked' => 1));
-			$select->order('pick.pack_number ASC, pick.pick_number ASC');
+			$select->order($orderByName ? 'card.name ASC' : 'pick.pack_number ASC, pick.pack_number ASC');
 		});
 		return $resultSet;
 	}

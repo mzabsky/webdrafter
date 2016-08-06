@@ -83,7 +83,7 @@ class DraftController extends AbstractActionController
 				break;
 			case Draft::STATUS_RUNNING:
 				$jsonModel->booster = \Application\resultSetToArray($this->pickTable->fetchBoosterForPlayer($this->draftPlayer->draftPlayerId));
-				$jsonModel->picks = \Application\resultSetToArray($this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId));
+				$jsonModel->picks = \Application\resultSetToArray($this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId, false));
 				$jsonModel->hasPicked = (int)$this->pickTable->hasPickedFromCurrent($this->draftPlayer->draftPlayerId);
 				$jsonModel->pickIndicators = $this->draftTable->fetchPickIndicators($this->draft->draftId);
 				$jsonModel->packNumber = $this->draft->packNumber;
@@ -91,7 +91,7 @@ class DraftController extends AbstractActionController
 				// do picks
 				break;
 			case Draft::STATUS_FINISHED:
-				$jsonModel->picks = \Application\resultSetToArray($this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId));
+				$jsonModel->picks = \Application\resultSetToArray($this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId, true));
 				// list picks
 				break;
 			default:
