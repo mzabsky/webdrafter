@@ -63,7 +63,7 @@ class DraftPlayerBasicTable
 		$id = (int) $draftPlayerBasic->draftPlayerBasicId;
 		if ($id == 0) {
 			$this->tableGateway->insert($data);
-			$draftPlayer->draftPlayerBasicId = $this->tableGateway->lastInsertValue;
+			$draftPlayerBasic->draftPlayerBasicId = $this->tableGateway->lastInsertValue;
 		} else {
 			if ($this->getDraftPlayerBasic($id)) {
 				$this->tableGateway->update($data, array('draft_player_basic_id' => $id,));
