@@ -56,7 +56,7 @@ class MemberAreaController extends AbstractActionController
 		);
 		
 		$client = new \Google_Client();
-		$client->setApplicationName('WebDrafter');
+		$client->setApplicationName('PlaneSculptors.net');
 		$client->setScopes($scopes);
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');
@@ -1120,7 +1120,7 @@ class MemberAreaController extends AbstractActionController
 				$form->setData(array('about' => $changeLog));
 			}
 			else {
-				$form->setData(array('about' => "This is the first version of " . $set->name . " published on WebDrafter."));
+				$form->setData(array('about' => "This is the first version of " . $set->name . " published on PlaneSculptors.net."));
 			}
 		}
 		

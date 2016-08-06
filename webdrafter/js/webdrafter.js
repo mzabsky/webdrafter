@@ -58,7 +58,7 @@ $( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
 	
 	var report = "A background HTTP request has unexpectedly failed. Please send this error report to mzabsky@gmail.com, along with any additional information pertaining to the error.\n\n"; 
 	report += "You may try to reload the page and to retry the action which has failed.\n\n";		
-	report += "WebDrafter Error Report (XHR request failed)\n";
+	report += "PlaneSculptors.net Error Report (XHR request failed)\n";
 	report += "Timestamp: " + Date.now() + "\n";  
 	report += "Client: " + navigator.userAgent + "\n";
 	report += "Location: " + window.location + "\n";

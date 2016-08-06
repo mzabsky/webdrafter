@@ -1,19 +1,19 @@
 <div id="homepage">
 	<div class="beta-notice">
-		<div>
-			WebDrafter is still in development. If you have any feedback, contact me at <a href="mailto:mzabsky@gmail.com">mzabsky@gmail.com</a>.<br/>
+		<div style="font-size: 150%">
+			PlaneSculptors.net is still in development. If you have any feedback, contact me at <a href="mailto:mzabsky@gmail.com">mzabsky@gmail.com</a>.<br/>
 			<font color="red">Testers, please report <strong>anything</strong> you don't like: bugs, typos, even visual details.</font><br/>
-			Please don't share links to the testing instance publicly. 
+			Please don't share links to the testing instance publicly.<br />
+			Unless something goes wrong, no further data wipes will occur.
 		</div>
 	</div>
-	<!-- WebDrafter is a web application where you can explore, draft and share custom Magic: the Gathering sets. -->
 	
 	<h2>Explore</h2>
 	<p><a href="<?php echo $this->url('browse') ?>" title="Explore content">Browse</a> our database of custom Magic sets. You can get started by having a look at one our featured sets:</p>
 	<ul class="featured-sets">
-		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set (RAF won't necessarily be featured, once I get some nice sets to feature).</li>
-		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set.</li>
-		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise an Fall</a> - Atmospheric ancient history themed set.</li>
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise and Fall</a> - Atmospheric ancient history themed set (RAF won't necessarily be featured, once I get some nice sets to feature).</li>
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise and Fall</a> - Atmospheric ancient history themed set.</li>
+		<li><a href="<?php echo $this->url('browse-set', array('url_name' => 'rise-and-fall'))?>" title="Rise and Fall">Rise and Fall</a> - Atmospheric ancient history themed set.</li>
 	</ul>
 	
 	<h2>Draft</h2>
@@ -21,11 +21,23 @@
 	<p>Need more players for your event? Ask around on <a href="https://discord.gg/Twc6FX2">CustomMagic Discord server</a>!</p>
 	
 	<h2>Share</h2>
-	<p>Do you have your own Magic set to show off? There is no better way to share it with the community than uploading it to WebDrafter. Read the <a href="<?php echo $this->url('tutorial', array(), array("fragment" => 'set-import'))?>" title="Set import tutorial"/>set import tutorial</a> to learn how.</p>
-
+	<p>Do you have your own Magic set to show off? There is no better way to share it with the community than uploading it to PlaneSculptors. Read the <a href="<?php echo $this->url('tutorial', array(), array("fragment" => 'set-import'))?>" title="Set import tutorial"/>set import tutorial</a> to learn how.</p>
+	<hr class="spacer"/>
+	
+	<h2>Version 2.0</h2>
+	The most important changes in 2.0:
+	<ul>
+	<li><strong>Sets are now versioned</strong> - you don't have to upload every iteration as a new set. The "set" is now a sequence of versions of the card file. You can see history of a set or even history of individual cards on their respective pages.</li> 
+	<li><strong>Beautiful set pages</strong> - you can now craft a beautiful and representative home page for your set using powerful content formatting tools. There is now also an autocard feature, which enables you to link card or card images from your set page dynamically, using only a card name.</li>
+	<li><strong>Revamped set uploading</strong> - set upload now takes few more steps, but it offers you much more feedback throughout. Any errors in the import file will be reported to you and the upload tool will even check availability of all the card images and generate a nice version-to-version change log!</li>
+	<li><strong>Improved event hosting and drafting</strong> - It is now much less tedious to host events and the drafting experience is now also better than ever before.</li>
+	</ul>
+	
 	<hr class="spacer"/>
 	<h2>News</h2>
 	<ul class="news">
+		<li><strong>06/08/2016</strong> - Rebranded to PlaneSculptors.net.</li>
+		<li><strong>04/08/2016</strong> - Entered testing for version 2.0.</li>
 		<li><strong>08/09/2015</strong> - User accounts are now used to enter events for registered users. Added links to player page from the draft screen.</li>
 		<li><strong>05/09/2015</strong> - Started UI revamp. So far, member area and explore content screens are done. Added user registration.</li>
 		<li><strong>01/08/2015</strong> - Added basic lands to the deckbuilder.</li>

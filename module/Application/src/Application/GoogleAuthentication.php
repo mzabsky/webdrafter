@@ -70,7 +70,7 @@ class GoogleAuthentication
 		);
 	
 		$client = new \Google_Client();
-		$client->setApplicationName('WebDrafter');
+		$client->setApplicationName('PlaneSculptors.net');
 		$client->setScopes($scopes);
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');
