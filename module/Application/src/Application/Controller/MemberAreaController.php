@@ -836,16 +836,16 @@ class MemberAreaController extends AbstractActionController
 							switch($formData["art_url_format"])
 							{
 								case UploadCardsForm::NAME_DOT_PNG:
-									$card->artUrl = $artUrl . "/" . $cardName . ".png";
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".png";
 									break;
 								case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
-									$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.png";
 									break;
 								case UploadCardsForm::NAME_DOT_JPG:
-									$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".jpg";
 									break;
 								case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
-									$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.jpg";
 									break;
 								default:
 									throw new \Exception("Invalid art URL format.");
