@@ -771,7 +771,7 @@ class MemberAreaController extends AbstractActionController
 		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));		
 		
 		$uploadForm = new \Application\Form\UploadCardsForm();
-		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId), array('fragment' => 'upload_tab')));
+		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId), array('fragment' => 'upload')));
 		
 		if ($this->getRequest()->isPost())
 		{
@@ -951,7 +951,7 @@ class MemberAreaController extends AbstractActionController
 		
 		if(!isset($_GET["upload"]) || $_GET["upload"] != $_SESSION["card_file_guid"])
 		{
-			$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload_tab', 'query' => 'upload-expired'));
+			$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload', 'query' => 'upload-expired'));
 		}
 	
 		$cards = unserialize($_SESSION["card_file_cards"]);
