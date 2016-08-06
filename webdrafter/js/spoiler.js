@@ -145,7 +145,8 @@ Spoiler.prototype.initializeSorting = function () {
     this.sortFunctions = {
         "color": function(spoiler, a, b) {
             var rate = function(x) {
-                if (x.colors.length == 0 && x.types.indexOf("Artifact") == -1) return 7;
+            	if (x.colors.length == 0 && x.rarity == 'B') return 8;
+            	else if (x.colors.length == 0 && x.types.indexOf("Artifact") == -1) return 7;
                 else if (x.colors.length == 0 && x.types.indexOf("Artifact") != -1) return 6;
                 else if (x.colors.length > 1) return 5;
                 else if (x.colors[0] == 'G') return 4;
@@ -180,8 +181,8 @@ Spoiler.prototype.initializeSorting = function () {
             else return ratingA - ratingB;
         },
         "cmc": function (spoiler, a, b) {
-            var ratingA = a.cmc != null ? a.cmc : -1;
-            var ratingB = b.cmc != null ? b.cmc : -1;
+            var ratingA = a.cmc != null ? (a.rarity != 'B' ? a.cmc : -2) : -1;
+            var ratingB = b.cmc != null ? (b.rarity != 'B' ? b.cmc : -2) : -1;
 
             if (ratingA == ratingB) return spoiler.sortFunctions["color"](spoiler, a, b);
             else return ratingA - ratingB;
