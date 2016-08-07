@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <?php echo $this->headTitle('WebDrafter') ?>
+        <?php echo $this->headTitle('PlaneSculptors.net')->setSeparator(' | ') ?>
 
         <?php echo $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -13,50 +13,80 @@
         <!-- Le styles -->
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
        					->prependStylesheet($this->basePath('css/jquery.dataTables.min.css'))
+                        ->prependStylesheet($this->basePath('css/simplemde.min.css'))
                         ->prependStylesheet($this->basePath('css/style.css'))
+                        ->prependStylesheet($this->basePath('css/mtgicons.css'))
+                        ->prependStylesheet($this->basePath('css/themes/tooltipster-light.css'))
+                        ->prependStylesheet($this->basePath('css/tooltipster.css'))
+                        ->prependStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
         				->prependStylesheet($this->basePath('css/jquery-ui.css')) ?>
 
         <!-- Scripts -->
         <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/jquery.layout_and_plugins.js'))
+            ->prependFile($this->basePath('js/autocard.js'))
+            ->prependFile($this->basePath('js/spoiler.js'))
             ->prependFile($this->basePath('js/webdrafter.js'))
+            ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
+            ->prependFile($this->basePath('js/jquery.tooltipster.min.js'))
+            ->prependFile('https://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.min.js')
             //->prependFile($this->basePath('js/jquery.min.js'))
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js')
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
             ->prependFile('http://www.google.com/jsapi')
             ->prependFile($this->basePath('js/json2.js'))
         ; ?>
-
+        
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		
+		  ga('create', '<?php echo $this->config('gaTrackingCode')?>', 'auto');
+		  ga('send', 'pageview');
+		</script>
     </head>
     <body>
-        <div class="container">
-        	<div id="header">
-	        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>WebDrafter</h1></a>
-	        	<div id="menuBar">
-		        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
-		        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+        <div class="container <?php echo $this->wideMode() ? 'wide-mode' : 'column-mode'?>">
+        	<div id="header-wrapper">
+	        	<div id="header">
+	        		<?php if($this->config('devRealm')){?>
+	        			<div style="position: absolute; left: 50%; font-weight: bold; color: red; pointer-events:none;">
+	        				<div style="position: relative; left: -50%;"><center>This instance is a development realm.</center></div>
+	        			</div>
+	        		<?php } ?>
+		        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>PLANE<strong>SCULPTORS</strong><small>.NET</small></h1></a>
+		        	<div id="menuBar">
+			        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
+			        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+		        	</div>
+		        	<div id="userPanel">
+			        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
+			        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
+			        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+			        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
+			        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
+			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+			        	<?php } else  {?>
+			        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
+			        	<?php } ?>
+		        	</div>
+	        		<div class="clear"></div>
 	        	</div>
-	        	<div id="userPanel">
-		        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
-		        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
-		        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-		        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
-		        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
-		        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
-		        	<?php } else  {?>
-		        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>">Login</a>
-		        	<?php } ?>
-	        	</div>
-        		<div class="clear"></div>
         	</div>
         	<div id="body">
             	<?php echo $this->content; ?>
             </div>
-            <footer>
-                <p>&copy; <?php echo date('Y') ?> by Matej Zabsky. All dates and times are in CEST.</p> 
-            </footer>
+            <?php if(!$this->wideMode()){ ?>
+	            <footer>
+	                <p>&copy; <?php echo date('Y') ?> by <a href="http://www.zabsky.net">Matej Zabsky</a>. All dates and times are in CEST.</p> 
+	                <p>PlaneSculptors.net is <a href="https://github.com/mzabsky/webdrafter" title="WebDrafter at GitHub"/>open source</a>.</p>
+	            </footer>
+            <?php } ?>
         </div> <!-- /container -->
         <?php echo $this->inlineScript() ?>
     </body>

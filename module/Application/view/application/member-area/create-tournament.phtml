@@ -1,0 +1,33 @@
+<?php $this->headTitle()->append("Host a tournament for " . $this->draft->name); ?>
+<h2 id="contentTitle"><?php echo "Host a tournament for " . $this->draft->name?></h2>
+<p>Here you can quickly set up a tournament on the <a href="http://challonge.com/">Challonge</a> web tournament organizer based on this event. 
+<?php
+if($this->auth()->getUser()->challongeApiKey == NULL)
+{
+?>
+	<p>You have not set up a Challonge API key on PlaneSculptors.net yet. To do this, follow these steps:</p>
+	<ol>
+		<li><a href="https://challonge.com/user_session/new">Log in to Challonge</a>.</li>
+		<li>Make sure your Challonge email is verified.</li>
+		<li>Go to <a href="https://challonge.com/settings/developer">Challonge Settings->Developer API</a>.</li>
+		<li>Click "Generate a new API key".</li>
+		<li>Copy the API key to the text box below and click "Save API key". You will not need to do this the next time you want to host a tournament using PlaneSculptors.net.</li>
+	</ol> 
+	<form method="post">
+		<p>Challonge API key: <input name="challonge_api_key" type="text"/> <input type="submit" value="Save API key"/></p>
+	</form>
+<?php 
+}
+else {
+?>
+	<p>Tournament type:</p>
+	<form method="post">
+		<input type="radio" name="tournament_type" value="swiss" id="swiss" checked="checked"> <label for="swiss">Swiss</label>.<br />
+		<input type="radio" name="tournament_type" value="single elimination" id="se"> <label for="se">Single elimination</label>.<br />
+		<input type="radio" name="tournament_type" value="double elimination" id="de"> <label for="de">Double elimination</label>.<br />
+		<input type="radio" name="tournament_type" value="round robin" id="rr"> <label for="rr">Round robin</label>.<br />
+		<p>One you create the tournament, you will be redirected to the Challonge page for that tournament, where you can add or remove any additional players, if necessary. Once everything is ready, start the tournament. Players will receive the brackets and you will then be able to fill in match results as they play them (to do that, you will need to be loggied in to Challonge).</p>
+		<input type="submit" value="Create" />
+	</form>
+<?php 
+}

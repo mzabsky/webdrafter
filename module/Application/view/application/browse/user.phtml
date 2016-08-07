@@ -1,3 +1,4 @@
+<?php $this->headTitle()->append($this->user->name); ?>
 <script>
 $(function(){
 	$('#owned_sets_grid').DataTable({
@@ -8,23 +9,36 @@ $(function(){
 
 	$('#owned_sets_grid tbody').on( 'click', 'tr', function () {
 		$(this).addClass('selected');
-		window.location = $(this).attr('url');
+		if($(this).attr('url') != null)
+		{
+			window.location = $(this).attr('url');
+		}
 	});
 });
 </script>
 <h2 id="contentTitle"><?php echo $this->user->name; ?></h2>
+<div class="info-bar">
+	<span class="info-bar-item">Email: <?php 
+		if(
+				($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) ||
+				$this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_PUBLIC
+		)
+		{
+			echo $this->user->email;
+		}
+		else if($this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) {
+			echo "Log in to see";
+		}
+		else {
+			echo "Hidden";
+		}
+	?></span>
+	<span class="info-bar-item">Registration date: <?php echo $this->user->createdOn ?></span>
+	
+</div>
 <?php 
 
-if(
-	($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN && $this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_REGISTERED_ONLY) ||
-	$this->user->emailPrivacy == \Application\Form\RegistrationForm::EMAIL_PRIVACY_PUBLIC
-)
-{
-	echo "<p>Email: " . $this->user->email . "</p>";
-}
-
-
-echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
+echo $this->markdown($this->user->about) ?>
 <table id="owned_sets_grid" class="display hover stripe clickableRows" >
 	<thead>
 		<tr>
@@ -37,7 +51,7 @@ echo \Michelf\Markdown::defaultTransform($this->user->about) ?>
 <?php
 		foreach ($this->sets as $set)
 		{
-			echo "<tr url='" . $this->url('browse-set', array('set_id' => $set["setId"])) . "'><td class='nameCell'>";
+			echo "<tr url='" . $this->url('browse-set', array('url_name' => $set["setUrlName"])) . "'><td class='nameCell'>";
 			echo $set["setName"];
 			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
 		}

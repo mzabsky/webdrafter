@@ -15,7 +15,7 @@ use League\OAuth2\Client\Provider;
 use Application\Model\Set;
 use Application\Model\Draft;
 use Application\Model\Pick;
-use Application\Model\DraftSet;
+use Application\Model\DraftSetVersion;
 use Zend\View\Model\JsonModel;
 use Application\Model\DraftPlayer;
 use Application\Model\User;
@@ -23,6 +23,8 @@ use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
 use Application\Form\CreateSetForm;
 use Application\GoogleAuthentication;
+use Application\ChallongeAPI;
+use Application\Form\UploadCardsForm;
 
 class MemberAreaController extends AbstractActionController
 {
@@ -55,11 +57,35 @@ class MemberAreaController extends AbstractActionController
 		);
 		
 		$client = new \Google_Client();
-		$client->setApplicationName('WebDrafter');
+		$client->setApplicationName('PlaneSculptors.net');
 		$client->setScopes($scopes);
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');
 		$client->setRedirectUri($redirectUri);
+		
+		//var_dump($client->isAccessTokenExpired());
+		
+		$token = @$_COOKIE['ACCESSTOKEN'];  // fetch from cookie
+		if($token){
+			// use the same token
+			$client->setAccessToken($token);
+			//echo "token from cookie";
+		}
+		else {
+			$token = $client->getAccessToken();
+			//var_dump($token);
+			//echo "token from get";
+		}
+
+		$_COOKIE['ACCESSTOKEN'] = $token;
+		
+		if($token && $client->isAccessTokenExpired()){  // if token expired
+			$refreshToken = json_decode($token)->refresh_token;
+		
+			// refresh the token
+			$client->refreshToken($refreshToken);
+		}
+		
 		
 		return $client;
 	}
@@ -76,17 +102,18 @@ class MemberAreaController extends AbstractActionController
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
 		$form = new \Application\Form\RegistrationForm(false);
-		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index')));
+		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index'), array('fragment' => 'account_settings_tab')));
 		
 		if ($this->getRequest()->isPost())
 		{
 			$formData = $this->getRequest()->getPost()->toArray();
-		
+			
 			$userTable = $sm->get('Application\Model\UserTable');
 			$user = $auth->getUser();
 			$inputFilter = $user->getInputFilter();
 			$inputFilter->remove('name');
-			$form->setInputFilter($inputFilter);
+			$inputFilter->remove('url_name');
+			$form->setInputFilter($inputFilter);			
 		
 			$form->setData($formData);
 			
@@ -115,7 +142,7 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->accountUpdated = isset($_GET["account-updated"]);
 		$viewModel->draftsHosted = $draftTable->getPastDraftsByHost($_SESSION["user_id"]);
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
-		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"]);
+		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"], true);
 		$viewModel->form = $form;
 		
 		return $viewModel;
@@ -149,6 +176,7 @@ class MemberAreaController extends AbstractActionController
 			if ($form->isValid($formData))
 			{
 				$user->name = $formData["name"];
+				$user->urlName = $formData["url_name"];
 				$user->emailPrivacy = $formData["email_privacy"];
 				$user->about = $formData["about"];
 					
@@ -276,16 +304,21 @@ class MemberAreaController extends AbstractActionController
 				try
 				{
 					$set->name = $formData["name"];
+					$set->urlName = $formData["url_name"];
 					$set->code = $formData["code"];
-					$set->url = $formData["url"];
-					$set->downloadUrl = $formData["download_url"];
+					$set->about = $formData["about"];
+					//$set->url = $formData["url"];
+					//$set->downloadUrl = $formData["download_url"];
 					$set->userId = $_SESSION["user_id"];
-					$set->isRetired = 0;
+					$set->isPrivate = 1;
+					$set->isFeatured = 0;
+					$set->currentSetVersion = null;
+					$set->status = Set::STATUS_UNPLAYABLE;
 					
 					$setTable = $sm->get('Application\Model\SetTable');
 					$setTable->saveSet($set);
 					
-					$artUrl = $formData["art_url"];
+					/*$artUrl = $formData["art_url"];
 					
 					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
 					
@@ -316,7 +349,7 @@ class MemberAreaController extends AbstractActionController
 						}
 						
 						$cardTable->saveCard($card);
-					}
+					}*/
 
 					$adapter->getDriver()->getConnection()->commit();
 				}
@@ -326,7 +359,7 @@ class MemberAreaController extends AbstractActionController
 					throw $e;
 				}
 								
-				return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-created'));
+				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-created'));
 			} 
 			else 
 			{
@@ -335,8 +368,6 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		$viewModel = new ViewModel();
-		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
-		$viewModel->accessToken = $_SESSION['access_token'];
 		$viewModel->form = $form;
 		
 		return $viewModel;
@@ -357,113 +388,102 @@ class MemberAreaController extends AbstractActionController
 			throw new \Exception("Game mode not set");
 		}
 		
-		$mode = (int)$_REQUEST["mode"];
+		$mode = (int)@$_REQUEST["mode"];
+		$rarityMode = (int)@$_REQUEST["rarity_mode"];
 		
 		$sm = $this->getServiceLocator();
-		$setTable = $sm->get('Application\Model\SetTable');		
-		$form = new \Application\Form\HostDraftForm($setTable, $mode);
+		$setTable = $sm->get('Application\Model\SetTable');	
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');		
+		$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');	
 	
-		if ($this->getRequest()->isPost())
+		if (isset($_POST["setVersionIds"]))
 		{
-			$formData = $this->getRequest()->getPost();
-			$form->setData($formData);
-			if ($form->isValid($formData))
+			$setVersionIds = explode(",", $_POST["setVersionIds"]);
+			
+			if(count($setVersionIds) < 1)
 			{
-				$sm = $this->getServiceLocator();
-				$adapter = $sm->get("Zend\Db\Adapter\Adapter");
-				$adapter->getDriver()->getConnection()->beginTransaction();
-	
-				try
-				{
-					
-					$setTable = $sm->get('Application\Model\SetTable');
-					
+				throw new \Exception("No sets selected");	
+			}
+			
+			$sm = $this->getServiceLocator();
+			$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+			$adapter->getDriver()->getConnection()->beginTransaction();
 
-					$setIds = array();
-					$numberOfPacks = (int)$formData['number_of_packs'];
-					switch($mode)
-					{
-						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
-						case \Application\Model\Draft::MODE_SEALED_DECK:
-						case \Application\Model\Draft::MODE_CUBE_DRAFT:
-							for($i = 1; $i <= $numberOfPacks; $i++)
-							{
-								$setIds[] = $formData['pack' . $i];
-							}
-							break;
-						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
-							$setIds = $formData['pack1'];
-							break;
-						default:
-							throw new \Exception("Invalid game mode " . $mode);
-								
-					}
-					
-					switch($mode)
-					{
-						case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
-							$modeName = 'booster draft';
-							break;
-						case \Application\Model\Draft::MODE_SEALED_DECK:
-							$modeName = 'sealed deck';
-							break;
-						case \Application\Model\Draft::MODE_CUBE_DRAFT:
-							$modeName = 'cube draft';
-							break;
-						case \Application\Model\Draft::MODE_CHAOS_DRAFT:
-							$modeName = 'chaos draft';
-							break;
-						default:
-							throw new \Exception("Invalid game mode " . $mode);
-					
-					}
-					
-					$sets = array();
-					$setCodes = array();					
-					foreach($setIds as $setId)
-					{
-						$set = $setTable->getSet($setId);
-						$sets[] = $set;
-						$setCodes[] = $set->code;	
-					}
-					
-					$draft = new Draft();
-					$draft->name = join("/", $setCodes) . " " . $modeName;
-					$draft->status = Draft::STATUS_OPEN;
-					$draft->hostId = $_SESSION["user_id"];
-					$draft->createdOn = date("Y-m-d H:i:s");
-					$draft->pickNumber = 1;
-					$draft->packNumber = 1;
-					$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
-					$draft->gameMode = $mode;
-						
-					$draftTable = $sm->get('Application\Model\DraftTable');
-					$draftTable->saveDraft($draft);
-						
-					$draftSetTable = $sm->get('Application\Model\DraftSetTable');
-					foreach($setIds as $index => $setId)
-					{
-						$draftSet = new DraftSet();
-						$draftSet->draftId = $draft->draftId;
-						$draftSet->setId = $setId;
-						$draftSet->packNumber = $index + 1;
-						$draftSetTable->saveDraftSet($draftSet);
-					}
-	
-					$adapter->getDriver()->getConnection()->commit();
-				}
-				catch(Exception $e)
+			try
+			{
+				$setTable = $sm->get('Application\Model\SetTable');
+			
+				switch($mode)
 				{
-					$adapter->getDriver()->getConnection()->rollback();
-					throw $e;
+					case \Application\Model\Draft::MODE_BOOSTER_DRAFT:
+						$modeName = 'booster draft';
+						break;
+					case \Application\Model\Draft::MODE_SEALED_DECK:
+						$modeName = 'sealed deck';
+						break;
+					case \Application\Model\Draft::MODE_CUBE_DRAFT:
+						$modeName = 'cube draft';
+						break;
+					case \Application\Model\Draft::MODE_CHAOS_DRAFT:
+						$modeName = 'chaos draft';
+						break;
+					default:
+						throw new \Exception("Invalid game mode " . $mode);
+				
 				}
 				
-				return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'draft-opened'));
+				$sets = array();
+				$setVersions = array();
+				$setCodes = array();					
+				foreach($setVersionIds as $setVersionId)
+				{
+					$setVersion = $setVersionTable->getSetVersion($setVersionId);
+					$setVersions[] = $setVersion;
+					
+					$set = $setTable->getSet($setVersion->setId);					
+					$sets[] = $set;
+					
+					$setCodes[] = $set->code;	
+				}
+				
+				$draft = new Draft();
+				$draft->name = join("/", $setCodes) . " " . $modeName;
+				$draft->status = Draft::STATUS_OPEN;
+				$draft->hostId = $_SESSION["user_id"];
+				$draft->createdOn = date("Y-m-d H:i:s");
+				$draft->pickNumber = 1;
+				$draft->packNumber = 1;
+				$draft->lobbyKey = md5(time() . "lobby key" . $draft->hostId);
+				$draft->gameMode = $mode;
+				$draft->rarityMode = $rarityMode;
+					
+				$draftTable = $sm->get('Application\Model\DraftTable');
+				$draftTable->saveDraft($draft);
+					
+				$draftSetTable = $sm->get('Application\Model\DraftSetVersionTable');
+				foreach($setVersionIds as $index => $setVersionId)
+				{
+					$draftSetVersion = new DraftSetVersion();
+					$draftSetVersion->draftId = $draft->draftId;
+					$draftSetVersion->setVersionId = $setVersionId;
+					$draftSetVersion->packNumber = $index + 1;
+					$draftSetVersionTable->saveDraftSetVersion($draftSetVersion);
+				}
+
+				$adapter->getDriver()->getConnection()->commit();
 			}
+			catch(Exception $e)
+			{
+				$adapter->getDriver()->getConnection()->rollback();
+				throw $e;
+			}
+			
+			return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'draft-opened'));
 		}
 	
 		$viewModel = new ViewModel();
-		$viewModel->form = $form;
+		$viewModel->sets = $setTable->getSetsToHost($_SESSION["user_id"]);
+		$viewModel->mode = $mode;
 	
 		return $viewModel;
 	}
@@ -549,7 +569,7 @@ class MemberAreaController extends AbstractActionController
 			
 			$draftTable = $sm->get('Application\Model\DraftTable');
 			$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
-			$draftSetTable = $sm->get('Application\Model\DraftSetTable');
+			$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
 			
@@ -571,19 +591,36 @@ class MemberAreaController extends AbstractActionController
 			}
 			$numberOfPlayers = count($draftPlayerArray);
 			
+			$allowedRarities = array();
+			switch($draft->rarityMode)
+			{
+				case Draft::RARITY_MODE_MRUC:
+					$allowedRarities[] = 'M';
+				case Draft::RARITY_MODE_RUC:
+					$allowedRarities[] = 'R';
+				case Draft::RARITY_MODE_UC:
+					$allowedRarities[] = 'U';
+				case Draft::RARITY_MODE_C:
+					$allowedRarities[] = 'C';
+					break;
+				default:
+					throw new \Exception("Invalid rarity mode " . $draft->rarityMode);
+			}
 			// Create packs
 			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
 			{
 				$packGenerator = new BoosterDraftPackGenerator();
-				$draftSets = $draftSetTable->fetchByDraft($draftId);
+				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
 				$picks = array();
-				foreach($draftSets as $setIndex => $draftSet)
+				foreach($draftSetVersions as $setIndex => $draftSetVersion)
 				{		
-					$cards = $cardTable->fetchBySet($draftSet->setId);
+					$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 					$cardArray = array();
 					foreach($cards as $card)
 					{
-						$cardArray[] = $card;
+						if(in_array($card->rarity, $allowedRarities)){
+							$cardArray[] = $card;
+						}
 					}
 					
 					$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers);
@@ -608,13 +645,15 @@ class MemberAreaController extends AbstractActionController
 			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT)
 			{
 				$packGenerator = new CubePackGenerator();				
-				$draftSet = $draftSetTable->fetchByDraft($draftId)->current();
-				$cards = $cardTable->fetchBySet($draftSet->setId);
+				$draftSetVersion = $draftSetVersionTable->fetchByDraft($draftId)->current();
+				$cards = $cardTable->fetchBySet($draftSetVersion->setId);
 				
 				$cardArray = array();				
 				foreach($cards as $card)
 				{
-					$cardArray[] = $card;
+					if(in_array($card->rarity, $allowedRarities)){
+						$cardArray[] = $card;
+					}
 				}
 				
 				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * 3);
@@ -643,21 +682,21 @@ class MemberAreaController extends AbstractActionController
 			else if($draft->gameMode == Draft::MODE_CHAOS_DRAFT)
 			{
 				$packGenerator = new BoosterDraftPackGenerator();
-				$draftSets = $draftSetTable->fetchByDraft($draftId);
-				$draftSetArray = array();				
+				$draftSetVersions = $draftSetTable->fetchByDraft($draftId);
+				$draftSetVersionArray = array();				
 				
-				$convertedDraftSets = \Application\resultSetToArray($draftSets);
+				$convertedDraftSetVersionss = \Application\resultSetToArray($draftSetVersions);
 				while(count($draftSetArray) < 3 * $numberOfPlayers)
 				{
-					foreach($convertedDraftSets as $draftSet)
+					foreach($convertedDraftSetVersions as $draftSetVersion)
 					{
-						$draftSetArray[] = $draftSet;		
+						$draftSetVersionArray[] = $draftSetVersion;		
 					}
 					
-					if(count($draftSetArray) == 0) throw new \Exception("No sets selected for this draft");
+					if(count($draftSetVersionArray) == 0) throw new \Exception("No sets selected for this draft");
 				}
 				
-				shuffle($draftSetArray);
+				shuffle($draftSetVersionArray);
 				
 				$picks = array();
 				foreach($draftPlayerArray as $playerIndex => $player)
@@ -665,7 +704,7 @@ class MemberAreaController extends AbstractActionController
 					for($i = 0; $i < 3; $i++)
 					{
 
-						$cards = $cardTable->fetchBySet($draftSetArray[$playerIndex * 3 + $i]->setId);
+						$cards = $cardTable->fetchBySet($draftSetVersionArray[$playerIndex * 3 + $i]->setId);
 						$pack = $packGenerator->generatePacks($cards, 1)[0];
 						
 						foreach ($pack as $card)
@@ -711,35 +750,526 @@ class MemberAreaController extends AbstractActionController
 		}
 	}
 	
-	public function retireSetAction()
+	public function setSetPrivateModeAction()
 	{
 		if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
-		if(!isset($_GET["set_id"]) || strlen($_GET["set_id"]) < 1)
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		$set->isPrivate = isset($_GET["private"]);
+		$setTable->saveSet($set);
+		
+		return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('query' => 'changes-saved'));
+	}
+	
+	public function manageSetAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		$form = new \Application\Form\CreateSetForm();
+		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId)));		
+		
+		$uploadForm = new \Application\Form\UploadCardsForm();
+		$uploadForm->setAttribute('action', $this->url()->fromRoute('member-area-manage-set', array('set_id' => $set->setId), array('fragment' => 'upload')));
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = array_merge_recursive(
+            	$this->getRequest()->getPost()->toArray(),
+            	$this->getRequest()->getFiles()->toArray()
+        	);
+			
+			if(isset($formData["submit"]))
+			{
+				// Set properties form
+				$inputFilter = $set->getInputFilter();
+				//$inputFilter->remove('name');
+				$form->setInputFilter($inputFilter);
+				
+				$form->setData($formData);
+				
+				if ($form->isValid($formData))
+				{
+					$set->name = $formData["name"];
+					$set->urlName = $formData["url_name"];
+					$set->code = $formData["code"];
+					$set->about = $formData["about"];
+					$setTable->saveSet($set);
+				
+					return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'changes-saved'));
+				}
+				else
+				{
+					//var_dump($form->getMessages());
+				}
+			}
+			else if(isset($formData["submit_upload"]))
+			{
+				$uploadForm->setInputFilter($form->getInputFilter());
+				
+				$uploadForm->setData($formData);
+				
+				if ($uploadForm->isValid($formData)) 
+				{
+					$artUrl = $formData["art_url"];
+					
+					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
+					
+					// Get cards from the current version so that we can compare the uploaded file against it
+					$cardTable = $sm->get('Application\Model\CardTable');
+					$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+					$currentVersionCardArray = array();
+					foreach($currentVersionCards as $card)
+					{
+						$currentVersionCardArray[$card->name] = $card;
+					}
+					
+					try 
+					{
+						$parser = new \Application\SetParser\IsochronDrafterSetParser();
+						$cards = $parser->Parse($fileContents);
+						
+						foreach($cards as $card)
+						{
+							$cardName = preg_replace("/[^a-zA-Z0-9-. ]/iu", "", $card->name);
+							switch($formData["art_url_format"])
+							{
+								case UploadCardsForm::NAME_DOT_PNG:
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".png";
+									break;
+								case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.png";
+									break;
+								case UploadCardsForm::NAME_DOT_JPG:
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".jpg";
+									break;
+								case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
+									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.jpg";
+									break;
+								default:
+									throw new \Exception("Invalid art URL format.");
+							}
+							
+							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
+							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
+							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->firstVersionCardId : NULL;
+							$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
+						}
+						
+						//die();
+	
+						$guid = \uniqid();
+						
+						$_SESSION["card_file_cards"] = serialize($cards);
+						$_SESSION["card_file_guid"] = $guid;
+				
+						return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload' => $guid)));
+					}
+					catch (\Exception $e)
+					{
+						$uploadForm->get("file")->setMessages(array($e->getMessage()));
+					}
+				} 
+				else 
+				{
+					//var_dump($form->getMessages());
+				}
+			}	
+		}
+		
+		if(!isset($formData["submit"]))
+		{
+			$form->setData($set->getArray());
+		}
+
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+		$setVersions = $setVersionTable->fetchBySet($set->setId);
+		
+		$viewModel = new ViewModel();
+		$viewModel->setCreated = isset($_GET['set-created']);
+		$viewModel->changesSaved = isset($_GET['changes-saved']);
+		$viewModel->setVersionCreated = isset($_GET['set-version-created']);
+		$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($set->setId);
+		
+		$viewModel->set = $set;		
+		$viewModel->form = $form;
+		$viewModel->uploadForm = $uploadForm;
+		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
+		$viewModel->accessToken = $_SESSION['access_token'];
+		return $viewModel;
+	}
+	
+	public function setSetStatusAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		
+		if(!isset($_GET["status"]) || $_GET["status"] < Set::STATUS_UNPLAYABLE || $_GET["status"] > Set::STATUS_DISCONTINUED)
 		{
 			throw new \Exception("Set not set");
 		}
 		
-		$sm = $this->getServiceLocator();
-		$setTable = $sm->get('Application\Model\SetTable');
-	
-		$set = $setTable->getSet($_GET["set_id"]);
-		
-		if($_SESSION["user_id"] != $set->userId)
-		{
-			throw new \Exception("You don't own this set.");			
+		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
 		}
 		
-		$set->isRetired = 1;
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		$set->status = $_GET["status"];
 		$setTable->saveSet($set);
-
-		return $this->redirect()->toRoute('member-area', array(), array('query' => 'set-retired'));
+		
+		$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'status_tab', 'query' => 'changes-saved'));
 	}
 	
-	public function googleDriveAction()
+	public function createSetVersionAction()
 	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+
+		$set = $setTable->getSet($setId);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
 		
-		die();
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+		
+		if(!isset($_GET["upload"]) || $_GET["upload"] != $_SESSION["card_file_guid"])
+		{
+			$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload', 'query' => 'upload-expired'));
+		}
+	
+		$cards = unserialize($_SESSION["card_file_cards"]);
+		
+		$sm = $this->getServiceLocator();
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
+		
+		$form = new \Application\Form\CreateSetVersionForm();
+		
+		$cardTable = $sm->get('Application\Model\CardTable');
+		
+
+		// Get cards from the previous version so that we can compare the uploaded file against it
+		$previousSetVersion = null;
+		$previousVersionCards = null;
+		if($set->currentSetVersionId != null){
+			$previousSetVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
+			$previousVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+		}
+		
+		if ($this->getRequest()->isPost())
+		{
+			$formData = array_merge_recursive(
+					$this->getRequest()->getPost()->toArray(),
+					$this->getRequest()->getFiles()->toArray()
+			);
+				
+			$setVersion = $sm->get('Application\Model\SetVersion');
+			$setVersion->setId = $set->setId;
+			$form->setInputFilter($setVersion->getInputFilter());
+				
+			$form->setData($formData);
+				
+			if ($form->isValid($formData))
+			{
+				$adapter->getDriver()->getConnection()->beginTransaction();
+		
+				try
+				{
+					$setVersion->name = $formData["name"];
+					$setVersion->urlName = $formData["url_name"];
+					$setVersion->downloadUrl = $formData["download_url"];
+					$setVersion->about = $formData["about"];
+					//$setVersion->createdOn = $formData["about"];
+						
+					$setVersionTable->saveSetVersion($setVersion);
+
+					$set->currentSetVersionId = $setVersion->setVersionId;
+					$setTable->saveSet($set);
+					
+					foreach($cards as $card)
+					{
+						$card->setVersionId = $setVersion->setVersionId;
+
+						$cardTable->saveCard($card);
+					}
+		
+					unset($_SESSION["card_file_guid"]);
+					unset($_SESSION["card_file_cards"]);
+					
+					$adapter->getDriver()->getConnection()->commit();
+				}
+				catch(Exception $e)
+				{
+					$adapter->getDriver()->getConnection()->rollback();
+					throw $e;
+				}
+		
+				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
+			}
+			else
+			{
+			}
+		}
+		else 
+		{
+			$previousSetVersionCount = count($setVersionTable->fetchBySet($set->setId));
+			$form->setData(array(
+					'name' => "Version " . ($previousSetVersionCount + 1),
+					'url_name' => "version-" . ($previousSetVersionCount + 1)
+			));
+			$form->setData(array('name' => "Version " . (count($setVersionTable->fetchBySet($set->setId)) + 1)));
+			
+			if($previousSetVersionCount > 0)
+			{
+				$addedCards = array();
+				$changedCards = array();
+				$removedCards = array();
+				$cardArray = array();
+				foreach($cards as $card)
+				{
+					if($card->isChanged)
+					{
+						if($card->firstVersionCardId == NULL)
+						{
+							$addedCards[] = $card;
+						}
+						else 
+						{
+							$changedCards[] = $card;
+						}
+					}
+					
+					$cardArray[$card->name] = $card;
+				}
+				
+				foreach($previousVersionCards as $previousVersionCard)
+				{
+					if(!isset($cardArray[$previousVersionCard->name]))
+					{
+						$removedCards[] = $previousVersionCard;
+					}
+				}
+				
+				if(count($addedCards) > 0 || count($removedCards) > 0 || count($changedCards) > 0)
+				{
+					$changeLog = "Change log:\n\n";
+					foreach($addedCards as $card)
+					{
+						$changeLog .= "* Added [[" . $card->name . "]].\n";
+					}
+					
+					foreach($removedCards as $card)
+					{
+						$changeLog .= "* Removed [[" . $set->urlName . ":" . $previousSetVersion->urlName . ":" . $card->name . "]].\n";
+					}
+					
+					foreach($changedCards as $card)
+					{
+						$changeLog .= "* Changed [[" . $card->name . "]].\n";
+					}
+					
+				}
+				else
+				{
+					$changeLog = "This update didn't change any cards.";	
+				}
+				
+				$changeLog = trim($changeLog);
+				
+				$form->setData(array('about' => $changeLog));
+			}
+			else {
+				$form->setData(array('about' => "This is the first version of " . $set->name . " published on PlaneSculptors.net."));
+			}
+		}
+		
+		$viewModel = new ViewModel();
+		
+		$viewModel->set = $set;
+		$viewModel->cards = $cards;
+		$viewModel->form = $form;	
+		$viewModel->uploadGuid = $_GET["upload"];
+		return $viewModel;
+	}
+	
+	public function manageSetVersionAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$sm = $this->getServiceLocator();
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$setTable = $sm->get('Application\Model\SetTable');
+		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+	
+		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
+		$setVersion = $setVersionTable->getSetVersion($this->getEvent()->getRouteMatch()->getParam('set_version_id'));
+		if($setVersion === null) {
+			return $this->notFoundAction();
+		}
+	
+		if($set->setId != $setVersion->setId)
+		{
+			return $this->notFoundAction();
+		}
+		
+		if($set->userId != $auth->getUser()->userId){
+			throw new Exception("You don't own this set.");
+		}
+	
+		$form = new \Application\Form\CreateSetVersionForm();
+		$form->setAttribute('action', $this->url()->fromRoute('member-area-manage-set-version', array('set_id' => $set->setId, 'set_version_id' => $setVersion->setVersionId)));
+
+		if ($this->getRequest()->isPost())
+		{
+			$formData = $this->getRequest()->getPost()->toArray();
+				
+			if(isset($formData["submit"]))
+			{
+				// Set properties form
+				$inputFilter = $setVersion->getInputFilter();
+				//$inputFilter->remove('name');
+				$form->setInputFilter($inputFilter);
+	
+				$form->setData($formData);
+	
+				if ($form->isValid($formData))
+				{
+					$setVersion->name = $formData["name"];
+					$setVersion->urlName = $formData["url_name"];
+					$setVersion->about = $formData["about"];
+	
+					$setVersionTable->saveSetVersion($setVersion);
+	
+					return $this->redirect()->toRoute('member-area-manage-set-version', array('set_id' => $setVersion->setId, 'set_version_id' => $setVersion->setVersionId), array('query' => 'changes-saved'));
+				}
+				else
+				{
+					//var_dump($form->getMessages());
+				}
+			}
+		}
+		else
+		{
+			$form->setData($setVersion->getArray());
+		}
+	
+		$viewModel = new ViewModel();
+		$viewModel->changesSaved = isset($_GET['changes-saved']);
+	
+		$viewModel->set = $set;
+		$viewModel->setVersion = $setVersion;
+		$viewModel->form = $form;
+		return $viewModel;
+	}
+	
+	public function createTournamentAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
+		//$tournamentType = $_GET["tournament_type"];
+
+		$sm = $this->getServiceLocator();
+		
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$draftTable = $sm->get('Application\Model\DraftTable');
+		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
+		
+		$draft = $draftTable->getDraft($draftId);
+		
+		if(isset($_POST["challonge_api_key"]))
+		{
+			$user = $auth->getUser();
+			$user->challongeApiKey = $_POST["challonge_api_key"];
+			
+			$userTable = $sm->get('Application\Model\UserTable');
+			$userTable->saveUser($user);
+		}
+		else if(isset($_POST["tournament_type"]) && $auth->getUser()->challongeApiKey != NULL){
+			$challonge = new \Application\ChallongeAPI($auth->getUser()->challongeApiKey);
+			$challonge->verify_ssl = false;
+			
+			$createTournamentParams = array(
+					"tournament[name]" => $draft->name . " tournament",
+					"tournament[tournament_type]" => $_POST["tournament_type"],
+					"tournament[url]" => $draft->lobbyKey,
+					"tournament[description]" => "Tournament for an event hosted on PlaneSculptors.net",
+					"tournament[pts_for_match_win]" => 3,
+					"tournament[pts_for_match_tie]" => 1,
+					"tournament[pts_for_bye]" => 3,
+					"tournament[open_signup]" => false,
+			);
+			
+			$tournament = $challonge->createTournament($createTournamentParams);
+
+			$draftPlayers = $draftPlayerTable->fetchJoinedByDraft($draftId);
+			foreach($draftPlayers as $playerIndex => $player)
+			{
+			
+				$createParticipantParams = array(
+						"participant[name]" => $player->name,
+						"participant[seed]" => $playerIndex + 1
+				);
+				$participant = $challonge->createParticipant($tournament->id, $createParticipantParams);
+			}
+			
+			$draft->tournamentUrl = $tournament->{'full-challonge-url'};
+			$draftTable->saveDraft($draft);
+		}
+		
+		if($draft->tournamentUrl != NULL){
+			return $this->redirect()->toUrl($draft->tournamentUrl);
+		}
+
+		$viewModel = new ViewModel();
+		$viewModel->draft = $draft;
+		return $viewModel;
 	}
 }
 ?>

@@ -1,0 +1,43 @@
+<script>
+$(function(){
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
+});
+</script>
+
+<h2 id="contentTitle"><a href="<?php echo $this->url('member-area-manage-set', array('set_id' => $this->set->setId))?>"><?php echo $this->set->name ?></a> (<?php echo $this->setVersion->name ?>)</h2>
+<?php 
+if($this->changesSaved)
+{
+	?>
+	<div class="success-message"/>Changes saved!</div>
+<?php 
+}
+
+$form = $this->form;
+ 
+$form->prepare();
+
+echo $this->form()->openTag($form);
+
+$replacementToken = 'XYZ1234';
+$url = $this->url('browse-version', array('url_name' => $set->urlName, 'version_url_name' => $replacementToken), array('force_canonical' => true));
+$url = substr($url, 0, strpos($url, $replacementToken));
+
+echo $this->fullFormInput($form->get('name'));
+echo $this->fullFormInput($form->get('url_name'), $url, null, true);
+echo $this->fullFormInput($form->get('about'));
+
+?>
+<div class="form_element">
+<?php
+echo $this->formSubmit($form->get('submit'));
+?>
+</div>
+
+<?php
+echo $this->form()->closeTag();
+?>

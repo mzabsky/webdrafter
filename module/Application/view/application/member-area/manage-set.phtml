@@ -1,0 +1,302 @@
+<?php $this->headTitle()->append("Manage " . $this->set->name); ?>
+<script>
+function makePublicDialog(){
+	$("#makePublicDialog").dialog("open");
+	return false;
+}
+
+$(function(){
+	makeTabs($("#tabs"));	
+
+	$('#history-grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15,
+		"order": [[ 1, "desc" ]]
+	});
+	
+	$('.set_status_picker tr').click(function(){
+		window.location = $(this).attr('url');
+	});
+
+	$( "#makePublicDialog" ).dialog({
+      resizable: false,
+      height:620,
+      width:800,
+      modal: true,
+      autoOpen: false,
+      closeOnEscape: true,
+      dialogClass: "no-close",
+      buttons: {
+        "Confirm": function() {
+          window.location = '<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>';
+        },
+        "Stay private": function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
+
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
+
+	$('.dataTable').on( 'click', 'tr', function () {
+		$(this).addClass('selected');
+		if($(this).attr('url') != null)
+		{
+			window.location = $(this).attr('url');
+		}
+	});
+});
+
+var createPicker = function() {
+	var view = new google.picker.DocsView();
+	view.setIncludeFolders(true) 
+    .setMimeTypes("application/vnd.google-apps.folder")
+    .setSelectFolderEnabled(true);
+    
+    var picker = new google.picker.PickerBuilder()
+        //.addView(google.picker.ViewId.PDFS)
+        .addView(view)
+        .setOAuthToken(<?php echo $this->accessToken ?>.access_token)
+        .setAppId("<?php echo $this->driveAppId ?>")
+        .enableFeature(google.picker.Feature.NAV_HIDDEN)
+        .setTitle("Select a folder with card images")
+        .setCallback(function pickerCallback(data) {
+            switch (data.action) {
+                case google.picker.Action.PICKED:
+                    $("input[name=art_url]").val("http://googledrive.com/host/" + data.docs[0].id);
+                    $("input[name=google_file_id]").val(data.docs[0].id);
+                	break;
+            }
+        })
+        .build();
+
+   	$('.google_drive_button').click(function(){
+        picker.setVisible(true);
+        return false;
+   	});
+}
+
+google.setOnLoadCallback(createPicker);
+google.load("picker", "1");
+
+</script>
+<div id="makePublicDialog" title="Terms for public sets">
+	<p>When you publish a set, it will become visible to all visitiors of PlaneSculptors.net. </p>
+	<p>Please make sure your set fulfills the following terms and conditions:</p>
+	<ol>
+		<li>You allow everyone to copy and improve upon your designs.
+			<div class="explanation">We are a cooperative, not competitive community! Attribution is encouraged, but not required.</div>
+		</li>
+		<li>The set must not contain any nudity or sexually explicit material.</li>
+		<li>All art must be properly credited.</li>
+		<li>The set must not contain any art from artists who have explicitly stated they don't want their art used.
+			<div class="explanation">You are allowed to use any art from artists who did not forbid the use of their art. If an artist requires permission before using their art, please obtain it first.</div>
+		</li>
+		<li>Scans/images of any official cards are not allowed.
+			<div class="explanation">You are free to "reprint" official cards in your set, but please don't use the official art.</div>
+		</li>
+		<li>High-res card images are not allowed.
+			<div class="explanation">Users must not be reasonably able to mistake one of your cards for an official card. Upper limit for card image height is 525 px.</div>
+		</li>
+	</ol>
+	<p>Note that private sets don't have to fulfill any of these conditions - you are allowed to upload almost anything, as long as you keep it to yourself and your friends.</p>
+</div>
+
+<h2 id="contentTitle"><?php echo $this->set->name ?></h2>
+<?php 
+if($this->setCreated)
+{
+?>
+	<div class="success-message"/>Set created!</div>
+<?php 
+}
+
+if($this->changesSaved)
+{
+	?>
+	<div class="success-message"/>Changes saved!</div>
+<?php 
+}
+
+if($this->setVersionCreated)
+{
+	?>
+	<div class="success-message"/>Set version created!</div>
+<?php 
+}
+
+if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE)
+{
+	?>
+	<div class="warning-message"/>This set is marked as unplayable, it can't be used to host events!</div>
+<?php 
+}
+
+if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED)
+{
+	?>
+	<div class="warning-message"/>This set is marked as discontinued, it can't be used to host events!</div>
+<?php 
+}
+
+
+if($this->set->isPrivate)
+{
+	?>
+	<div class="warning-message"/>This set is marked as private, it is not visible in any public listings!</div>
+<?php 
+}
+
+if(count($this->setVersions) == 0)
+{
+	?>
+	<div class="warning-message"/>No card file was uploaded for this set yet, users won't see any cards!</div>
+<?php 
+}
+?>
+<p>
+	<a href='<?php echo $this->url('browse-set', array('url_name' => $this->set->urlName)) ?>'>Go to set page</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<?php if($this->set->isPrivate){ ?>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId)) ?>' onclick="return makePublicDialog();">Make public</a>
+	<?php } else { ?>
+		<a href='<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-private-mode', 'set_id' => $this->set->setId), array('query' => 'private')) ?>'>Make private</a>
+	<?php } ?>
+	</a>
+</p>
+<div id="tabs">
+	<ul>
+		<li><a href="#details">Set details</a></li>
+		<li><a href="#status">Development stage</a></li>
+		<li><a href="#history">Version history</a></li>
+		<li><a href="#upload">Upload card file</a></li>
+	</ul>
+	<div id="details">
+		<?php
+		$form = $this->form;
+		 
+		$form->prepare();
+		
+		echo $this->form()->openTag($form);
+		
+		$replacementToken = 'XYZ1234';
+		$url = $this->url('browse-set', array('url_name' => $replacementToken), array('force_canonical' => true));
+		$url = substr($url, 0, strpos($url, $replacementToken));
+		
+		echo $this->fullFormInput($form->get('name'));
+		echo $this->fullFormInput($form->get('url_name'), $url, null, true);
+		echo $this->fullFormInput($form->get('code'));
+		echo $this->fullFormInput($form->get('about'));
+
+		?>
+		<div class="form_element">
+		<?php
+		echo $this->formSubmit($form->get('submit'));
+		?>
+		</div>
+		
+		<?php
+		echo $this->form()->closeTag();
+		?>
+	</div>
+	<div id="status">
+		Here you can set how far into the development your set is. You can include additional information into the set description.
+		<table class="set_status_picker">
+			<tr class='set_status_unplayable <?php if($this->set->status == \Application\Model\Set::STATUS_UNPLAYABLE) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_UNPLAYABLE ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #1: Unplayable prototype</h3>
+					Very incomplete prototype of the set, not playable in limited. <strong>Can't be used to host events</strong>.
+				</td>				
+			</tr>
+			<tr class='set_status_design <?php if($this->set->status == \Application\Model\Set::STATUS_DESIGN) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DESIGN ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #2: Design</h3>
+					Mechanics are being figured out and the set file is being filled out, but it may be missing significant chunks of the total card count. Playtesting in limited is possible.
+				</td>				
+			</tr>
+			<tr class='set_status_development <?php if($this->set->status == \Application\Model\Set::STATUS_DEVELOPMENT) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DEVELOPMENT ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #3: Development</h3>
+					The set file is complete or almost complete and the mechanics are generally figured out. Most work is being done on balancing of individual cards and the limited enviroment as a whole. Playtesting is strongly encouraged.
+				</td>				
+			</tr>
+			<tr class='set_status_finishing <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHING) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHING ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #4: Finishing touches</h3>
+					The set is almost finished. All that remains to be done is polish - card art, card names, flavor texts etc.
+				</td>				
+			</tr>
+			<tr class='set_status_finished <?php if($this->set->status == \Application\Model\Set::STATUS_FINISHED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_FINISHED ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Stage #5: Finished</h3>
+					Further changes are not expected (but not impossible).
+				</td>				
+			</tr>
+			<tr class='set_status_discontinued <?php if($this->set->status == \Application\Model\Set::STATUS_DISCONTINUED) echo 'current'; ?>' url="<?php echo $this->url('member-area-manage-set', array('action' => 'set-set-status', 'set_id' => $this->set->setId)) . '?status=' . \Application\Model\Set::STATUS_DISCONTINUED ?>">
+				<td class='indicator'>&#9658;</td>
+				<td class='picker'>
+					<h3>Discontinued</h3>
+					All works on the set have ceased and it never really got anywhere. <strong>Can't be used to host events</strong>.
+				</td>				
+			</tr>
+		</table>
+	</div>
+	<div id="history">
+		<table id="history-grid" class="display hover stripe clickableRows" >
+			<thead>
+				<tr>
+					<th>Version name</th>
+					<th>Date</th>
+					<th>Number of cards</th>
+					<th>Number of events</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->setVersions as $setVersion)
+		{
+			echo "<tr url='" . $this->url('member-area-manage-set-version', array('set_id' => $this->set->setId, 'set_version_id' => $setVersion["setVersionId"])) . "'><td class='nameCell'>";
+			echo $setVersion["versionName"];
+			echo "</td><td>";
+			echo $setVersion["createdOn"];
+			echo "</td><td>" . $setVersion["cardCount"] . "</td><td>" . $setVersion["draftCount"] . "</td></tr>";	
+		}
+		?>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="upload">
+		<p>The first step is to upload the file and to specify where will the images be loaded from. We will then check all the card image URLs and ask you to fill in some additional information.
+		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial', array(), array('fragment' => 'set-import'))?>">the tutorial</a>.</p>
+		<?php
+		$form = $this->uploadForm;
+		
+		$form->prepare();
+		 
+		echo $this->form()->openTag($form);
+		echo $this->fullFormInput($form->get('art_url'), null, " <button class='google_drive_button'>Pick from Google Drive</button>");
+		echo $this->fullFormInput($form->get('art_url_format'));
+		echo $this->fullFormInput($form->get('file'));
+		
+		?>
+		<div class="form_element">
+		<?php
+		echo $this->formSubmit($form->get('submit_upload'));
+		?>
+		</div>
+		<?php
+		echo $this->form()->closeTag();
+		?>
+	</div>
+</div>

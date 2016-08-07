@@ -1,0 +1,25 @@
+<?php $this->headTitle()->append($this->set->name); ?>
+<script>
+var spoiler;
+
+var cardData = <?php echo $this->partial(
+	'/application/fragment/cards-to-spoiler-data', 
+	array(
+		'set' => $this->set,
+		'setVersion' => $this->currentSetVersion,
+		'cards' => $this->cards
+)); ?>
+
+$(function(){
+	spoiler = new Spoiler({element: $("#spoiler"), data: cardData, enableControl: true, enableLinks: false});
+});
+</script>
+<div id="set-page">
+	<div id="tabs">
+
+		<div id="cards">
+			<div id="spoiler"></div>
+		</div>
+	</div>
+
+</div>

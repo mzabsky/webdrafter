@@ -1,43 +1,16 @@
-   <script>   
-    var createPicker = function() {
-		var view = new google.picker.DocsView();
-		view.setIncludeFolders(true) 
-        .setMimeTypes("application/vnd.google-apps.folder")
-        .setSelectFolderEnabled(true);
-        
-        var picker = new google.picker.PickerBuilder()
-            //.addView(google.picker.ViewId.PDFS)
-            .addView(view)
-            .setOAuthToken(<?php echo $this->accessToken ?>.access_token)
-            .setAppId("<?php echo $this->driveAppId ?>")
-            .enableFeature(google.picker.Feature.NAV_HIDDEN)
-            .setTitle("Select a folder with card images")
-            .setCallback(function pickerCallback(data) {
-                switch (data.action) {
-                    case google.picker.Action.PICKED:
-                        console.log(data);
-                        //$("input[name=art_url]").val("Google Drive: " + data.docs[0].name);
-                        $("input[name=art_url]").val("http://googledrive.com/host/" + data.docs[0].id);
-                        //$("input[name=art_url]").attr('disabled', 'disabled');
-                        $("input[name=google_file_id]").val(data.docs[0].id);
-                        //window.location = "file.php?id=" + encodeURIComponent(data.docs[0].id);
-                    break;
-                }
-            })
-            .build();
+<?php $this->headTitle()->append("Create set"); ?>
+<script>
+$(document).ready(function(){
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
 
-       	$('.google_drive_button').click(function(){
-            picker.setVisible(true);
-            return false;
-       	});
-    }
-
-    google.setOnLoadCallback(createPicker);
-    google.load("picker", "1");
-    </script>
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
+});
+</script>
 <h2 id="contentTitle">Create a set</h2>
+<p>Please fill in basic information that will represent your set on PlaneSculptors. Once this is finished, you will be able to upload first version of your card file.</p>
 <p>Do you have issues figuring out the set import process? Check out <a href="<?php echo $this->url('tutorial')?>">the tutorial</a>.</p>
-
 <?php
 $form = $this->form;
 $formLabel = $this->plugin('formLabel');
@@ -45,73 +18,18 @@ $formLabel = $this->plugin('formLabel');
 $form->setAttribute('action', $this->url('member-area', array('action' => 'create-set'))); 
 $form->prepare();
  
+$replacementToken = 'XYZ1234';
+$url = $this->url('browse-set', array('url_name' => $replacementToken), array('force_canonical' => true));
+$url = substr($url, 0, strpos($url, $replacementToken));
+
 echo $this->form()->openTag($form);
+echo $this->fullFormInput($form->get('name'));
+echo $this->fullFormInput($form->get('url_name'), $url, null, true);
+echo $this->fullFormInput($form->get('code'));
+echo $this->fullFormInput($form->get('about'));
 ?>
 <div class="form_element">
 <?php
-    $name = $form->get('name');
-    echo $formLabel->openTag() . $name->getOption('label');
-    echo $this->formInput($name);
-    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $emailPrivacy = $form->get('code');
-    echo $formLabel->openTag() . $emailPrivacy->getOption('label');
-    echo $this->formInput($emailPrivacy);
-    echo $this->formElementErrors($emailPrivacy) . "<small>" . $emailPrivacy->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $about = $form->get('url');
-    echo $formLabel->openTag() . $about->getOption('label');
-    echo $this->formInput($about);
-    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $artUrl = $form->get('art_url');
-    echo $formLabel->openTag() . $artUrl->getOption('label');
-    echo $this->formInput($artUrl);
-    echo $this->formElementErrors($artUrl) . " <button class='google_drive_button'>Pick from Google Drive</button> <small>" . $artUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $artFormatUrl = $form->get('art_url_format');
-    echo $formLabel->openTag() . $artFormatUrl->getOption('label');
-    echo $this->formElement($artFormatUrl);
-    echo $this->formElementErrors($artFormatUrl) . "<small>" . $artFormatUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $downloadUrl = $form->get('download_url');
-    echo $formLabel->openTag() . $downloadUrl->getOption('label');
-    echo $this->formInput($downloadUrl);
-    echo $this->formElementErrors($downloadUrl) . "<small>" . $downloadUrl->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $file = $form->get('file');
-    echo $formLabel->openTag() . $file->getOption('label');
-    echo $this->formFile($file);
-    echo $this->formElementErrors($file) . "<small>" . $file->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-<div class="form_element">
-<?php
-echo $this->formInput($form->get('google_file_id'));
 echo $this->formSubmit($form->get('submit'));
 ?>
 </div>

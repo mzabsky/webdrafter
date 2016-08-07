@@ -29,9 +29,10 @@ class GoogleAuthentication
 		$this->googleClient->setAccessToken($_SESSION["access_token"]);
 	
 		if ($this->googleClient->isAccessTokenExpired()) {
+			
 			$refreshToken = $this->googleClient->getRefreshToken();
 			if($refreshToken == null){
-				session_destroy();
+				@session_destroy();
 				$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 				return;
 			}
@@ -47,6 +48,9 @@ class GoogleAuthentication
 			$this->authStatus = GoogleAuthentication::STATUS_NOT_REGISTERED;
 			return;
 		}
+		
+		// Keep alive
+		$_SESSION["user_id"] = $_SESSION["user_id"];
 		
 		$this->authStatus = GoogleAuthentication::STATUS_LOGGED_IN;
 	}
@@ -66,7 +70,7 @@ class GoogleAuthentication
 		);
 	
 		$client = new \Google_Client();
-		$client->setApplicationName('WebDrafter');
+		$client->setApplicationName('PlaneSculptors.net');
 		$client->setScopes($scopes);
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');

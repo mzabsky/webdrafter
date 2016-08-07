@@ -1,44 +1,34 @@
+<?php if($this->registrationMode){ $this->headTitle()->append("User registration"); }?>
+<script>
+$(document).ready(function(){
+	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+
+	$("input[name='name']").on('input', function(){
+		$("input[name='url_name']").val(toUrlName($(this).val()));
+	});
+});
+</script>
 <?php if($this->registrationMode){?>
 	<h2 id="contentTitle">User registration</h2>
-	<p>This is the first time you are logging into WebDrafter. We need you to fill in a few things before you can continue to use the app.</p>
+	<p>This is the first time you are logging into PlaneSculptors. We need you to fill in a few things before you can continue to use the app.</p>
 <?php
 }
 $form = $this->form;
 $formLabel = $this->plugin('formLabel');
 $form->prepare();
 
+$replacementToken = 'XYZ1234';
+$url = $this->url('browse-user', array('url_name' => $replacementToken), array('force_canonical' => true));
+$url = substr($url, 0, strpos($url, $replacementToken));
+
 echo $this->form()->openTag($form);
-?>
-<div class="form_element">
-<?php
-if($form->isNameIncluded())
-{
-    $name = $form->get('name');
-    echo $formLabel->openTag() . $name->getOption('label');
-    echo $this->formInput($name);
-    echo $this->formElementErrors($name) . "<small>" . $name->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
+if($this->registrationMode){
+	echo $this->fullFormInput($form->get('name'));
+	echo $this->fullFormInput($form->get('url_name'), $url, null, true);
 }
+echo $this->fullFormInput($form->get('email_privacy'));
+echo $this->fullFormInput($form->get('about'));
 ?>
-</div>
-<div class="form_element">
-<?php
-    $emailPrivacy = $form->get('email_privacy');
-    echo $formLabel->openTag() . $emailPrivacy->getOption('label');
-    echo $this->formElement($emailPrivacy);
-    echo $this->formElementErrors($emailPrivacy) . "<small>" . $emailPrivacy->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
-<div class="form_element">
-<?php
-    $about = $form->get('about');
-    echo $formLabel->openTag() . $about->getOption('label');
-    echo $this->formTextarea($about);
-    echo $this->formElementErrors($about) . "<small>" . $about->getOption('description') . "</small>";
-    echo $formLabel->closeTag();
-?>
-</div>
 <div class="form_element">
 <?php
 echo $this->formSubmit($form->get('submit'));

@@ -1,0 +1,131 @@
+<?php 
+
+if(!function_exists('replaceSymbolsForBB'))
+{
+	function replaceSymbolsForBB($str){
+		$str = str_replace('[W]', ":symw: ", $str);
+		$str = str_replace('[U]', ":symu: ", $str);
+		$str = str_replace('[B]', ":symb: ", $str);
+		$str = str_replace('[R]', ":symr: ", $str);
+		$str = str_replace('[G]', ":symg: ", $str);
+	
+		$str = str_replace('[0]', ":0mana: ", $str);
+		$str = str_replace('[1]', ":1mana: ", $str);
+		$str = str_replace('[2]', ":2mana: ", $str);
+		$str = str_replace('[3]', ":3mana: ", $str);
+		$str = str_replace('[4]', ":4mana: ", $str);
+		$str = str_replace('[5]', ":5mana: ", $str);
+		$str = str_replace('[6]', ":6mana: ", $str);
+		$str = str_replace('[7]', ":7mana: ", $str);
+		$str = str_replace('[8]', ":8mana: ", $str);
+		$str = str_replace('[9]', ":9mana: ", $str);
+		$str = str_replace('[10]', ":10mana: ", $str);
+		$str = str_replace('[11]', ":11mana: ", $str);
+		$str = str_replace('[12]', ":12mana: ", $str);
+		$str = str_replace('[13]', ":13mana: ", $str);
+		$str = str_replace('[14]', ":14mana: ", $str);
+		$str = str_replace('[15]', ":15mana: ", $str);
+		$str = str_replace('[16]', ":16mana: ", $str);
+		$str = str_replace('[17]', ":17mana: ", $str);
+		$str = str_replace('[18]', ":18mana: ", $str);
+		$str = str_replace('[19]', ":19mana: ", $str);
+		$str = str_replace('[20]', ":20mana: ", $str);
+		$str = str_replace('[X]', ":xmana: ", $str);
+		$str = str_replace('[Y]', ":ymana: ", $str);
+		$str = str_replace('[Z]', ":zmana: ", $str);
+		$str = str_replace('[T]', ":symtap: ", $str);
+		$str = str_replace('[Q]', ":symuntap: ", $str);
+	
+		$str = str_replace('[WU]', ":symwu: ", $str);
+		$str = str_replace('[UB]', ":symub: ", $str);
+		$str = str_replace('[BR]', ":symbr: ", $str);
+		$str = str_replace('[RG]', ":symrg: ", $str);
+		$str = str_replace('[GW]', ":symgw: ", $str);
+		$str = str_replace('[WB]', ":symwb: ", $str);
+		$str = str_replace('[UR]', ":symur: ", $str);
+		$str = str_replace('[BG]', ":symbg: ", $str);
+		$str = str_replace('[RW]', ":symrw: ", $str);
+		$str = str_replace('[GU]', ":symgu: ", $str);
+		$str = str_replace('[2W]', ":sym2w: ", $str);
+		$str = str_replace('[2U]', ":sym2u: ", $str);
+		$str = str_replace('[2B]', ":sym2b: ", $str);
+		$str = str_replace('[2R]', ":sym2r: ", $str);
+		$str = str_replace('[2G]', ":sym2g: ", $str);
+		$str = str_replace('[PW]', ":sympw: ", $str);
+		$str = str_replace('[PU]', ":sympu: ", $str);
+		$str = str_replace('[PB]', ":sympb: ", $str);
+		$str = str_replace('[PR]', ":sympr: ", $str);
+		$str = str_replace('[PG]', ":sympg: ", $str);
+		$str = str_replace('[S]', ":snow: ", $str);
+		return $str;
+	}
+}
+
+$rulesText = null;
+if ($this->card->rulesText != null) {
+	$rulesText = replaceSymbolsForBB($this->card->rulesText);
+	$rulesText = str_replace("<i>", "[i]", $rulesText);
+	$rulesText = str_replace("</i>", "[/i]", $rulesText);
+	$rulesText = str_replace("<b>", "[b]", $rulesText);
+	$rulesText = str_replace("</b>", "[/b]", $rulesText);
+	$rulesText = str_replace("<br />", "\n", $rulesText);
+	$rulesText = str_replace("<br/>", "\n", $rulesText);
+	$rulesText = str_replace("<br>", "\n", $rulesText);
+}
+
+$flavorText = null;
+if ($this->card->flavorText != null) {
+	$flavorText = str_replace("<i>", "[i]", $this->card->flavorText);
+	$flavorText = str_replace("</i>", "[/i]", $flavorText);
+	$flavorText = str_replace("<b>", "[b]", $flavorText);
+	$flavorText = str_replace("</b>", "[/b]", $flavorText);
+	$flavorText = str_replace("<br />", "\n", $flavorText);
+	$flavorText = str_replace("<br/>", "\n", $flavorText);
+	$flavorText = str_replace("<br>", "\n", $flavorText);
+}
+
+$rulesText2 = null;
+$flavorText2 = null;
+if($this->card->getShapeName() != "normal")
+{
+	if ($this->card->rulesText2 != null) {
+		$rulesText2 = replaceSymbolsForBB($this->card->rulesText2);
+		$rulesText2 = str_replace("<i>", "[i]", $rulesText2);
+		$rulesText2 = str_replace("</i>", "[/i]", $rulesText2);
+		$rulesText2 = str_replace("<b>", "[b]", $rulesText2);
+		$rulesText2 = str_replace("</b>", "[/b]", $rulesText2);
+		$rulesText2 = str_replace("<br />", "\n", $rulesText2);
+		$rulesText2 = str_replace("<br/>", "\n", $rulesText2);
+		$rulesText2 = str_replace("<br>", "\n", $rulesText2);
+	}
+	
+	if ($this->card->flavorText2 != null) {
+		$flavorText2 = str_replace("<i>", "[i]", $this->card->flavorText2);
+		$flavorText2 = str_replace("</i>", "[/i]", $flavorText2);
+		$flavorText2 = str_replace("<b>", "[b]", $flavorText2);
+		$flavorText2 = str_replace("</b>", "[/b]", $flavorText2);
+		$flavorText2 = str_replace("<br />", "\n", $flavorText2);
+		$flavorText2 = str_replace("<br/>", "\n", $flavorText2);
+		$flavorText2 = str_replace("<br>", "\n", $flavorText2);
+	}
+}
+
+$cardCode = "[quote][b][url=" . $this->url('browse-card', array('set_url_name' => $this->setUrlName, 'version_url_name' => $this->versionUrlName, 'card_url_name' => $this->card->urlName), array('force_canonical' => true)) . "]" . $this->card->name . "[/url] [/b]       " . ($this->card->manaCost != null ? replaceSymbolsForBB($this->card->manaCost) : "") . "\n" .
+        $this->card->types . " (" . $this->card->rarity . ")\n" .
+        ($this->card->rulesText != null ? $rulesText . "\n" : "") .
+        ($this->card->ptString != null ? $this->card->ptString . "\n" : "") .
+        ($this->card->flavorText != null ? $flavorText . "\n" : "") .
+        ($this->card->getShapeName() != "normal" ? "//\n" .
+            "[b]" . $this->card->name2 . "[/b] " . ($this->card->manaCost2 != '' ? replaceSymbolsForBB($this->card->manaCost2) : "") . "\n" .
+            $this->card->types2 . " (" . $this->card->rarity . ")\n" .
+            ($this->card->rulesText2 != null ? $rulesText2 . "\n" : "") .
+            ($this->card->ptString2 != null ? $this->card->ptString2 . "\n" : "") .
+            ($this->card->flavorText2 != null ? $flavorText2 . "\n" : "") .
+            "": "") .
+        "[/quote]";
+
+$cardCode = str_replace("\n", '\\n', $cardCode);
+$cardCode = str_replace("\\n\\n", '\\n', $cardCode);
+//$cardCode = str_replace("\\n[/quote]", '[/quote]', $cardCode);
+
+echo $cardCode;

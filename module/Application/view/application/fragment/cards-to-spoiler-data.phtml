@@ -1,0 +1,50 @@
+[
+<?php 
+$i = 0;
+foreach($this->cards as $card)
+{
+	//echo $card->colors;
+	
+	$colors = array_diff(array_unique (array_merge(str_split(trim($card->colors)), str_split(trim($card->colors2)))), array(""));
+	foreach($colors as &$color)
+	{
+		$color = "'" . $color . "'";
+	}
+	
+	$versionName = isset($card->setVersionName) ? $card->setVersionName : $this->setVersion->name;
+	$versionUrlName = isset($card->setVersionUrlName) ? $card->setVersionUrlName : $this->setVersion->urlName;
+	
+	?>
+	{
+		cardId: <?php echo $card->cardId ?>,
+		sequenceNumber: <?php echo $i?>,
+	    shape: "<?php echo $card->getShapeName() ?>",
+	    name: "<?php echo $card->name ?>",
+	    manaCost: '<?php echo $this->symbols($card->manaCost) ?>',
+	    cmc: <?php echo $card->cmc ?>,
+	    colors: [<?php echo implode(',', $colors) ?>],
+	    types: "<?php echo $card->types ?>",
+	    artUrl: "<?php echo $card->artUrl ?>",
+	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName), array('force_canonical' => true)) ?>",
+	    rulesText: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText)) ?>',
+	    flavorText: "<?php echo preg_replace('/\n+/', '', $card->flavorText) ?>",
+	    rarity: "<?php echo $card->rarity ?>",
+	    rarityName: "<?php echo $card->getRarityName() ?>",
+	    ptString: "<?php echo $card->ptString ?>",
+	    illustrator: "<?php echo htmlspecialchars($card->illustrator) ?>",
+
+	    name2: "<?php echo $card->name2 ?>",
+	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
+	    types2: "<?php echo $card->types2 ?>",
+	    rulesText2: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText2)) ?>',
+	    flavorText2: "<?php echo preg_replace('/\n+/', '', $card->flavorText2) ?>",
+	    ptString2: "<?php echo $card->ptString2 ?>",
+	    illustrator2: "<?php echo htmlspecialchars($card->illustrator2) ?>",
+	    
+	    setVersionLink: "<a href='<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName)) ?>'><?php echo $versionName ?></a>",
+	    bbCode: '<?php echo $this->partial('/application/fragment/card-to-phpbb', array('setUrlName' => $this->set->urlName, 'versionUrlName' => $versionUrlName, 'card' => $card));?>'
+	},
+<?php 
+$i++;
+} ?>	
+];

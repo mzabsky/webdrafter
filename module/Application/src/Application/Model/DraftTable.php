@@ -67,7 +67,7 @@ class DraftTable
 					'packNumber' => $result->pack_number,
 					'pickNumber' => $result->pick_number,
 					'createdOn' => $result->created_on,
-					'playerCount' => $result->player_count
+					'playerCount' => $result->player_count != null ? $result->player_count : 0
 			);
 		}
 	
@@ -102,7 +102,7 @@ class DraftTable
 				'createdOn' => $result->created_on,
 				'hostName' => $result->host_name,
 				'hostId' => $result->host_id,
-				'playerCount' => $result->player_count
+				'playerCount' => $result->player_count != null ? $result->player_count : 0
 			);
 		}
 	
@@ -168,6 +168,8 @@ class DraftTable
 			'pick_number'  => $draft->pickNumber,
 			'lobby_key'  => $draft->lobbyKey,
 			'game_mode'  => $draft->gameMode,
+			'rarity_mode'  => $draft->rarityMode,
+			'tournament_url'  => $draft->tournamentUrl,
 		);
 	
 		$id = (int) $draft->draftId;

@@ -531,6 +531,13 @@ button.ui-button::-moz-focus-inner {
 	bottom: -5px;
 	background-position: 16px 16px;
 }
+
+.ui-dialog textarea {
+	width: 750px;
+	height: 400px;
+}
+
+
 .ui-draggable .ui-dialog-titlebar {
 	cursor: move;
 }
@@ -776,7 +783,7 @@ button.ui-button::-moz-focus-inner {
 }
 .ui-tabs {
 	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-	padding: .2em;
+	/*padding: .2em;*/
 }
 .ui-tabs .ui-tabs-nav {
 	margin: 0;
@@ -812,25 +819,35 @@ button.ui-button::-moz-focus-inner {
 .ui-tabs .ui-tabs-panel {
 	display: block;
 	border-width: 0;
-	padding: 1em 1.4em;
+	padding: 1em 1.4em 50px 1em;
+	margin-bottom: -50px;
 	background: none;
+    border-left: 1px solid #d3d3d3;
+    border-right: 1px solid #d3d3d3;
 }
+
+.ui-tabs-panel {
+	
+}
+
 .ui-tooltip {
-	padding: 8px;
+	/*padding: 8px;*/
 	position: absolute;
 	z-index: 9999;
-	max-width: 300px;
-	-webkit-box-shadow: 0 0 5px #aaa;
-	box-shadow: 0 0 5px #aaa;
+	max-width: 600px;
+	/*-webkit-box-shadow: 0 0 5px #aaa;
+	box-shadow: 0 0 5px #aaa;*/
+	background: none !important;
+	border: none !important;
 }
 body .ui-tooltip {
-	border-width: 2px;
+	/*border-width: 2px;*/
 }
 
 /* Component containers
 ----------------------------------*/
 .ui-widget {
-	font-family: Verdana,Arial,sans-serif;
+	/*font-family: Verdana,Arial,sans-serif;*/
 	font-size: 1.1em;
 }
 .ui-widget .ui-widget {
@@ -849,7 +866,7 @@ body .ui-tooltip {
 	color: #222222;
 }
 .ui-widget-content a {
-	color: #222222;
+	/*color: #222222;*/
 }
 .ui-widget-header {
 	border: 1px solid #aaaaaa;

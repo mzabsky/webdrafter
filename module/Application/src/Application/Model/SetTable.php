@@ -18,26 +18,40 @@ class SetTable
 	
 	public function fetchAll()
 	{
-		$resultSet = $this->tableGateway->select(array('is_retired' => 0));
+		$resultSet = $this->tableGateway->select(array('is_private' => 0));
 		return $resultSet;
 	}
 	
-	public function fetchByUser($userId)
+	public function fetchByUser($userId, $includePrivate = false)
 	{
-		$resultSet = $this->tableGateway->select(array('is_retired' => 0, 'user_id' => $userId));
+		if($includePrivate)
+		{
+			$resultSet = $this->tableGateway->select(array('user_id' => $userId));
+		}
+		else {
+			$resultSet = $this->tableGateway->select(array('is_private' => 0, 'user_id' => $userId));
+		}
 		return $resultSet;
 	}
 	
-	public function getSetsByUser($userId)
+	public function getSetsByUser($userId, $includePrivate)
 	{
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('set');
 		//$select->forUpdate();
-		$select->columns(array('set_name' => 'name', 'set_id'));
-		//$select->join('user', 'user.user_id = set.user_id', array('user_name' => 'name', 'user_id'));
-		$select->join(array('draft_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_id FROM draft_set GROUP BY set_id)')), 'set.set_id = draft_set_count.set_id', array('draft_count' => 'count'));
-		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_id FROM card GROUP BY set_id)')), 'set.set_id = card_set_count.set_id', array('card_count' => 'count'));		
-		$select->where(array('set.user_id' => $userId, 'set.is_retired' => 0));
+		$select->columns(array('set_name' => 'name', 'set_id', 'set_url_name' => 'url_name', 'set_status' => 'status'));
+		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array(), 'left');
+		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
+		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set.current_set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
+
+		if($includePrivate)
+		{
+			$select->where(array('set.user_id' => $userId));
+		}
+		else 
+		{
+			$select->where(array('set.user_id' => $userId, 'set.is_private' => 0));
+		}		
 		//$select->order('draft.created_on DESC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		//var_dump($selectString);
@@ -50,8 +64,10 @@ class SetTable
 			$resultArray[] = array(
 					'setId' => $result->set_id,
 					'setName' => $result->set_name,
-					'draftCount' => $result->draft_count,
-					'cardCount' => $result->card_count
+					'setStatus' => $result->set_status,
+					'setUrlName' => $result->set_url_name,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0
 			);
 		}
 	
@@ -63,12 +79,12 @@ class SetTable
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('set');
 		//$select->forUpdate();
-		$select->columns(array('set_name' => 'name', 'set_id', 'created_on'));
-		//$select->join('user', 'user.user_id = set.user_id', array('user_name' => 'name', 'user_id'));
-		$select->join(array('draft_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_id FROM draft_set GROUP BY set_id)')), 'set.set_id = draft_set_count.set_id', array('draft_count' => 'count'));
-		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_id FROM card GROUP BY set_id)')), 'set.set_id = card_set_count.set_id', array('card_count' => 'count'));
+		$select->columns(array('set_name' => 'name', 'set_id', 'url_name', 'created_on', 'is_featured', 'set_status' => 'status'));
+		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array(), 'left');
+		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
+		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
 		$select->join('user', 'set.user_id = user.user_id', array('user_name' => 'name'));
-		$select->where(array('set.is_retired' => 0));
+		$select->where(array('set.is_private' => 0));
 		//$select->order('draft.created_on DESC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		//var_dump($selectString);
@@ -81,10 +97,57 @@ class SetTable
 			$resultArray[] = array(
 					'setId' => $result->set_id,
 					'setName' => $result->set_name,
-					'draftCount' => $result->draft_count,
-					'cardCount' => $result->card_count,
+					'setStatus' => $result->set_status,
+					'urlName' => $result->url_name,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0,
 					'userName' => $result->user_name,
-					'createdOn' => $result->created_on
+					'createdOn' => $result->created_on,
+					'isFeatured' => $result->is_featured
+			);
+		}
+	
+		return $resultArray;
+	}
+	
+	public function getSetsToHost($userId)
+	{
+		$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('set');
+		//$select->forUpdate();
+		$select->columns(array('set_name' => 'name', 'set_id', 'url_name', 'created_on', 'is_featured', 'set_status' => 'status', 'current_set_version_id', 'set_code' => 'code'));
+		$select->join('set_version', 'set_version.set_version_id = set.current_set_version_id', array('current_set_version_name' => 'name'), 'left');
+		$select->join(array('draft_set_version_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, set_version_id FROM draft_set_version GROUP BY set_version_id)')), 'set_version.set_version_id = draft_set_version_count.set_version_id', array('draft_count' => 'count'), 'left');
+		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
+		$select->join('user', 'set.user_id = user.user_id', array('user_name' => 'name'));
+		$select->where(array(
+				'set.status NOT IN(' . Set::STATUS_UNPLAYABLE . ', ' . Set::STATUS_DISCONTINUED . ')', 
+				'(set.is_private = 0 OR set.user_id = ' . (int)$userId . ')',
+				'current_set_version_id IS NOT NULL'
+		));
+		//$select->where(array();
+		//$select->order('draft.created_on DESC');
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
+	
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+	
+		$resultArray = array();
+		foreach ($resultSet as $result)
+		{
+			$resultArray[] = array(
+					'setId' => $result->set_id,
+					'setName' => $result->set_name,
+					'setCode' => $result->set_code,
+					'setStatus' => $result->set_status,
+					'urlName' => $result->url_name,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'cardCount' => $result->card_count != null ? $result->card_count : 0,
+					'userName' => $result->user_name,
+					'createdOn' => $result->created_on,
+					'isFeatured' => $result->is_featured,
+					'currentSetVersionId' => $result->current_set_version_id,
+					'currentSetVersionName' => $result->current_set_version_name,
 			);
 		}
 	
@@ -97,7 +160,17 @@ class SetTable
 		$rowset = $this->tableGateway->select(array('set_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find set $id");
+			return null;
+		}
+		return $row;
+	}
+	
+	public function getSetByUrlName($urlName)
+	{
+		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
 		}
 		return $row;
 	}
@@ -107,11 +180,14 @@ class SetTable
 		$data = array(
 			'set_id' => $set->setId,
 			'name'  => $set->name,
+			'url_name'  => $set->urlName,
 			'code'  => $set->code,
-			'url'  => $set->url,
 			'user_id'  => $set->userId,
-			'is_retired'  => $set->isRetired,
-			'download_url'  => $set->downloadUrl,
+			'about'  => $set->about,
+			'status'  => $set->status,
+			'is_private'  => $set->isPrivate,
+			'current_set_version_id'  => $set->currentSetVersionId,
+			'is_featured'  => $set->isFeatured,
 		);
 	
 		$id = (int) $set->setId;

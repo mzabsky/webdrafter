@@ -14,6 +14,11 @@ class Draft
 	const MODE_CHAOS_DRAFT = 3;
 	const MODE_SEALED_DECK = 4;
 	
+	const RARITY_MODE_MRUC = 1;
+	const RARITY_MODE_RUC = 2;
+	const RARITY_MODE_UC = 3;
+	const RARITY_MODE_C = 4;
+	
 	public $draftId;
 	public $status;
 	public $createdOn;
@@ -23,6 +28,8 @@ class Draft
 	public $pickNumber;
 	public $lobbyKey;
 	public $gameMode;
+	public $rarityMode;
+	public $tournamentUrl;
 
     public function exchangeArray($data)
     {
@@ -35,5 +42,18 @@ class Draft
         $this->pickNumber = $data['pick_number'];
         $this->lobbyKey = $data['lobby_key'];
         $this->gameMode = $data['game_mode'];
+        $this->rarityMode = $data['rarity_mode'];
+        $this->tournamentUrl = $data['tournament_url'];
+    }
+    
+    public static function getGameModeName($gameMode)
+    {
+    	switch($gameMode)
+    	{
+    		case Draft::MODE_BOOSTER_DRAFT: return "Booster draft";
+    		case Draft::MODE_CUBE_DRAFT: return "Cube draft";
+    		case Draft::MODE_CHAOS_DRAFT: return "Chaos draft";
+    		case Draft::MODE_SEALED_DECK: return "Sealed deck";
+    	}
     }
 }

@@ -64,6 +64,12 @@ class Module
             		$user->setDbAdapter($dbAdapter);
             		return $user;
                 },
+                'Application\Model\SetVersion' =>  function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+            		$user = new \Application\Model\SetVersion();
+            		$user->setDbAdapter($dbAdapter);
+            		return $user;
+                },
                 'Application\Model\SetTable' =>  function($sm) {
                     $tableGateway = $sm->get('SetTableGateway');
                     $table = new \Application\Model\SetTable($tableGateway);
@@ -72,8 +78,19 @@ class Module
                 'SetTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Set());
+                    $resultSetPrototype->setArrayObjectPrototype($sm->get('Application\Model\Set'));
                     return new TableGateway('set', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\SetVersionTable' =>  function($sm) {
+                    $tableGateway = $sm->get('SetVersionTableGateway');
+                    $table = new \Application\Model\SetVersionTable($tableGateway);
+                    return $table;
+                },
+                'SetVersionTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype($sm->get('Application\Model\SetVersion'));
+                    return new TableGateway('set_version', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\CardTable' =>  function($sm) {
                     $tableGateway = $sm->get('CardTableGateway');
@@ -97,16 +114,16 @@ class Module
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Draft());
                     return new TableGateway('draft', $dbAdapter, null, $resultSetPrototype);
                 },
-                'Application\Model\DraftSetTable' =>  function($sm) {
-                    $tableGateway = $sm->get('DraftSetTableGateway');
-                    $table = new \Application\Model\DraftSetTable($tableGateway);
+                'Application\Model\DraftSetVersionTable' =>  function($sm) {
+                    $tableGateway = $sm->get('DraftSetVersionTableGateway');
+                    $table = new \Application\Model\DraftSetVersionTable($tableGateway);
                     return $table;
                 },
-                'DraftSetTableGateway' => function ($sm) {
+                'DraftSetVersionTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftSet());
-                    return new TableGateway('draft_set', $dbAdapter, null, $resultSetPrototype);
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftSetVersion());
+                    return new TableGateway('draft_set_version', $dbAdapter, null, $resultSetPrototype);
                 },
                 'Application\Model\DraftPlayerTable' =>  function($sm) {
                     $tableGateway = $sm->get('DraftPlayerTableGateway');
@@ -169,6 +186,26 @@ class Module
      					'auth' => function($sm) {
      						$helper = new \Application\View\Helper\Auth() ;
      						return $helper;
+     					},
+     					'config' => function($sm) {
+     						$helper = new \Application\View\Helper\Config() ;
+     						return $helper;
+     					},
+     					'fullFormInput' => function($sm) {
+     						$helper = new \Application\View\Helper\FullFormInput() ;
+     						return $helper;
+     					},
+     					'markdown' => function($sm) {
+     						$helper = new \Application\View\Helper\Markdown() ;
+     						return $helper;
+     					},
+     					'symbols' => function($sm) {
+     						$helper = new \Application\View\Helper\Symbols() ;
+     						return $helper;
+     					},
+     					'wideMode' => function($sm) {
+     						$helper = new \Application\View\Helper\WideMode() ;
+     						return $helper;
      					}
      			)
      	);
@@ -183,4 +220,13 @@ function resultSetToArray($resultSet)
 		$a[] = $item;		
 	}
 	return $a;
+}
+
+function toUrlName($str){
+	$clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+	$clean = preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', $clean);
+	$clean = strtolower(trim($clean, '-'));
+	$clean = preg_replace("/[\/_|+ -]+/", '-', $clean);
+
+	return $clean;
 }

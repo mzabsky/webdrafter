@@ -28,7 +28,17 @@ class UserTable
 		$rowset = $this->tableGateway->select(array('user_id' => $id));
 		$row = $rowset->current();
 		if (!$row) {
-			throw new \Exception("Could not find user $id");
+			return null;
+		}
+		return $row;
+	}
+	
+	public function getUserByUrlName($urlName)
+	{
+		$rowset = $this->tableGateway->select(array('url_name' => $urlName));
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
 		}
 		return $row;
 	}
@@ -37,9 +47,9 @@ class UserTable
 	{
 		$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('user');
-		$select->columns(array('user_name' => 'name', 'user_id'));
-		$select->join(array('draft_player_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, user_id FROM draft_player GROUP BY user_id)')), 'user.user_id = draft_player_count.user_id', array('draft_count' => 'count'));
-		$select->join(array('set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(set_id) count, user_id FROM `set` WHERE is_retired = 0 GROUP BY user_id)')), 'user.user_id = set_count.user_id', array('set_count' => 'count'));
+		$select->columns(array('user_name' => 'name', 'user_url_name' => 'url_name', 'user_id'));
+		$select->join(array('draft_player_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(DISTINCT draft_id) count, user_id FROM draft_player GROUP BY user_id)')), 'user.user_id = draft_player_count.user_id', array('draft_count' => 'count'), 'left');
+		$select->join(array('set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(set_id) count, user_id FROM `set` WHERE is_private = 0 GROUP BY user_id)')), 'user.user_id = set_count.user_id', array('set_count' => 'count'), 'left');
 		$select->where(array('user.name IS NOT NULL'));
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		
@@ -51,8 +61,9 @@ class UserTable
 			$resultArray[] = array(
 					'userId' => $result->user_id,
 					'userName' => $result->user_name,
-					'draftCount' => $result->draft_count,
-					'setCount' => $result->set_count
+					'userUrlName' => $result->user_url_name,
+					'draftCount' => $result->draft_count != null ? $result->draft_count : 0,
+					'setCount' => $result->set_count != null ? $result->set_count : 0
 			);
 		}
 	
@@ -76,8 +87,10 @@ class UserTable
 			'user_id' => $user->userId,
 			'email'  => $user->email,
 			'name'  => $user->name,
+			'url_name'  => $user->urlName,
 			'email_privacy'  => $user->emailPrivacy,
 			'about'  => $user->about,
+			'challonge_api_key'  => $user->challongeApiKey,
 		);
 	
 		$id = (int) $user->userId;

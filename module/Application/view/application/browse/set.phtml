@@ -1,11 +1,76 @@
-<h2 id="contentTitle"><?php echo "[" . $this->set->code . "] " . $this->set->name; ?></h2>
-<?php if($this->set->isRetired){ ?><p><b>This set is retired and is only stored for archiving purposes.</b></p><?php } ?>
-<p><a href="<?php echo $this->set->url ?>" target="_blank">Set information</a></p>
-<?php if($this->set->downloadUrl != null) { ?><p><a href="<?php echo $this->set->downloadUrl ?>">Set download</a></p><?php } ?>
-<p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></p>
-<p><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></p>
-<?php
-foreach($this->cards as $card)
-{
-	echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
-}
+<?php $this->headTitle()->append($this->set->name); ?>
+<script>
+var spoiler;
+
+var cardData = <?php echo $this->partial(
+	'/application/fragment/cards-to-spoiler-data', 
+	array(
+		'set' => $this->set,
+		'setVersion' => $this->currentSetVersion,
+		'cards' => $this->cards
+)); ?>
+
+$(function(){
+	makeTabs($("#tabs"));
+
+	spoiler = new Spoiler({element: $("#spoiler"), data: cardData, enableControl: true});
+});
+</script>
+<h2 id="contentTitle">
+	<?php echo $this->set->name; ?>
+	<?php if($set->isFeatured){ ?><span class="featured-set-title">Featured</span><?php } ?>
+	<?php if($set->isPrivate){ ?><span class="private-set-title">Private</span><?php } ?>
+</h2>
+<div id="set-page">
+	<div class="info-bar">
+		<span class="info-bar-item">Author: <a href="<?php echo $this->url('browse-user', array('url_name' => $this->user->urlName)) ?>"><?php echo $this->user->name ?></a></span>
+		<span class="info-bar-item">Current version: <?php if($this->currentSetVersion != null){ ?><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $this->currentSetVersion->urlName)) ?>"><?php echo $this->currentSetVersion->name ?></a><?php } else { ?>None<?php }?></span>
+		<?php if($this->currentSetVersion != null) { ?>
+			<span class="info-bar-item">Last change: <?php echo $this->currentSetVersion->createdOn ?></span>
+		<?php } ?>
+		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>
+		<!--<span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span>-->		
+		<?php if($this->currentSetVersion != null) { ?>			
+			<?php if($this->currentSetVersion->downloadUrl != null){?>
+				<span class="info-bar-item"><a href="<?php echo $this->currentSetVersion->downloadUrl ?>" title="Download set files">Download for desktop</a></span>
+			<?php }?>
+			<!-- <span class="info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=1">Generate booster</a></span>
+			<span class="info-bar-item"><a href="<?php echo $this->url('generate-pool', array('action' => 'sealed-pol', 'set_id' => $this->set->setId)) ?>?n=6">Generate sealed pool</a></span> -->
+		<?php } ?>
+	</div>
+	<div id="tabs">
+		<ul>
+			<?php if($this->set->about != NULL) { ?><li><a href="#details">Set details</a></li><?php } ?>
+			<li><a href="#cards">Cards</a></li>
+			<li><a href="#history">Version history</a></li>
+		</ul>
+		<?php if($this->set->about != NULL) { ?>
+			<div id="details">
+			<?php echo $this->markdown($this->set->about, $this->set->urlName, $this->currentSetVersion != null ? $this->currentSetVersion->urlName : $this->currentSetVersion); ?>
+			</div>
+		<?php }?>
+		<div id="cards">
+			<div id="spoiler"></div>
+		<?php
+		/*foreach($this->cards as $card)
+		{
+			echo "<img src='" . $card->artUrl . "' alt='" . $card->name . "' />";
+		}*/
+		?>
+		</div>
+		<div id="history">
+		<?php foreach($this->setVersions as $setVersion){?>
+		<div class="set-version">
+			<h2><a href="<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $setVersion["versionUrlName"])) ?>"><?php echo $setVersion["versionName"] ?></a></h2>
+			<div class="info-bar">
+				<span class="info-bar-item">Date: <?php echo $setVersion["createdOn"] ?></span>
+			</div>
+			<div class="set-version-about-expandable"/>
+				<?php echo $this->markdown($setVersion["about"], $this->set->urlName, $setVersion["versionUrlName"]); ?>
+			</div>
+		</div>
+		<?php } ?>
+		</div>	
+	</div>
+
+</div>

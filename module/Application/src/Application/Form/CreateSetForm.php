@@ -8,11 +8,6 @@ use Zend\Form\Element\File;
 
 class CreateSetForm extends Form
 {
-	const NAME_DOT_PNG = 1;
-	const NAME_DOT_FULL_DOT_PNG = 2;
-	const NAME_DOT_JPG = 3;
-	const NAME_DOT_FULL_DOT_JPG = 4;
-	
 	public function __construct($options = null)
 	{
 		parent::__construct($options);
@@ -26,19 +21,43 @@ class CreateSetForm extends Form
 		$this->add($factory->createElement(array(
 			'name' => 'name',
 			'options' => array(
-				'label' => 'Name',
-				'description' => 'Representative name of the set. Must be unique (consider including version or date).'
+				'label' => 'Name: ',
+				'description' => 'Representative name of the set. Must be unique.'
+			)
+		)));
+		
+		$this->add($factory->createElement(array(
+			'name' => 'url_name',
+			'attributes' => array(
+					'class' => 'url-name-input',
+			),
+			'options' => array(
+				'label' => 'URL name: ',
+				'description' => 'Name used in URLs to this set. Can only contain lower case english alphabet letters, numbers and minus sign. Must be unique.'
 			)
 		)));
 		
 		$this->add($factory->createElement(array(
 			'name' => 'code',
+			'attributes' => array(
+					'class' => 'code-input',
+			),
 			'options' => array(
-				'label' => 'Code:',
+				'label' => 'Code: ',
 				'description' => '3-5 uppercase letter code. Doesn\'t have to be unique.'
 			)
 		)));
 		
+		$this->add($factory->createElement(array(
+			'name' => 'about',
+			'type' => 'textarea',
+			'options' => array(
+				'label' => 'About the set: ',
+				'description' => 'Arbitrary text displayed on the set page. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Up to 50000 characters.'
+			),
+		)));
+		
+		/*
 		$this->add($factory->createElement(array(
 			'name' => 'url',
 			'type' => 'url',
@@ -67,9 +86,9 @@ class CreateSetForm extends Form
 					),
 				),
 			),
-		)));
+		)));*/
 		
-		$this->add($factory->createElement(array(
+		/*$this->add($factory->createElement(array(
 				'name' => 'art_url_format',
 				'type' => 'Zend\Form\Element\Select',
 				'required' => true,
@@ -83,9 +102,9 @@ class CreateSetForm extends Form
 								CreateSetForm::NAME_DOT_FULL_DOT_JPG => '<card name>.full.jpg',
 						],
 				),
-		)));
+		)));*/
 		
-		$this->add($factory->createElement(array(
+		/*$this->add($factory->createElement(array(
 				'name' => 'download_url',
 				'type' => 'url',
 				'options' => array(
@@ -114,11 +133,11 @@ class CreateSetForm extends Form
 			),
 		)));
 
-
 		$this->add($factory->createElement(array(
 				'name' => 'google_file_id',
 				'type' => 'hidden',
-		)));
+		)));*/
+
 		
 		/*$file = new File('file');
 		$file->setLabel('Set file:')
@@ -131,7 +150,7 @@ class CreateSetForm extends Form
 		$this->add($factory->createElement(array(
 			'name' => 'submit',
             'attributes' => array(
-                'value' => 'Create',
+                'value' => 'Save',
             ),
 			'type' => 'submit',
 			'required' => true,

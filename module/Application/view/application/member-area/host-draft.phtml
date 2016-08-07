@@ -1,45 +1,91 @@
-<h2 id="contentTitle">Host event</h2>
-<!--  <button>Add pack</button>-->
-<?php
-$form = $this->form;
-$formLabel = $this->plugin('formLabel');
+<script>
+$(function(){
+	$('#sets-grid').DataTable({
+		"searching": false,
+		"lengthChange": false,
+		"pageLength": 15,
+		"order": [[1, 'asc']]
+	});
 
-$form->setAttribute('action', $this->url('member-area', array('action' => 'host-draft'))); 
-$form->prepare();
- 
-echo $this->form()->openTag($form);
-echo $this->formElement($form->get('mode'));
-echo $this->formElement($form->get('number_of_packs'));
+	$('.add-button').click(function(){
+		console.log(this);
+		var setVersionId = $(this).parent().parent().attr('setVersionId');
+		var setLabel = $(this).parent().parent().attr('setLabel');
 
-for($i = 1; $i <= $form->get('number_of_packs')->getvalue(); $i++)
-{
-?>
-<div class="form_element">
-<?php
-    $pack = $form->get('pack' . $i);
-    echo $formLabel->openTag() /*. $pack->getOption('label')*/;
-    echo $this->formElement($pack);
-    echo $this->formElementErrors($pack) /*. "<small>" . $pack->getOption('description') . "</small>"*/;
-    echo $formLabel->closeTag();
-?>
+		var button = $('<span class="selected-pack" setVersionId="' + setVersionId + '">' + setLabel +'</span>');
+		button.click(function(){ $(this).remove(); if($('.selected-pack').length == 0) { $('.host-event form').hide(); } });
+		
+		$('#selected-packs').append(button);
+
+		$("input[type='submit']").show();
+
+		return false;
+	});
+
+	$('.host-event input[type=submit]').click(function(){
+		var first = true;
+		var str = "";
+		$('.selected-pack').each(function(){
+			if(!first) str += ",";
+			str += $(this).attr("setVersionId");
+			first = false;
+		});
+		$('input[name=setVersionIds]').val(str);
+	})
+});
+</script>
+<?php $this->headTitle()->append("Host event"); ?>
+<div class="host-event">
+	<form method="post">
+		<h2 id="contentTitle">Host event - <?php echo Application\Model\Draft::getGameModeName($this->mode)?></h2>
+		<p>Card rarity mode:</p>
+		<input type="radio" name="rarity_mode" value="1" id="rarity1" checked="checked"> <label for="rarity1">All cards</label>.<br />
+		<input type="radio" name="rarity_mode" value="2" id="rarity2"> <label for="rarity2">No mythics</label>.<br />
+		<input type="radio" name="rarity_mode" value="3" id="rarity3"> <label for="rarity3">Commons and uncommons only</label>.<br />
+		<input type="radio" name="rarity_mode" value="4" id="rarity4"> <label for="rarity4">Commons only</label>.<br />
+		<p>Selected packs (click to remove):</p>
+		<div id="selected-packs"></div>
+	
+		<p>Add more packs:</p>
+		<table id="sets-grid" class="display hover stripe clickableRows" >
+			<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>Set name</th>
+					<th>Current version</th>
+					<th>Stage</th>
+					<th>Author</th>
+					<th>Date</th>
+					<th>Number of cards</th>
+					<th>Number of events</th>
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach ($this->sets as $set)
+		{
+			echo "<tr url='" . $this->url('browse-set', array('url_name' => $set["urlName"])) . "' setVersionId='".$set["currentSetVersionId"]."' setLabel='" . htmlspecialchars($set["setCode"] . ' - ' . $set["setName"] . ' - ' .$set["currentSetVersionName"]) . "'>";
+			echo "<td><button class='add-button'>Add</button/></td>";
+			echo "<td class='nameCell'>";
+			echo $set["setName"];
+			echo "</td>";
+			echo "<td class='nameCell'>";
+			echo $set["currentSetVersionName"];
+			echo "</td><td>";
+			echo "	<span class='set-status-label set-status-label-" . $set["setStatus"] ."'>" . \Application\Model\Set::getStatusNameStatic($set["setStatus"]) . "</span>";
+			echo "</td><td>";
+			echo $set["userName"];
+			echo "</td><td>";
+			echo $set["createdOn"];
+			echo "</td><td>" . $set["cardCount"] . "</td><td>" . $set["draftCount"] . "</td></tr>";	
+		}
+		?>
+				</tr>
+			</tbody>
+		</table>
+		<input name="mode" type="hidden" value="<?php echo $this->mode?>"/>
+		<input name="setVersionIds" type="hidden"/>
+		<input type="submit" value="Open the event"/>
+		<p>Once you open the event, you will be to invite players to join.</p>
+	</form>
 </div>
-<?php 
-}
-?>
-<div class="form_element">
-<?php
-/*
-    $mode = $form->get('mode');
-    echo $formLabel->openTag() . $mode->getOption('label');
-    echo $this->formElement($mode);
-    echo $this->formElementErrors($mode) . "<small>" . $mode->getOption('description') . "</small>";
-    echo $formLabel->closeTag();*/
-?>
-</div>
-<div class="form_element">
-<?php
-echo $this->formSubmit($form->get('submit')) . '<small>' . $form->get('submit')->getOption('description') . '</small>';
-?>
-</div>
-<?php
-echo $this->form()->closeTag();
