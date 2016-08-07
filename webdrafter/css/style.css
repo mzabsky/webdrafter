@@ -763,6 +763,10 @@ form input.code-input {
     .draft-screen .draft-bar .spinner {
       height: 20px;
       margin-bottom: -3px; }
+    .draft-screen .draft-bar .draft-info-button {
+      display: inline-block;
+      cursor: pointer;
+      *cursor: hand; }
   .draft-screen #players-list {
     display: none;
     font-size: 80%; }

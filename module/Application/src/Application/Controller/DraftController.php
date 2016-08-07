@@ -38,6 +38,8 @@ class DraftController extends AbstractActionController
 		$this->draftPlayerTable = $this->sm->get('Application\Model\DraftPlayerTable');
 		$this->draftSetVersionTable = $this->sm->get('Application\Model\DraftSetVersionTable');
 		$this->pickTable = $this->sm->get('Application\Model\PickTable');
+		$this->setVersionTable = $this->sm->get('Application\Model\SetVersionTable');
+		$this->setTable = $this->sm->get('Application\Model\SetTable');
 		$this->userTable = $this->sm->get('Application\Model\UserTable');
 		$this->cardTable = $this->sm->get('Application\Model\CardTable');
 		$this->draftPlayer = $this->draftPlayerTable->getDraftPlayerByInviteKey($this->inviteKey);		
@@ -62,6 +64,18 @@ class DraftController extends AbstractActionController
 			$cardArray[$card->cardId] = $card;
 		}
 		
+		$packs = array();
+		$draftSetVersions = $this->draftSetVersionTable->fetchByDraft($this->draft->draftId);
+		foreach($draftSetVersions as $draftSetVersion)
+		{
+			$pack = new \stdClass();
+			$pack->packNumber = $draftSetVersion->packNumber;
+			$pack->setVersion = $this->setVersionTable->getSetVersion($draftSetVersion->setVersionId);
+			$pack->set = $this->setTable->getSet($pack->setVersion->setId);
+			$packs[] = $pack;
+		}
+		
+		$viewModel->packs = $packs;
 		$viewModel->cards = $cardArray;
 		
 		$basicTable = $this->sm->get('Application\Model\DraftPlayerBasicTable');

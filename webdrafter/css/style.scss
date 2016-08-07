@@ -1050,7 +1050,11 @@ $shape-double-height: 523px;
 			margin-bottom: -3px;			
 		}
 		
-		
+		.draft-info-button {
+			display: inline-block;
+			cursor: pointer;
+	    	*cursor: hand;
+		}
 	}
 		
 	#players-list {

@@ -2,15 +2,38 @@
 <div class="draft-screen">
 	<audio id="audio_notification" src="/audio/267337__gkillhour__ding-4.wav" preload="auto"></audio>
 	<div class="draft-bar">
-		<span class="draft-name"><?php echo $this->draft->name; ?></span>
-		<!-- <i class="fa fa-question-circle"></i> -->
+		<span class="draft-name"><?php echo $this->draft->name; ?></span>		
 		hosted by <a href="<? echo $this->url('browse-user', array('url_name' => $this->host->urlName))?>"><?php echo $this->host->name?></a>
 		<span class='draft-pick-display'>at pack <span class="draft-pack-number">?</span>, pick <span class="draft-pick-number">?</span></span>
+		<span class="draft-info-button"><i class="fa fa-info-circle" onclick="showInfo()"></i></span>
 		<img src="<?php echo $this->basePath('images/spinner.svg')?>" alt="Spinner" class="spinner"/>
 		<div class="card-size">
 			<i class="fa fa-search-plus"></i>
 			<div id="card-size-slider"></div>
 			<i class="fa fa-search-minus"></i>
+		</div>
+	</div>
+	<div id="draft-info-content-wrapper" style="display: none">
+		<div class="draft-info-content">
+			<div class="packs-info">
+				Packs:<br/>
+				<table>
+				<?php 
+					foreach($this->packs as $pack){
+					?>
+						<tr>
+							<td>P<?php echo $pack->packNumber?>:</td>
+							<td>
+								<a href="<?php echo $this->url('browse-set', array('url_name' => $pack->set->urlName)) ?>" target="blank"><?php echo $pack->set->name?></a>
+								(<a href="<?php echo $this->url('browse-version', array('url_name' => $pack->set->urlName, 'version_url_name' => $pack->setVersion->urlName)) ?>" target="blank"><?php echo $pack->setVersion->name?></a>)
+							</td>
+							<td><?php if($pack->setVersion->downloadUrl != null) { ?>&mdash; <a href="<?php echo $pack->setVersion->downloadUrl?>" target="blank">Download set</a><?php } ?></td>
+						</tr>						
+					<?php
+					}
+				?>
+				</table>
+			</div>
 		</div>
 	</div>
 	<div class="draft-bar" id="players-list">
@@ -82,6 +105,10 @@
 		$.getJSON( "<?php echo $this->url('draft', array('action' => 'join', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?name=" + playerName, function( data ) {		
 			refreshDraft();
 		});
+	}
+
+	function showInfo(){
+		$(".draft-info-content").clone().dialog({ modal: true, resizable: true, width: 800, height: 500, title: "Event information" });
 	}
 
 	function startDraft() {
