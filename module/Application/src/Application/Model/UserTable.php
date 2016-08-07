@@ -90,6 +90,7 @@ class UserTable
 			'url_name'  => $user->urlName,
 			'email_privacy'  => $user->emailPrivacy,
 			'about'  => $user->about,
+			'challonge_api_key'  => $user->challongeApiKey,
 		);
 	
 		$id = (int) $user->userId;

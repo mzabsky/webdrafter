@@ -355,6 +355,10 @@
 				$("#buttons-row td").append("<a href='#' id='sort-by-rarity'>Sort by rarity</a>&nbsp;&nbsp;&nbsp;&nbsp;");
 				$("#buttons-row td").append('<span class="basics">Basics: <span class="icon-wrapper"><i class="mtg white"></i></span><input type="text" basicColor="W" value="' + existingBasics.W + '"> <span class="icon-wrapper"><i class="mtg blue"></i></span><input type="text" basicColor="U" value="' + existingBasics.U + '"> <span class="icon-wrapper"><i class="mtg black"></i></span><input type="text" basicColor="B" value="' + existingBasics.B + '"> <span class="icon-wrapper"><i class="mtg red"></i></span><input type="text" basicColor="R" value="' + existingBasics.R + '"> <span class="icon-wrapper"><i class="mtg green"></i></span><input type="text" basicColor="G" value="' + existingBasics.G + '"></span>&nbsp;&nbsp;&nbsp;&nbsp;');
 				$("#buttons-row td").append("<a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=text' target='blank'>Export deck</a>");
+				if(data["tournamentUrl"] != null && data["tournamentUrl"] != "")
+				{
+					$("#buttons-row td").append(" <a href='" + data["tournamentUrl"] + "' target='blank'>Go to tournament</a>");
+				}								
 
 				$("input[basicColor]").change(function(){
 					changeBasicCount();

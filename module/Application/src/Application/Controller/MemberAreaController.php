@@ -23,6 +23,7 @@ use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
 use Application\Form\CreateSetForm;
 use Application\GoogleAuthentication;
+use Application\ChallongeAPI;
 use Application\Form\UploadCardsForm;
 
 class MemberAreaController extends AbstractActionController
@@ -1204,6 +1205,70 @@ class MemberAreaController extends AbstractActionController
 		$viewModel->set = $set;
 		$viewModel->setVersion = $setVersion;
 		$viewModel->form = $form;
+		return $viewModel;
+	}
+	
+	public function createTournamentAction()
+	{
+		if(($redirect = $this->initUser()) != NULL) return $redirect;
+	
+		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
+		//$tournamentType = $_GET["tournament_type"];
+
+		$sm = $this->getServiceLocator();
+		
+		$auth = $sm->get('Application\GoogleAuthentication');
+		$draftTable = $sm->get('Application\Model\DraftTable');
+		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
+		
+		$draft = $draftTable->getDraft($draftId);
+		
+		if(isset($_POST["challonge_api_key"]))
+		{
+			$user = $auth->getUser();
+			$user->challongeApiKey = $_POST["challonge_api_key"];
+			
+			$userTable = $sm->get('Application\Model\UserTable');
+			$userTable->saveUser($user);
+		}
+		else if(isset($_POST["tournament_type"]) && $auth->getUser()->challongeApiKey != NULL){
+			$challonge = new \Application\ChallongeAPI($auth->getUser()->challongeApiKey);
+			$challonge->verify_ssl = false;
+			
+			$createTournamentParams = array(
+					"tournament[name]" => $draft->name . " tournament",
+					"tournament[tournament_type]" => $_POST["tournament_type"],
+					"tournament[url]" => $draft->lobbyKey,
+					"tournament[description]" => "Tournament for an event hosted on PlaneSculptors.net",
+					"tournament[pts_for_match_win]" => 3,
+					"tournament[pts_for_match_tie]" => 1,
+					"tournament[pts_for_bye]" => 3,
+					"tournament[open_signup]" => false,
+			);
+			
+			$tournament = $challonge->createTournament($createTournamentParams);
+
+			$draftPlayers = $draftPlayerTable->fetchJoinedByDraft($draftId);
+			foreach($draftPlayers as $playerIndex => $player)
+			{
+			
+				$createParticipantParams = array(
+						"participant[name]" => $player->name,
+						"participant[seed]" => $playerIndex + 1
+				);
+				$participant = $challonge->createParticipant($tournament->id, $createParticipantParams);
+			}
+			
+			$draft->tournamentUrl = $tournament->{'full-challonge-url'};
+			$draftTable->saveDraft($draft);
+		}
+		
+		if($draft->tournamentUrl != NULL){
+			return $this->redirect()->toUrl($draft->tournamentUrl);
+		}
+
+		$viewModel = new ViewModel();
+		$viewModel->draft = $draft;
 		return $viewModel;
 	}
 }

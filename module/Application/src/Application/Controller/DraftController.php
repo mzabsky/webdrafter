@@ -89,6 +89,7 @@ class DraftController extends AbstractActionController
 		$jsonModel = new JsonModel();
 		$jsonModel->inviteKey = $this->inviteKey;
 		$jsonModel->draftStatus = $this->draft->status;
+		$jsonModel->tournamentUrl = $this->draft->tournamentUrl;
 		switch($this->draft->status)
 		{
 			case Draft::STATUS_OPEN:

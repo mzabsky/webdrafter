@@ -29,6 +29,7 @@ class Draft
 	public $lobbyKey;
 	public $gameMode;
 	public $rarityMode;
+	public $tournamentUrl;
 
     public function exchangeArray($data)
     {
@@ -42,6 +43,7 @@ class Draft
         $this->lobbyKey = $data['lobby_key'];
         $this->gameMode = $data['game_mode'];
         $this->rarityMode = $data['rarity_mode'];
+        $this->tournamentUrl = $data['tournament_url'];
     }
     
     public static function getGameModeName($gameMode)

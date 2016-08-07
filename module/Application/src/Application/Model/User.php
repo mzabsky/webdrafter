@@ -28,6 +28,7 @@ class User implements InputFilterAwareInterface
         $this->emailPrivacy = (!empty($data['email_privacy'])) ? $data['email_privacy'] : null;
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
         $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
+        $this->challongeApiKey = (!empty($data['challonge_api_key'])) ? $data['challonge_api_key'] : null;
     }
     
     public function getArray()
@@ -40,6 +41,7 @@ class User implements InputFilterAwareInterface
     		'email_privacy' => $this->emailPrivacy,
     		'about' => $this->about,
     		'created_on' => $this->createdOn,
+    		'challonge_api_key' => $this->challongeApiKey,
     	);
     }
     

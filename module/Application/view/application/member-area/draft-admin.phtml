@@ -118,11 +118,22 @@ function refreshPage()
 		}
 
 		if(hostInviteKey != null) {
-			$("#draft_players").append(" <input type='submit' onclick=\"goToDraft()\" value='Go to your&nbsp;draft' />");
+			$("#draft_players").append(" <input type='submit' onclick=\"goToDraft('" + hostInviteKey + "')\" value='Go to your&nbsp;draft' />");
 		}
 		else {
 			$("#draft_players").append(" <input type='submit' onclick=\"joinDraft()\" value='Join as a player' />");
 		}
+
+		if(data["draft"]["status"] >= draftStatuses.running){
+			if(data["draft"]["tournamentUrl"] != null)
+			{	
+				$("#draft_players").append(" <input type='submit' onclick=\"window.location='"+ data["draft"]["tournamentUrl"] +"'\" value='Go to tournament' />");
+			}
+			else {
+				$("#draft_players").append(" <input type='submit' onclick=\"window.location='<?php echo $this->url('member-area-with-draft-id', array('action' => 'create-tournament', 'draft_id' => $this->draft->draftId));?>'\" value='Host a tournament' />");
+			}
+			
+		}		
 
 		timer = setTimeout(function(){ refreshPage(); }, 1000);
 	});
@@ -145,11 +156,11 @@ function joinDraft()
 	window.location = '<?php echo $this->url('lobby', array('action' => 'join', 'lobby_key' => $this->draft->lobbyKey)); ?>';
 }
 
-function goToDraft()
+function goToDraft(hostInviteKey)
 {
 	if(xhr != null) xhr.abort();
 	if(timer != null) clearTimeout(timer);
-	window.location = '/draft/" + hostInviteKey + "';
+	window.location = "/draft/" + hostInviteKey;
 }
 
 </script>
