@@ -4,7 +4,7 @@
 	<div class="draft-bar">
 		<span class="draft-name"><?php echo $this->draft->name; ?></span>
 		<!-- <i class="fa fa-question-circle"></i> -->
-		hosted by <a href="<? echo $this->url('browse-user', array('user_id' => $this->host->hostId))?>"><?php echo $this->host->name?></a>
+		hosted by <a href="<? echo $this->url('browse-user', array('url_name' => $this->host->urlName))?>"><?php echo $this->host->name?></a>
 		<span class='draft-pick-display'>at pack <span class="draft-pack-number">?</span>, pick <span class="draft-pick-number">?</span></span>
 		<img src="<?php echo $this->basePath('images/spinner.svg')?>" alt="Spinner" class="spinner"/>
 		<div class="card-size">
