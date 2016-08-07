@@ -31,7 +31,7 @@ foreach($this->cards as $card)
 	    rarity: "<?php echo $card->rarity ?>",
 	    rarityName: "<?php echo $card->getRarityName() ?>",
 	    ptString: "<?php echo $card->ptString ?>",
-	    illustrator: "<?php echo $card->illustrator ?>",
+	    illustrator: "<?php echo htmlspecialchars($card->illustrator) ?>",
 
 	    name2: "<?php echo $card->name2 ?>",
 	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
@@ -39,7 +39,7 @@ foreach($this->cards as $card)
 	    rulesText2: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText2)) ?>',
 	    flavorText2: "<?php echo preg_replace('/\n+/', '', $card->flavorText2) ?>",
 	    ptString2: "<?php echo $card->ptString2 ?>",
-	    illustrator2: "<?php echo $card->illustrator2 ?>",
+	    illustrator2: "<?php echo htmlspecialchars($card->illustrator2) ?>",
 	    
 	    setVersionLink: "<a href='<?php echo $this->url('browse-version', array('url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName)) ?>'><?php echo $versionName ?></a>",
 	    bbCode: '<?php echo $this->partial('/application/fragment/card-to-phpbb', array('setUrlName' => $this->set->urlName, 'versionUrlName' => $versionUrlName, 'card' => $card));?>'
