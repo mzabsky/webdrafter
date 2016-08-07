@@ -256,15 +256,25 @@ class IsochronDrafterSetParser
 		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PG]', $str);
 		
 		$str = str_replace("<img src='magic-mana-small-WU.png' alt='W/U' width='16' height='16'>", '[WU]', $str);
+		$str = str_replace("<img src='magic-mana-small-UW.png' alt='U/W' width='16' height='16'>", '[WU]', $str);
 		$str = str_replace("<img src='magic-mana-small-UB.png' alt='U/B' width='16' height='16'>", '[UB]', $str);
+		$str = str_replace("<img src='magic-mana-small-BU.png' alt='B/U' width='16' height='16'>", '[UB]', $str);
 		$str = str_replace("<img src='magic-mana-small-BR.png' alt='B/R' width='16' height='16'>", '[BR]', $str);
+		$str = str_replace("<img src='magic-mana-small-RB.png' alt='R/B' width='16' height='16'>", '[BR]', $str);
 		$str = str_replace("<img src='magic-mana-small-RG.png' alt='R/G' width='16' height='16'>", '[RG]', $str);
+		$str = str_replace("<img src='magic-mana-small-GR.png' alt='G/R' width='16' height='16'>", '[RG]', $str);
 		$str = str_replace("<img src='magic-mana-small-GW.png' alt='G/W' width='16' height='16'>", '[GW]', $str);
+		$str = str_replace("<img src='magic-mana-small-WG.png' alt='W/G' width='16' height='16'>", '[GW]', $str);
 		$str = str_replace("<img src='magic-mana-small-WB.png' alt='W/B' width='16' height='16'>", '[WB]', $str);
+		$str = str_replace("<img src='magic-mana-small-BW.png' alt='B/W' width='16' height='16'>", '[WB]', $str);
 		$str = str_replace("<img src='magic-mana-small-UR.png' alt='U/R' width='16' height='16'>", '[UR]', $str);
-		$str = str_replace("<img src='magic-mana-small-WU.png' alt='B/G' width='16' height='16'>", '[BG]', $str);
+		$str = str_replace("<img src='magic-mana-small-RU.png' alt='R/U' width='16' height='16'>", '[UR]', $str);
+		$str = str_replace("<img src='magic-mana-small-BG.png' alt='B/G' width='16' height='16'>", '[BG]', $str);
+		$str = str_replace("<img src='magic-mana-small-GB.png' alt='G/B' width='16' height='16'>", '[BG]', $str);
 		$str = str_replace("<img src='magic-mana-small-RW.png' alt='R/W' width='16' height='16'>", '[RW]', $str);
+		$str = str_replace("<img src='magic-mana-small-WR.png' alt='W/R' width='16' height='16'>", '[RW]', $str);
 		$str = str_replace("<img src='magic-mana-small-UG.png' alt='U/G' width='16' height='16'>", '[UG]', $str);
+		$str = str_replace("<img src='magic-mana-small-GU.png' alt='G/U' width='16' height='16'>", '[UG]', $str);
 		
 		return $str;
 	}
