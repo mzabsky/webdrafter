@@ -783,9 +783,10 @@ form input.code-input {
     height: 100%;
     /*margin: 0 10px 0 10px;*/ }
     .draft-screen #draft .draft-booster {
+      position: relative;
       background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAJ37979zwjjgzjKysqMYAEYB8RmROaABAAFug+bVs5NCQAAAABJRU5ErkJggg==) repeat;
       /*min-height: 300px;*/
-      flex: 1 1 auto; }
+      flex: 1 0 200px; }
       .draft-screen #draft .draft-booster .card {
         cursor: pointer;
         *cursor: hand;
@@ -842,7 +843,8 @@ form input.code-input {
     height: 400px; }
   .draft-screen .already-picked {
     font-size: 120%;
-    text-align: center; }
+    text-align: center;
+    height: 140px; }
   .draft-screen .spinner-large {
     display: block;
     margin: 150px auto; }
