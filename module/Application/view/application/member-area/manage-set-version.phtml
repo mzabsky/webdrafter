@@ -1,6 +1,7 @@
 <script>
 $(function(){
-	var simplemde = new SimpleMDE({ element: $('input[name="about"]')[ 0 ], status: false });
+	var simplemde = createEditor('input[name="about"]');
+	$("input[name='submit']").click(function(){ hasUnsavedChanges = false; });
 
 	$("input[name='name']").on('input', function(){
 		$("input[name='url_name']").val(toUrlName($(this).val()));

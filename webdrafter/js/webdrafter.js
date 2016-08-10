@@ -71,3 +71,20 @@ $( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
 	showCopyable(report);
 	console.log(report);	
 });
+
+var hasUnsavedChanges = false;
+function createEditor(selector)
+{
+	var el = $(selector);
+	var editor = new SimpleMDE({ element: el[ 0 ], status: false });
+	
+	editor.codemirror.on("change", function() { hasUnsavedChanges = true; });
+	
+	return editor;
+}
+
+$(window).bind('beforeunload', function() {
+    if(hasUnsavedChanges){
+        return "You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?";
+    }
+});
