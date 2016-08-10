@@ -3,6 +3,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <meta name="referrer" content="no-referrer">
         <?php echo $this->headTitle('PlaneSculptors.net')->setSeparator(' | ') ?>
 
         <?php echo $this->headMeta()
@@ -36,6 +37,7 @@
             ->prependFile('https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js')
             ->prependFile('http://www.google.com/jsapi')
             ->prependFile($this->basePath('js/json2.js'))
+            ->prependFile($this->basePath('js/blazy.min.js'))
         ; ?>
         
 		<script>
