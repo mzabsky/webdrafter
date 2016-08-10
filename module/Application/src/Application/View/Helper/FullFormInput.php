@@ -46,7 +46,7 @@ class FullFormInput extends AbstractHelper implements ServiceLocatorAwareInterfa
     	
     	$strNew = "";
     	for($i = 0; $i < strlen($str); $i++){
-    		$strNew .= '<font>' . $str[$i]. '</code>';
+    		$strNew .= '<font>' . $str[$i]. '</font>';
     	}
     	return $strNew;
     }
