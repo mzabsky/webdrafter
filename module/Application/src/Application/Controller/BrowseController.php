@@ -215,7 +215,21 @@ class BrowseController extends AbstractActionController
     	{
     		return $this->redirect()->toUrl($card->artUrl);//->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
-    	
+    	else if(isset($_GET["bot"]))
+    	{
+    		$response = $this->getResponse();
+    		
+    		$headers = $response->getHeaders();
+    		$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');
+    		
+    		$viewModel = new ViewModel();
+    		$viewModel->setTerminal(true);
+    		
+    		$viewModel->set = $set;
+    		$viewModel->card = $card;
+    		
+    		return $viewModel;
+    	}
     	else //if(!isset($_GET["ajax"]))
     	{
     		return $this->redirect()->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));

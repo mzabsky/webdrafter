@@ -1,40 +1,77 @@
-<div class="autocard-content shape-<?php echo $this->card->getShapeName() ?>">
-	<div class="card-image" style="background-image:url('<?php echo $this->card->artUrl?>')">&nbsp;</div>
-	<div class="card primary">
-		<div class="title-line">
-			<span class="name"><?php echo $this->card->name ?></span>
-			<span class="mana-cost"><?php echo $this->card->manaCost ?></span>
-		</div>
-		<div class="type-line">
-			<span class="types"><?php echo $this->card->types ?></span>
-			<span class="rarity"><?php echo $this->card->rarity ?></span>
-		</div>
-		<div class="rules-box">
-			<span class="rules-text"><?php echo $this->card->rulesText ?></span>
-			<span class="flavor-text"><?php echo $this->card->flavorText ?></span>
-		</div>
-		<div class="info-line">
-			<span class="illustrator"><?php echo $this->card->illustrator ?></span>
-			<span class="power-toughness"><?php echo $this->card->ptString ?></span>
-		</div>
-	</div>
-	
-	<div class="card secondary">
-		<div class="title-line">
-			<span class="name"><?php echo $this->card->name2 ?></span>
-			<span class="mana-cost"><?php echo $this->card->manaCost2 ?></span>
-		</div>
-		<div class="type-line">
-			<span class="types"><?php echo $this->card->types2 ?></span>
-			<span class="rarity"><?php echo $this->card->rarity ?></span>
-		</div>
-		<div class="rules-box">
-			<span class="rules-text"><?php echo $this->card->rulesText2 ?></span>
-			<span class="flavor-text"><?php echo $this->card->flavorText2 ?></span>
-		</div>
-		<div class="info-line">
-			<span class="illustrator"><?php echo $this->card->illustrator2 ?></span>
-			<span class="power-toughness"><?php echo $this->card->ptString2 ?></span>
-		</div>	
-	</div>
-</div>
+<?php 
+$rulesText = null;
+if ($this->card->rulesText != null) {
+	$rulesText = str_replace("<i>", "*", $this->card->rulesText);
+	$rulesText = str_replace("</i>", "*", $rulesText);
+	$rulesText = str_replace("<b>", "**", $rulesText);
+	$rulesText = str_replace("</b>", "**", $rulesText);
+	$rulesText = str_replace("<br />", "", $rulesText);
+	$rulesText = str_replace("<br/>", "", $rulesText);
+	$rulesText = str_replace("<br>", "", $rulesText);;
+	$rulesText = str_replace("<span class=\"symbol\">", "", $rulesText);;
+	$rulesText = str_replace("</span>", "", $rulesText);;
+	//$rulesText = str_replace("\\n", "\n", $rulesText);
+}
+
+$flavorText = null;
+if ($this->card->flavorText != null) {
+	$flavorText = str_replace("<i>", "*", $this->card->flavorText);
+	$flavorText = str_replace("</i>", "*", $flavorText);
+	$flavorText = str_replace("<b>", "**", $flavorText);
+	$flavorText = str_replace("</b>", "**", $flavorText);
+	$flavorText = str_replace("<br />", "", $flavorText);
+	$flavorText = str_replace("<br/>", "", $flavorText);
+	$flavorText = str_replace("<br>", "", $flavorText);
+	$flavorText = str_replace("<span class=\"symbol\">", "", $flavorText);;
+	$flavorText = str_replace("</span>", "", $flavorText);;
+}
+
+$rulesText2 = null;
+$flavorText2 = null;
+if($this->card->getShapeName() != "normal")
+{
+	if ($this->card->rulesText2 != null) {
+		$rulesText2 = str_replace("<i>", "*", $this->card->rulesText2);
+		$rulesText2 = str_replace("</i>", "*", $rulesText2);
+		$rulesText2 = str_replace("<b>", "**", $rulesText2);
+		$rulesText2 = str_replace("</b>", "**", $rulesText2);
+		$rulesText2 = str_replace("<br />", "", $rulesText2);
+		$rulesText2 = str_replace("<br/>", "", $rulesText2);
+		$rulesText2 = str_replace("<br>", "", $rulesText2);
+		$rulesText2 = str_replace("<span class=\"symbol\">", "", $rulesText2);;
+		$rulesText2 = str_replace("</span>", "", $rulesText2);;
+	}
+
+	if ($this->card->flavorText2 != null) {
+		$flavorText2 = str_replace("<i>", "*", $this->card->flavorText2);
+		$flavorText2 = str_replace("</i>", "*", $flavorText2);
+		$flavorText2 = str_replace("<b>", "**", $flavorText2);
+		$flavorText2 = str_replace("</b>", "**", $flavorText2);
+		$flavorText2 = str_replace("<br />", "", $flavorText2);
+		$flavorText2 = str_replace("<br/>", "", $flavorText2);
+		$flavorText2 = str_replace("<br>", "", $flavorText2);
+		$flavorText2 = str_replace("<span class=\"symbol\">", "", $flavorText2);;
+		$flavorText2 = str_replace("</span>", "", $flavorText2);;
+	}
+}
+?><?php 
+$cardCode = 
+'**' . $this->card->name . "**\t" . $this->card->manaCost . "\n" .
+$this->card->types . "\t" . $this->set->name . " (" . $this->card->rarity . ")\n" .
+($rulesText != null ? $rulesText . "\n" : "") .
+($flavorText != null ? $flavorText . "\n" : "") .
+($this->card->ptString != null ? $this->card->ptString . "\n" : "") .
+($this->card->shape == \Application\Model\Card::SHAPE_NORMAL ? "" : (
+	"///\n".
+	'**' . $this->card->name2 . "**\t" . $this->card->manaCost2 . "\n" .
+	$this->card->types2 . "\n" .
+	($rulesText2 != null ? $rulesText2 . "\n" : "") .
+	($flavorText2 != null ? $flavorText2 . "\n" : "") .
+	($this->card->ptString2 != null ? $this->card->ptString2 . "\n" : "")
+)) . $card->artUrl;
+
+$cardCode = str_replace("\\n", '\n', $cardCode);
+$cardCode = str_replace("\n\n", '\n', $cardCode);
+
+echo $cardCode;
+?>
