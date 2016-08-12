@@ -250,10 +250,10 @@ class IsochronDrafterSetParser
 		$str = str_replace("<img src='magic-mana-small-2G.png' alt='2/G' width='16' height='16'>", '[2G]', $str);
 		
 		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PW]', $str);
-		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PU]', $str);
-		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PB]', $str);
-		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PR]', $str);
-		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PG]', $str);
+		$str = str_replace("<img src='magic-mana-small-HU.png' alt='H/U' width='16' height='16'>", '[PU]', $str);
+		$str = str_replace("<img src='magic-mana-small-HB.png' alt='H/B' width='16' height='16'>", '[PB]', $str);
+		$str = str_replace("<img src='magic-mana-small-HR.png' alt='H/R' width='16' height='16'>", '[PR]', $str);
+		$str = str_replace("<img src='magic-mana-small-HG.png' alt='H/G' width='16' height='16'>", '[PG]', $str);
 		
 		$str = str_replace("<img src='magic-mana-small-WU.png' alt='W/U' width='16' height='16'>", '[WU]', $str);
 		$str = str_replace("<img src='magic-mana-small-UW.png' alt='U/W' width='16' height='16'>", '[WU]', $str);
