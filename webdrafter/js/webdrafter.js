@@ -76,7 +76,7 @@ var hasUnsavedChanges = false;
 function createEditor(selector)
 {
 	var el = $(selector);
-	var editor = new SimpleMDE({ element: el[ 0 ], status: false });
+	var editor = new SimpleMDE({ element: el[ 0 ], status: false, hideIcons: [ 'preview', 'side-by-side', 'guide' ] });
 	
 	editor.codemirror.on("change", function() { hasUnsavedChanges = true; });
 	
