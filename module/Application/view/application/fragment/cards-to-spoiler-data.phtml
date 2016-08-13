@@ -5,6 +5,10 @@ function escapeForJavascript($str)
 	return str_replace('\'', '\\\'', htmlspecialchars($str));
 }
 
+function escapeApostrophes($str)
+{
+	return str_replace('\'', '\\\'', $str);
+}
 
 $i = 0;
 foreach($this->cards as $card)
@@ -32,8 +36,8 @@ foreach($this->cards as $card)
 	    types: "<?php echo escapeForJavascript($card->types) ?>",
 	    artUrl: "<?php echo $card->artUrl ?>",
 	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName), array('force_canonical' => true)) ?>",
-	    rulesText: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText)) ?>',
-	    flavorText: "<?php echo preg_replace('/\n+/', '', $card->flavorText) ?>",
+	    rulesText: '<?php echo escapeApostrophes(preg_replace('/\n+/', '', $this->symbols($card->rulesText))) ?>',
+	    flavorText: "<?php echo escapeApostrophes(preg_replace('/\n+/', '', $card->flavorText)) ?>",
 	    rarity: "<?php echo $card->rarity ?>",
 	    rarityName: "<?php echo $card->getRarityName() ?>",
 	    ptString: "<?php echo $card->ptString ?>",
@@ -42,8 +46,8 @@ foreach($this->cards as $card)
 	    name2: "<?php echo escapeForJavascript($card->name2) ?>",
 	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
 	    types2: "<?php echo escapeForJavascript($card->types2) ?>",
-	    rulesText2: '<?php echo preg_replace('/\n+/', '', $this->symbols($card->rulesText2)) ?>',
-	    flavorText2: "<?php echo preg_replace('/\n+/', '', $card->flavorText2) ?>",
+	    rulesText2: '<?php echo escapeApostrophes(preg_replace('/\n+/', '', $this->symbols($card->rulesText2))) ?>',
+	    flavorText2: "<?php echo escapeApostrophes(preg_replace('/\n+/', '', $card->flavorText2)) ?>",
 	    ptString2: "<?php echo escapeForJavascript($card->ptString2) ?>",
 	    illustrator2: "<?php echo escapeForJavascript($card->illustrator2) ?>",
 	    
