@@ -177,9 +177,19 @@ class IsochronDrafterSetParser
 					$state = "empty";
 					break;
 
-				case "empty":					
-					if(strpos($currentCard->types, 'Token') === false)
+				case "empty":
+					if(strpos($currentCard->types, 'Token') !== false)
 					{
+						$currentCard->rarity = "T";
+					}
+					
+					if(strpos($currentCard->types, 'Basic') !== false)
+					{
+						$currentCard->rarity = "B";
+					}
+					
+					/*if(strpos($currentCard->types, 'Token') === false)
+					{*/
 						$originalUrlName = \Application\toUrlName($currentCard->name);
 						$urlName = $originalUrlName;
 						$i = 0;
@@ -190,7 +200,7 @@ class IsochronDrafterSetParser
 						$currentCard->urlName = $urlName;
 						
 						$cards[] = $currentCard;
-					}
+					//}
 					
 					$currentCard = new \Application\Model\Card();
 					$state = "shape";

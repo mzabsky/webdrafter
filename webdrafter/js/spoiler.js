@@ -49,6 +49,7 @@ Spoiler.prototype.initializeStructure = function () {
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Land\")' filter='Land' title='Lands only'>Land</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Planeswalker\")' filter='Planeswalker' title='Planeswalkers only'>Planeswalker</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Sorcery\")' filter='Sorcery' title='Sorceries only'>Sorcery</a>" +
+	        "      <a href='javascript:void(0)' onclick='spoiler.filterByType(\"Token\")' filter='Token' title='Tokens only'>Token</a>" +
 	        "   </div>" +
 	        "</div>" +
 	        "<br />" +
