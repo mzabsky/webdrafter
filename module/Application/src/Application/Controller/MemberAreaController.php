@@ -496,10 +496,17 @@ class MemberAreaController extends AbstractActionController
 		
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
+		$auth = $sm->get('Application\GoogleAuthentication');
 		
 		$viewModel = new ViewModel();
 		$viewModel->draftOpened = isset($_GET["draft-opened"]);
 		$viewModel->draft = $draftTable->getDraft($draftId);
+		
+		if($viewModel->draft->hostId != $auth->getUser()->userId)
+		{
+			throw new Exception("Unauthorized");
+		}
+		
 		//$viewModel->form = $form;
 	
 		return $viewModel;
@@ -535,11 +542,17 @@ class MemberAreaController extends AbstractActionController
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
+		$auth = $sm->get('Application\GoogleAuthentication');
 	
 		$draft = $draftTable->getDraft($draftId);
 		if($draft->status != Draft::STATUS_OPEN)
 		{
 			throw new Exception("Invalid status");
+		}
+		
+		if($draft->hostId != $auth->getUser()->userId)
+		{
+			throw new Exception("Unauthorized");
 		}
 		
 		$inviteKey = md5("draftplayer_" . time());
@@ -572,12 +585,18 @@ class MemberAreaController extends AbstractActionController
 			$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
+			$auth = $sm->get('Application\GoogleAuthentication');
 			
 			// Start the draft
 			$draft = $draftTable->getDraft($draftId);
 			if($draft->status != Draft::STATUS_OPEN)
 			{
 				throw new Exception("Invalid status");
+			}
+			
+			if($draft->hostId != $auth->getUser()->userId) 
+			{
+				throw new Exception("Unauthorized");				
 			}
 			
 			$draft->status = $draft->gameMode == Draft::MODE_SEALED_DECK ? Draft::STATUS_FINISHED : Draft::STATUS_RUNNING;
@@ -1222,6 +1241,10 @@ class MemberAreaController extends AbstractActionController
 		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
 		
 		$draft = $draftTable->getDraft($draftId);
+		if($draft->hostId != $auth->getUser()->userId)
+		{
+			throw new Exception("Unauthorized");
+		}
 		
 		if(isset($_POST["challonge_api_key"]))
 		{
