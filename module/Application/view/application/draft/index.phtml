@@ -44,7 +44,7 @@
 	<?php
 	foreach ($this->cards as $card)
 	{
-		echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card'/>\n"; 	
+		echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card card-" . $card->getShapeName() . "'/>\n"; 	
 	}
 	?>
 	</div>
@@ -520,7 +520,8 @@
 		var cellWidth = 218 * size / 300 + 12;
 		$("#deckbuilder #buttons-row td").width(9 * cellWidth);
 		$("#deckbuilder #labels-row td, #deckbuilder tbody td").width(cellWidth);
-		$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));		
+		$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));	
+		$(".draft-picks img").css("margin-bottom", (-266) * (size) / (300));			
 	}
 	
 	$("#card-size-slider").slider({

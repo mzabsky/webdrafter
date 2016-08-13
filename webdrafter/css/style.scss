@@ -1106,7 +1106,11 @@ $shape-double-height: 523px;
 		    top:auto!important;*/
 		    
 		    .card {
-				margin: 5px;
+				margin: 0 5px;
+			}
+			
+			.card.card-double {
+				margin: 0 14px 0 5px;
 			}
 		}
 		

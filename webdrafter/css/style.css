@@ -802,7 +802,9 @@ form input.code-input {
       bottom:0!important;
       top:auto!important;*/ }
       .draft-screen #draft .draft-picks .card {
-        margin: 5px; }
+        margin: 0 5px; }
+      .draft-screen #draft .draft-picks .card.card-double {
+        margin: 0 14px 0 5px; }
     .draft-screen #draft .draft-area-label {
       margin: 5px 5px 0 5px;
       font-size: 80%; }
