@@ -26,12 +26,32 @@ use Application\GoogleAuthentication;
 use Application\ChallongeAPI;
 use Application\Form\UploadCardsForm;
 
-class MemberAreaController extends AbstractActionController
+class MemberAreaController extends WebDrafterControllerBase
 {
-	private function initUser($allowUnregistered = false)
+	protected function isAuthRequired(\Zend\Mvc\MvcEvent $e)
+	{
+		$action = $e->getRouteMatch()->getParam('action');
+		if($action == 'logout' || $action == 'login')
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	protected function isUnregisteredAllowed(\Zend\Mvc\MvcEvent $e)
+	{
+		$action = $e->getRouteMatch()->getParam('action');
+		if($action == 'register')
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	/*private function initUser($allowUnregistered = false)
 	{
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		
 		if($auth->GetStatus() == GoogleAuthentication::STATUS_ANONYMOUS)
 		{
@@ -43,9 +63,9 @@ class MemberAreaController extends AbstractActionController
 		}
 		
 		return NULL;
-	}
+	}*/
 	
-	private function createClient()
+	/*private function createClient()
 	{
 		$redirectUri = $this->url()->fromRoute('member-area', array('action' => 'login'), array('force_canonical' => true));
 		
@@ -65,7 +85,7 @@ class MemberAreaController extends AbstractActionController
 		
 		//var_dump($client->isAccessTokenExpired());
 		
-		$token = @$_COOKIE['ACCESSTOKEN'];  // fetch from cookie
+		$token = @$_SESSION['access_token'];  // fetch from cookie
 		if($token){
 			// use the same token
 			$client->setAccessToken($token);
@@ -77,7 +97,7 @@ class MemberAreaController extends AbstractActionController
 			//echo "token from get";
 		}
 
-		$_COOKIE['ACCESSTOKEN'] = $token;
+		$_SESSION['access_token'] = $token;
 		
 		if($token && $client->isAccessTokenExpired()){  // if token expired
 			$refreshToken = json_decode($token)->refresh_token;
@@ -88,14 +108,14 @@ class MemberAreaController extends AbstractActionController
 		
 		
 		return $client;
-	}
+	}*/
 	
 	public function indexAction()
 	{	
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$setTable = $sm->get('Application\Model\SetTable');
 		
@@ -150,14 +170,14 @@ class MemberAreaController extends AbstractActionController
 	
 	public function registerAction()
 	{
-		if(($redirect = $this->initUser(true)) != NULL) return $redirect;
+		//if(($redirect = $this->initUser(true)) != NULL) return $redirect;
 
 		if($_SESSION["not_registered"] != true){
 			return $this->redirect()->toRoute('member-area');
 		}
 		
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
 		$form = new \Application\Form\RegistrationForm(true);
@@ -203,7 +223,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function loginAction()
 	{
-		$client = $this->createClient();
+		$client = $this->auth()->getGoogleClient();
 		
 		/*$provider = new \League\OAuth2\Client\Provider\Google([
 				'clientId'      => $this->getServiceLocator()->get('Config')['auth']['clientId'],
@@ -224,17 +244,24 @@ class MemberAreaController extends AbstractActionController
 			$sm = $this->getServiceLocator();
 			$userTable = $sm->get('Application\Model\UserTable');
 			$user = $userTable->tryGetUserByEmail($_SESSION["email"]);
+			
 			if($user == null)
 			{
 				$user = new User();
 				$user->email = $_SESSION["email"];
-				$userTable->saveUser($user);
 				$_SESSION["user_id"] = $user->userId;
 			}
 			else
 			{
 				$_SESSION["user_id"] = $user->userId;
 			}
+
+			$user->refreshToken = $client->getRefreshToken(); // Presunout do prvni casti ifu vyse
+			$_SESSION["refresh_token"] = $user->refreshToken;
+			
+			$userTable->saveUser($user);
+			
+			//var_dump($client->getRefreshToken());die();
 			
 			if($user->name === null)
 			{
@@ -274,7 +301,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createSetAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
@@ -375,13 +402,13 @@ class MemberAreaController extends AbstractActionController
 	
 	public function selectGameModeAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		return new ViewModel();
 	}
 	
 	public function hostDraftAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
 		{
@@ -490,13 +517,13 @@ class MemberAreaController extends AbstractActionController
 	
 	public function draftAdminAction()
 	{	
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		
 		$viewModel = new ViewModel();
 		$viewModel->draftOpened = isset($_GET["draft-opened"]);
@@ -514,7 +541,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function getDraftPlayersAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
@@ -535,14 +562,14 @@ class MemberAreaController extends AbstractActionController
 	
 	public function addDraftPlayerAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 	
 		$draft = $draftTable->getDraft($draftId);
 		if($draft->status != Draft::STATUS_OPEN)
@@ -570,7 +597,7 @@ class MemberAreaController extends AbstractActionController
 	
 	public function startDraftAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		try
 		{
@@ -585,7 +612,7 @@ class MemberAreaController extends AbstractActionController
 			$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
-			$auth = $sm->get('Application\GoogleAuthentication');
+			$auth = $this->auth();
 			
 			// Start the draft
 			$draft = $draftTable->getDraft($draftId);
@@ -771,12 +798,12 @@ class MemberAreaController extends AbstractActionController
 	
 	public function setSetPrivateModeAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 		
 		$set = $setTable->getSet($setId);
@@ -796,10 +823,10 @@ class MemberAreaController extends AbstractActionController
 	
 	public function manageSetAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 		
 		$set = $setTable->getSet($this->getEvent()->getRouteMatch()->getParam('set_id'));
@@ -946,12 +973,12 @@ class MemberAreaController extends AbstractActionController
 	
 	public function setSetStatusAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 		
 		if(!isset($_GET["status"]) || $_GET["status"] < Set::STATUS_UNPLAYABLE || $_GET["status"] > Set::STATUS_DISCONTINUED)
@@ -976,12 +1003,12 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createSetVersionAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 
 		$set = $setTable->getSet($setId);
@@ -1155,10 +1182,10 @@ class MemberAreaController extends AbstractActionController
 	
 	public function manageSetVersionAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		$sm = $this->getServiceLocator();
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 	
@@ -1229,14 +1256,14 @@ class MemberAreaController extends AbstractActionController
 	
 	public function createTournamentAction()
 	{
-		if(($redirect = $this->initUser()) != NULL) return $redirect;
+		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 	
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		//$tournamentType = $_GET["tournament_type"];
 
 		$sm = $this->getServiceLocator();
 		
-		$auth = $sm->get('Application\GoogleAuthentication');
+		$auth = $this->auth();
 		$draftTable = $sm->get('Application\Model\DraftTable');
 		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
 		

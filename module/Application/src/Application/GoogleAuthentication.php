@@ -19,28 +19,33 @@ class GoogleAuthentication
 	{
 		$this->googleClient = $this->createClient();
 
+		//$_SESSION['user_id'] = null;
 		if(!isset($_SESSION['user_id']))
 		{
+			die("no session");
 			$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 			return;
 			//throw new \Exception("Must be logged in to access this page");
 		}
 		
 		$this->googleClient->setAccessToken($_SESSION["access_token"]);
-	
+	//var_dump($_SESSION["access_token"]);
 		if ($this->googleClient->isAccessTokenExpired()) {
 			
-			$refreshToken = $this->googleClient->getRefreshToken();
+			$refreshToken = $_SESSION["refresh_token"];
+			//$refreshToken = json_decode($_SESSION["access_token"])->refresh_token;
+			//var_dump($refreshToken);
 			if($refreshToken == null){
+				die("no refresh token");
 				@session_destroy();
 				$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 				return;
 			}
 				
-			$this->googleClient->refreshToken($refreshToken);
+			/*$_SESSION["access_token"] = */$this->googleClient->refreshToken($refreshToken);
 			//file_put_contents($credentialsPath, $client->getAccessToken());
-		}
-	
+		}		
+		
 		$userTable = $this->sm->get('Application\Model\UserTable');
 		$this->user = $userTable->tryGetUserByEmail($_SESSION["email"]);
 	
@@ -75,6 +80,7 @@ class GoogleAuthentication
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');
 		$client->setRedirectUri($redirectUri);
+		$client->setPrompt("consent");
 	
 		return $client;
 	}

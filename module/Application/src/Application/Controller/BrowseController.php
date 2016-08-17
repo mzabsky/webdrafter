@@ -12,7 +12,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-class BrowseController extends AbstractActionController
+class BrowseController extends WebDrafterControllerBase
 {
     public function indexAction()
     {

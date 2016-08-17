@@ -16,7 +16,7 @@ use League\OAuth2\Client\Provider;
 use Application\Model\Draft;
 use Zend\View\Model\JsonModel;
 
-class LobbyController extends AbstractActionController
+class LobbyController extends WebDrafterControllerBase
 {	
 	private $sm;
 	private $draftTable;

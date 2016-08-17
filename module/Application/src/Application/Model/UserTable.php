@@ -91,6 +91,7 @@ class UserTable
 			'email_privacy'  => $user->emailPrivacy,
 			'about'  => $user->about,
 			'challonge_api_key'  => $user->challongeApiKey,
+			'refresh_token'  => $user->refreshToken,
 		);
 	
 		$id = (int) $user->userId;

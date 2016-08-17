@@ -18,7 +18,7 @@ use Application\Model\Pick;
 use Application\Model\DraftPlayerTable;
 use Zend\View\Model\JsonModel;
 
-class DraftController extends AbstractActionController
+class DraftController extends WebDrafterControllerBase
 {	
 	private $sm;
 	private $draftTable;
