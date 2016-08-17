@@ -22,7 +22,7 @@ class GoogleAuthentication
 		//$_SESSION['user_id'] = null;
 		if(!isset($_SESSION['user_id']))
 		{
-			die("no session");
+			//die("no session");
 			$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 			return;
 			//throw new \Exception("Must be logged in to access this page");
@@ -36,7 +36,7 @@ class GoogleAuthentication
 			//$refreshToken = json_decode($_SESSION["access_token"])->refresh_token;
 			//var_dump($refreshToken);
 			if($refreshToken == null){
-				die("no refresh token");
+				//die("no refresh token");
 				@session_destroy();
 				$this->authStatus = GoogleAuthentication::STATUS_ANONYMOUS;
 				return;
