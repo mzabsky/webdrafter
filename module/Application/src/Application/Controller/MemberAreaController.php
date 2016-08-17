@@ -109,6 +109,9 @@ class MemberAreaController extends WebDrafterControllerBase
 		
 		return $client;
 	}*/
+	public function keepAliveAction(){
+		return new JsonModel();
+	}
 	
 	public function indexAction()
 	{	

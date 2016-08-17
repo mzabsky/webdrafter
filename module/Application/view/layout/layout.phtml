@@ -23,6 +23,9 @@
         				->prependStylesheet($this->basePath('css/jquery-ui.css')) ?>
 
         <!-- Scripts -->
+        <script type="text/javascript">
+        	var isLoggedIn = <?php echo $this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN ? 'true' : 'false' ?>;
+        </script>
         <?php echo $this->headScript()
             ->prependFile($this->basePath('js/jquery.layout_and_plugins.js'))
             ->prependFile($this->basePath('js/autocard.js'))
