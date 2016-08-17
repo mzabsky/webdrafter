@@ -48,75 +48,12 @@ class MemberAreaController extends WebDrafterControllerBase
 		return false;
 	}
 	
-	/*private function initUser($allowUnregistered = false)
-	{
-		$sm = $this->getServiceLocator();
-		$auth = $this->auth();
-		
-		if($auth->GetStatus() == GoogleAuthentication::STATUS_ANONYMOUS)
-		{
-			return $this->redirect()->toRoute('member-area', array('action' => 'login'));
-		}
-		else if($auth->GetStatus() == GoogleAuthentication::STATUS_NOT_REGISTERED && !$allowUnregistered)
-		{
-			return $this->redirect()->toRoute('member-area', array('action' => 'register'));
-		}
-		
-		return NULL;
-	}*/
-	
-	/*private function createClient()
-	{
-		$redirectUri = $this->url()->fromRoute('member-area', array('action' => 'login'), array('force_canonical' => true));
-		
-		$scopes = implode(' ', array(
-				//\Google_Service_Drive::DRIVE_METADATA_READONLY,
-				\Google_Service_Drive::DRIVE_READONLY,
-				\Google_Service_Oauth2::USERINFO_EMAIL,
-				\Google_Service_Oauth2::USERINFO_PROFILE)
-		);
-		
-		$client = new \Google_Client();
-		$client->setApplicationName('PlaneSculptors.net');
-		$client->setScopes($scopes);
-		$client->setAuthConfigFile('config/client_secret.json');
-		$client->setAccessType('offline');
-		$client->setRedirectUri($redirectUri);
-		
-		//var_dump($client->isAccessTokenExpired());
-		
-		$token = @$_SESSION['access_token'];  // fetch from cookie
-		if($token){
-			// use the same token
-			$client->setAccessToken($token);
-			//echo "token from cookie";
-		}
-		else {
-			$token = $client->getAccessToken();
-			//var_dump($token);
-			//echo "token from get";
-		}
-
-		$_SESSION['access_token'] = $token;
-		
-		if($token && $client->isAccessTokenExpired()){  // if token expired
-			$refreshToken = json_decode($token)->refresh_token;
-		
-			// refresh the token
-			$client->refreshToken($refreshToken);
-		}
-		
-		
-		return $client;
-	}*/
 	public function keepAliveAction(){
 		return new JsonModel();
 	}
 	
 	public function indexAction()
 	{	
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$sm = $this->getServiceLocator();
 		$auth = $this->auth();
 		$draftTable = $sm->get('Application\Model\DraftTable');
@@ -173,8 +110,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function registerAction()
 	{
-		//if(($redirect = $this->initUser(true)) != NULL) return $redirect;
-
 		if($_SESSION["not_registered"] != true){
 			return $this->redirect()->toRoute('member-area');
 		}
@@ -227,13 +162,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	public function loginAction()
 	{
 		$client = $this->auth()->getGoogleClient();
-		
-		/*$provider = new \League\OAuth2\Client\Provider\Google([
-				'clientId'      => $this->getServiceLocator()->get('Config')['auth']['clientId'],
-				'clientSecret'  => $this->getServiceLocator()->get('Config')['auth']['clientSecret'],
-				'redirectUri'   => $redirectUri,
-				'scopes'        => ['email']
-		]);*/
 		
 		if (isset($_GET['code'])) {
 			$client->authenticate($_GET['code']);
@@ -296,7 +224,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function logoutAction()
 	{
-	 	//unset($_SESSION["email"]);
 	 	session_destroy();
 
 		return $this->redirect()->toRoute('home');
@@ -304,8 +231,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function createSetAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$sm = $this->getServiceLocator();
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
 		
@@ -317,11 +242,7 @@ class MemberAreaController extends WebDrafterControllerBase
             	$this->getRequest()->getPost()->toArray(),
             	$this->getRequest()->getFiles()->toArray()
         	);
-			
-			/*if ($formData['file']['tmp_name'] == "" || $formData['file']['tmp_name'] === null) {
-				$formData['file'] = null;
-			}*/
-			
+				
 			$set = $sm->get('Application\Model\Set');
 			$form->setInputFilter($set->getInputFilter());
 			
@@ -347,40 +268,7 @@ class MemberAreaController extends WebDrafterControllerBase
 					
 					$setTable = $sm->get('Application\Model\SetTable');
 					$setTable->saveSet($set);
-					
-					/*$artUrl = $formData["art_url"];
-					
-					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
-					
-					$parser = new \Application\SetParser\IsochronDrafterSetParser();
-					$cards = $parser->Parse($fileContents);
-					
-					$cardTable = $sm->get('Application\Model\CardTable');
-					foreach($cards as $card)
-					{
-						$card->setId = $set->setId;
-						$cardName = preg_replace("/[^\p{L}0-9- ]/iu", "", $card->name);
-						switch($formData["art_url_format"])
-						{
-							case CreateSetForm::NAME_DOT_PNG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".png";
-								break;
-							case CreateSetForm::NAME_DOT_FULL_DOT_PNG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".full.png";
-								break;
-							case CreateSetForm::NAME_DOT_JPG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".jpg";
-								break;
-							case CreateSetForm::NAME_DOT_FULL_DOT_JPG:
-								$card->artUrl = $artUrl . "/" . $cardName . ".full.jpg";
-								break;
-							default:
-								throw new \Exception("Invalid art URL format.");
-						}
-						
-						$cardTable->saveCard($card);
-					}*/
-
+			
 					$adapter->getDriver()->getConnection()->commit();
 				}
 				catch(Exception $e)
@@ -405,14 +293,11 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function selectGameModeAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
 		return new ViewModel();
 	}
 	
 	public function hostDraftAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		if(!isset($_REQUEST["mode"]) || (int)$_REQUEST["mode"] < 1)
 		{
 			throw new \Exception("Game mode not set");
@@ -520,8 +405,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function draftAdminAction()
 	{	
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
 		$sm = $this->getServiceLocator();
@@ -544,8 +427,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function getDraftPlayersAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		
 		$sm = $this->getServiceLocator();
@@ -565,8 +446,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function addDraftPlayerAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
 		$sm = $this->getServiceLocator();
@@ -600,8 +479,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function startDraftAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		try
 		{
 			$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
@@ -801,8 +678,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function setSetPrivateModeAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-	
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
@@ -826,8 +701,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function manageSetAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$sm = $this->getServiceLocator();
 		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
@@ -976,8 +849,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function setSetStatusAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-		
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
@@ -1006,8 +877,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function createSetVersionAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-	
 		$setId = $this->getEvent()->getRouteMatch()->getParam('set_id');
 	
 		$sm = $this->getServiceLocator();
@@ -1185,8 +1054,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function manageSetVersionAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-	
 		$sm = $this->getServiceLocator();
 		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
@@ -1259,8 +1126,6 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function createTournamentAction()
 	{
-		//if(($redirect = $this->initUser()) != NULL) return $redirect;
-	
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 		//$tournamentType = $_GET["tournament_type"];
 
