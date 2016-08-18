@@ -161,6 +161,10 @@ class BrowseController extends WebDrafterControllerBase
     	$userTable = $sm->get('Application\Model\UserTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
     	
+    	$isBot = isset($_GET["bot"]);
+    	$viewModel = new ViewModel();
+    	$viewModel->setTerminal(true);
+    	
     	if(is_numeric($cardIdentifier))
     	{
     		$card = $cardTable->getCard((int)$cardIdentifier);
@@ -173,7 +177,7 @@ class BrowseController extends WebDrafterControllerBase
     			$set = $setTable->getSet((int)$setIdentifier);
     		}
     		else if($setIdentifier != null && $setIdentifier  != "") {
-    			$set = $setTable->getSetByUrlName($setIdentifier);
+    			$set = $setTable->getSetForBot($setIdentifier);
     		}
     		else if($contextIdentifier != null && $contextIdentifier != "") {
     			$set = $setTable->getSetByUrlName($contextIdentifier);
@@ -183,7 +187,15 @@ class BrowseController extends WebDrafterControllerBase
     		}
 
     		if($set === null){
-    			return $this->notFoundAction();
+    			if($isBot)
+    			{
+    				$viewModel->message = "Set not found.";
+    				return $viewModel;
+    			}
+    			else 
+    			{
+    				return $this->notFoundAction();
+    			}
     		}
     		 
     		if(is_numeric($setVersionIdentifier))
@@ -201,13 +213,29 @@ class BrowseController extends WebDrafterControllerBase
     		}
     		
     		if($setVersion === null){
-    			return $this->notFoundAction();
+    		    if($isBot)
+    			{
+    				$viewModel->message = "Set version not found.";
+    				return $viewModel;
+    			}
+    			else 
+    			{
+    				return $this->notFoundAction();
+    			}
     		}
     		
-    		$card = $cardTable->getCardByName($setVersion->setVersionId, $cardIdentifier);
+    		$card = $cardTable->getCardForBot($setVersion->setVersionId, $cardIdentifier);
     		
     		if($card === null){
-    			return $this->notFoundAction();
+    		    if($isBot)
+    			{
+    				$viewModel->message = "Card not found.";
+    				return $viewModel;
+    			}
+    			else 
+    			{
+    				return $this->notFoundAction();
+    			}
     		}
     	}
     	
@@ -220,10 +248,7 @@ class BrowseController extends WebDrafterControllerBase
     		$response = $this->getResponse();
     		
     		$headers = $response->getHeaders();
-    		$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');
-    		
-    		$viewModel = new ViewModel();
-    		$viewModel->setTerminal(true);
+    		$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');    		
     		
     		$viewModel->set = $set;
     		$viewModel->card = $card;

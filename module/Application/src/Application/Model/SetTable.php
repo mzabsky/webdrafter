@@ -175,6 +175,21 @@ class SetTable
 		return $row;
 	}
 	
+	public function getSetForBot($urlName)
+	{
+		$where = new \Zend\Db\Sql\Where;
+		$where->equalTo( 'url_name', $urlName );
+		$where->OR->equalTo( 'code', $urlName );
+		$where->OR->equalTo( 'name', $urlName );
+		
+		$rowset = $this->tableGateway->select($where);
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
+		}
+		return $row;
+	}
+	
 	public function saveSet(Set $set)
 	{
 		$data = array(

@@ -87,6 +87,22 @@ class CardTable
 		return $row;
 	}
 	
+	public function getCardForBot($setVersionId, $name)
+	{
+		$setVersionId  = (int) $setVersionId;
+		
+		$where = new \Zend\Db\Sql\Where();
+		$where->equalTo('set_version_id', $setVersionId);
+		$where->like('name', '%' . $name . '%');
+		
+		$rowset = $this->tableGateway->select($where);
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
+		}
+		return $row;
+	}
+	
 	public function getCardHistory($firstVersionCardId)
 	{
 		$sql = new Sql($this->tableGateway->adapter);
