@@ -1,7 +1,12 @@
-<?php 
+<?php
+if(isset($this->message)){
+	echo $this->message;
+	return;
+}
+
 $rulesText = null;
 if ($this->card->rulesText != null) {
-	$rulesText = str_replace("<i>", "*", $this->card->rulesText);
+	$rulesText = str_replace("<i>", "*", html_entity_decode($this->card->rulesText));
 	$rulesText = str_replace("</i>", "*", $rulesText);
 	$rulesText = str_replace("<b>", "**", $rulesText);
 	$rulesText = str_replace("</b>", "**", $rulesText);
@@ -15,7 +20,7 @@ if ($this->card->rulesText != null) {
 
 $flavorText = null;
 if ($this->card->flavorText != null) {
-	$flavorText = str_replace("<i>", "*", $this->card->flavorText);
+	$flavorText = str_replace("<i>", "*", html_entity_decode($this->card->flavorText));
 	$flavorText = str_replace("</i>", "*", $flavorText);
 	$flavorText = str_replace("<b>", "**", $flavorText);
 	$flavorText = str_replace("</b>", "**", $flavorText);
@@ -31,7 +36,7 @@ $flavorText2 = null;
 if($this->card->getShapeName() != "normal")
 {
 	if ($this->card->rulesText2 != null) {
-		$rulesText2 = str_replace("<i>", "*", $this->card->rulesText2);
+		$rulesText2 = str_replace("<i>", "*", html_entity_decode($this->card->rulesText2));
 		$rulesText2 = str_replace("</i>", "*", $rulesText2);
 		$rulesText2 = str_replace("<b>", "**", $rulesText2);
 		$rulesText2 = str_replace("</b>", "**", $rulesText2);
@@ -43,7 +48,7 @@ if($this->card->getShapeName() != "normal")
 	}
 
 	if ($this->card->flavorText2 != null) {
-		$flavorText2 = str_replace("<i>", "*", $this->card->flavorText2);
+		$flavorText2 = str_replace("<i>", "*", html_entity_decode($this->card->flavorText2));
 		$flavorText2 = str_replace("</i>", "*", $flavorText2);
 		$flavorText2 = str_replace("<b>", "**", $flavorText2);
 		$flavorText2 = str_replace("</b>", "**", $flavorText2);
