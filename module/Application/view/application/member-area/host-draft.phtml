@@ -5,7 +5,7 @@ function addSet(el){
 	var setLabel = $(el).parent().parent().attr('setLabel');
 
 	var button = $('<span class="selected-pack" setVersionId="' + setVersionId + '">' + setLabel +'</span>');
-	button.click(function(){ $(this).remove(); if($('.selected-pack').length == 0) { $('.host-event form').hide(); } });
+	button.click(function(){ $(this).remove(); if($('.selected-pack').length == 0) { $('.host-event-submit').hide(); } });
 	
 	$('#selected-packs').append(button);
 
@@ -85,7 +85,7 @@ $(function(){
 		</table>
 		<input name="mode" type="hidden" value="<?php echo $this->mode?>"/>
 		<input name="setVersionIds" type="hidden"/>
-		<input type="submit" value="Open the event"/>
+		<input type="submit" value="Open the event" class="host-event-submit"/>
 		<p>Once you open the event, you will be to invite players to join.</p>
 	</form>
 </div>
