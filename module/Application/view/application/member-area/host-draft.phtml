@@ -22,7 +22,7 @@ $(function(){
 		"order": [[1, 'asc']]
 	});
 
-	/*$('.host-event input[type=submit]').click(function(){
+	$('.host-event-submit').click(function(){
 		var first = true;
 		var str = "";
 		$('.selected-pack').each(function(){
@@ -31,7 +31,7 @@ $(function(){
 			first = false;
 		});
 		$('input[name=setVersionIds]').val(str);
-	})*/
+	});
 });
 </script>
 <?php $this->headTitle()->append("Host event"); ?>
