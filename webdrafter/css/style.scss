@@ -1183,8 +1183,16 @@ $shape-double-height: 523px;
 	.spinner-large {
 		display: block;
 		margin: 150px auto;
-	}	
+	}
 }
+	
+.tooltip-card {
+    /*-moz-transform:scale(2.75);
+   	-webkit-transform:scale(2.75);
+   	transform:scale(2.75);*/
+   	max-width: 500px;
+   	max-height: 400px;
+}	
 
 .headerSpinner {
 	height: 40px;
