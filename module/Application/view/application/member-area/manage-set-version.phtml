@@ -1,4 +1,15 @@
 <script>
+function updateNeedle(){
+	var mode = $("select[name='basic_land_slot']").val();
+	var needleNeeded = mode == <?php echo \Application\Model\SetVersion::BASIC_LAND_SLOT_TYPE ?> || mode == <?php echo \Application\Model\SetVersion::BASIC_LAND_SLOT_RULES_TEXT ?>;
+	if(needleNeeded){
+		$("#basic-land-slot-needle").show();
+	}
+	else {
+		$("#basic-land-slot-needle").hide();
+	}
+}
+
 $(function(){
 	var simplemde = createEditor('input[name="about"]');
 	$("input[name='submit']").click(function(){ hasUnsavedChanges = false; });
@@ -6,6 +17,9 @@ $(function(){
 	$("input[name='name']").on('input', function(){
 		$("input[name='url_name']").val(toUrlName($(this).val()));
 	});
+
+	$("select[name='basic_land_slot']").change(updateNeedle);
+	updateNeedle();
 });
 </script>
 
@@ -30,6 +44,7 @@ $url = substr($url, 0, strpos($url, $replacementToken));
 
 echo $this->fullFormInput($form->get('name'));
 echo $this->fullFormInput($form->get('url_name'), $url, null, true);
+echo $this->fullFormInput($form->get('basic_land_slot'), null, '<span id="basic-land-slot-needle"> <span>String to look for: </span>'.$this->formElement($form->get('basic_land_slot_needle')).'</span>');
 echo $this->fullFormInput($form->get('about'));
 
 ?>

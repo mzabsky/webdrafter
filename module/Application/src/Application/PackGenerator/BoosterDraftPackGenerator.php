@@ -2,6 +2,7 @@
 namespace Application\PackGenerator;
 
 use Application\Model\Card;
+use Application\Model\SetVersion;
 
 class BoosterDraftPackGenerator
 {
@@ -16,29 +17,75 @@ class BoosterDraftPackGenerator
 		return true;
 	}
 	
-	public function GeneratePacks($cards, $numberOfPacks)
+	public function GeneratePacks($cards, $numberOfPacks, $basicLandSlotMode, $basicLandSlotNeedle)
 	{
-		// Resultset can't be iterated over repeatedly
-		if(!is_array($cards))
+		$cardsArray = array();
+		$basicLandSlotCardsArray = array();
+		$basicLandSlotWeightSum = 0;
+		
+		$basicLandSlotCardCountByRarity = array();
+		
+		$cardsArray = array();
+		foreach($cards as $card)
 		{
-			$cardsArray = array();
-			foreach($cards as $card)
+			$belongsToBasicLandSlot = false;
+			if(
+				($basicLandSlotMode == SetVersion::BASIC_LAND_SLOT_NONBASIC_LAND && strpos($card->types, "Land") !== false) ||
+				($basicLandSlotMode == SetVersion::BASIC_LAND_SLOT_SPECIAL && $card->rarity == 'S') ||
+				($basicLandSlotMode == SetVersion::BASIC_LAND_SLOT_DFC && $card->shape == Card::SHAPE_DOUBLE) ||
+				($basicLandSlotMode == SetVersion::BASIC_LAND_SLOT_TYPE && $basicLandSlotNeedle != null && $basicLandSlotNeedle != "" && strpos($card->types, $basicLandSlotNeedle) !== false) ||
+				($basicLandSlotMode == SetVersion::BASIC_LAND_SLOT_RULES_TEXT && $basicLandSlotNeedle != null && $basicLandSlotNeedle != "" && strpos($card->rulesText, $basicLandSlotNeedle) !== false)
+			) 
+			{
+				$belongsToBasicLandSlot = true;
+			}
+			
+			if($belongsToBasicLandSlot)
+			{
+				
+				if($card->rarity == 'C') $card->weight = 10;
+				else if($card->rarity == 'U') $card->weight = 3;
+				else if($card->rarity == 'R') $card->weight = 7.0/8.0;
+				else if($card->rarity == 'M') $card->weight = 1.0/8.0;
+				else if($card->rarity == 'S') $card->weight = 1;				
+				
+				if(isset($basicLandSlotCardCountByRarity[$card->rarity])){
+					$basicLandSlotCardCountByRarity[$card->rarity]++;
+				}
+				else {
+					$basicLandSlotCardCountByRarity[$card->rarity] = 1;
+				}
+					
+				$basicLandSlotCardsArray[] = $card;
+			}
+			else 
 			{
 				$cardsArray[] = $card;
 			}
-			$cards = $cardsArray;
 		}
+		
+		/*$sum = 0;
+		foreach($basicLandSlotCardsArray as $card)
+		{
+			$card->weight = $card->weight / ($basicLandSlotCardCountByRarity[$card->rarity] * 1.0);
+
+			$sum += $card->weight / 14.0 * 100;
+		}
+		
+		echo $sum;*/
+		
+		//foreach ($basicLandSlotCardsArray as $card) echo $card->name . " - " . ($card->weight / 14.0 * 100) . "%<br/>";
 		
 		$list = array();
 		for($i = 0; $i < $numberOfPacks; $i++)
 		{
-			$list[] = $this->GeneratePack($cards);
+			$list[] = $this->GeneratePack($cardsArray, $basicLandSlotCardsArray, 10 + 3 + 1);
 		}
 
 		return $list;
 	}
 	
-	private function GeneratePack($cards)
+	private function GeneratePack($cards, $basicLandSlotCards, $basicLandSlotWeightSum)
 	{
 		$hasMythics = false;
 		$hasRares = false;
@@ -131,6 +178,21 @@ class BoosterDraftPackGenerator
 		if(count($pack) != $numberOfCommons + $numberOfUncommons + 1)
 		{
 			throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
+		}
+		
+		if(count($basicLandSlotCards) > 0)
+		{
+			// Select a card for the basic land slot
+			$randomWeight = mt_rand(0, $basicLandSlotWeightSum * 100) / 100.0; // We need more precise weight than integers (since mythics have weight 1/8)
+			$exploredWeight = 0;
+			foreach($basicLandSlotCards as $card){
+				$exploredWeight += $card->weight;
+				if($exploredWeight > $randomWeight)
+				{
+					$pack[] = $card;
+					break;
+				} 	
+			}
 		}
 		
 		// Make sure initial five commons are not the pre-planned WUBRG commons

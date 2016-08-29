@@ -206,9 +206,9 @@ return array(
         	'generate-pool' => array(
         		'type' => 'Segment',
         		'options' => array(
-        			'route' => '/generator/sealed-pool/:set_id',
+        			'route' => '/generator/sealed-pool/:set_version_id',
                     'constraints' => array(
-                    	'set_id' => '[0-9]+'
+                    	'set_version_id' => '[0-9]+'
                     ),
        				'defaults' => array(
       					'controller' => 'Application\Controller\Generator',

@@ -7,8 +7,8 @@ class DraftSetVersion
 	public $draftSetVersionId;
 	public $draftId;
 	public $setVersionId;
-	public $packNumber;
-
+	public $packNumber;	
+	
     public function exchangeArray($data)
     {
         $this->draftSetVersionId     = (!empty($data['draft_set_version_id'])) ? $data['draft_set_version_id'] : null;

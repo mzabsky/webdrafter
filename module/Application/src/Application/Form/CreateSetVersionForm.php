@@ -5,6 +5,7 @@ namespace Application\Form;
 use Zend\Form\Form;
 use Zend\Form\Element\Text;
 use Zend\Form\Element\File;
+use Application\Model\SetVersion;
 
 class CreateSetVersionForm extends Form
 {
@@ -44,6 +45,32 @@ class CreateSetVersionForm extends Form
 						'label' => 'Download URL:',
 						'description' => 'URL from which the players can download the files necessary to play this version of set (such as Cockatrice package). Cannot be changed later.'
 				),
+		)));
+		
+		$this->add($factory->createElement(array(
+				'name' => 'basic_land_slot',
+				'type' => 'Zend\Form\Element\Select',
+				'required' => true,
+				'options' => array(
+						'label' => 'Basic land slot:',
+						'description' => 'Determines which cards are put into the basic land slot in a booster pack. Has no effect in cube-type events.',
+						'value_options' => [
+								SetVersion::BASIC_LAND_SLOT_BASIC_LAND => 'Basic land (doesn\'t appear in draft)',
+								SetVersion::BASIC_LAND_SLOT_NONBASIC_LAND => 'Nonbasic land (weighed by rarity)',
+								SetVersion::BASIC_LAND_SLOT_SPECIAL => 'Special rarity card',
+								SetVersion::BASIC_LAND_SLOT_DFC => 'Double faced card (weighed by rarity)',
+								SetVersion::BASIC_LAND_SLOT_TYPE => 'Card with specific string in its type line (weighed by rarity)',
+								SetVersion::BASIC_LAND_SLOT_RULES_TEXT => 'Card with specific string in its rules text (weighed by rarity)',
+						],
+				),
+		)));
+
+		$this->add($factory->createElement(array(
+				'name' => 'basic_land_slot_needle',
+				/*'options' => array(
+						'label' => 'Download URL:',
+						'description' => 'URL from which the players can download the files necessary to play this version of set (such as Cockatrice package). Cannot be changed later.'
+				),*/
 		)));
 		
 		$this->add($factory->createElement(array(

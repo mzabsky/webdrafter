@@ -16,9 +16,19 @@ class SetVersion implements InputFilterAwareInterface
 	public $about;
 	public $createdOn;
 	public $downloadUrl;
+	public $basicLandSlot;
+	public $basicLandSlotNeedle;
 	
 	private $inputFilter;
 	private $dbAdapter;
+	
+	const BASIC_LAND_SLOT_BASIC_LAND = 1;
+	const BASIC_LAND_SLOT_NONBASIC_LAND = 2;
+	const BASIC_LAND_SLOT_SPECIAL= 3;
+	const BASIC_LAND_SLOT_DFC = 4;
+	const BASIC_LAND_SLOT_TYPE = 5;
+	const BASIC_LAND_SLOT_RULES_TEXT = 6;
+	//const BASIC_LAND_SLOT_LIST = 7;
 	
 	public function getArray(){
 		return array(
@@ -28,6 +38,8 @@ class SetVersion implements InputFilterAwareInterface
 			'set_id' => $this->setId,
 			'created_on' => $this->createdOn,
 			'about' => $this->about,
+			'basic_land_slot' => $this->basicLandSlot,
+			'basic_land_slot_needle' => $this->basicLandSlotNeedle,
 		);
 	}
 	
@@ -40,6 +52,8 @@ class SetVersion implements InputFilterAwareInterface
         $this->about = (!empty($data['about'])) ? $data['about'] : null;
         $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
         $this->downloadUrl = (!empty($data['download_url'])) ? $data['download_url'] : null;
+        $this->basicLandSlot = (!empty($data['basic_land_slot'])) ? $data['basic_land_slot'] : null;
+        $this->basicLandSlotNeedle = (!empty($data['basic_land_slot_needle'])) ? $data['basic_land_slot_needle'] : null;
     }
     
     public function setDbAdapter(\Zend\Db\Adapter\Adapter $adapter)
@@ -142,7 +156,22 @@ class SetVersion implements InputFilterAwareInterface
     				),
     			),
     		));
-    
+
+    		$inputFilter->add(array(
+    				'name'     => 'basic_land_slot_needle',
+    				'required' => false,
+    				'validators' => array(
+    						array(
+    								'name'    => 'StringLength',
+    								'options' => array(
+    										'encoding' => 'UTF-8',
+    										'min'      => 1,
+    										'max'      => 100,
+    								),
+    						),
+    				),
+    		));
+    		
     		$inputFilter->add(array(
     				'name'     => 'about',
     				'required' => false,

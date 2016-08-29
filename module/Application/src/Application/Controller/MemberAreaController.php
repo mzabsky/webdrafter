@@ -493,6 +493,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			$draftSetVersionTable = $sm->get('Application\Model\DraftSetVersionTable');
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
+			$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 			$auth = $this->auth();
 			
 			// Start the draft
@@ -541,6 +542,8 @@ class MemberAreaController extends WebDrafterControllerBase
 				$picks = array();
 				foreach($draftSetVersions as $setIndex => $draftSetVersion)
 				{		
+					$setVersion = $setVersionTable->getSetVersion($draftSetVersion->setVersionId);
+					
 					$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 					$cardArray = array();
 					foreach($cards as $card)
@@ -550,7 +553,7 @@ class MemberAreaController extends WebDrafterControllerBase
 						}
 					}
 					
-					$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers);
+					$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers, $setVersion->basicLandSlot, $setVersion->basicLandSlotNeedle);
 					foreach($draftPlayerArray as $playerIndex => $player)
 					{
 						foreach ($packs[$playerIndex] as $card)
@@ -940,6 +943,8 @@ class MemberAreaController extends WebDrafterControllerBase
 					$setVersion->urlName = $formData["url_name"];
 					$setVersion->downloadUrl = $formData["download_url"];
 					$setVersion->about = $formData["about"];
+					$setVersion->basicLandSlot = $formData["basic_land_slot"];
+					$setVersion->basicLandSlotNeedle = $formData["basic_land_slot_needle"];
 					//$setVersion->createdOn = $formData["about"];
 						
 					$setVersionTable->saveSetVersion($setVersion);
@@ -1100,6 +1105,8 @@ class MemberAreaController extends WebDrafterControllerBase
 					$setVersion->name = $formData["name"];
 					$setVersion->urlName = $formData["url_name"];
 					$setVersion->about = $formData["about"];
+					$setVersion->basicLandSlot = $formData["basic_land_slot"];
+					$setVersion->basicLandSlotNeedle = $formData["basic_land_slot_needle"];
 	
 					$setVersionTable->saveSetVersion($setVersion);
 	

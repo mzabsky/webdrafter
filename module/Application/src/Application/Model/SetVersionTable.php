@@ -92,6 +92,8 @@ class SetVersionTable
 			'download_url'  => $setVersion->downloadUrl,
 			'about'  => $setVersion->about,
 			'set_id'  => $setVersion->setId,
+			'basic_land_slot'  => $setVersion->basicLandSlot,
+			'basic_land_slot_needle'  => $setVersion->basicLandSlotNeedle,
 			//'created_on'  => $setVersion->createdOn,
 		);
 	
