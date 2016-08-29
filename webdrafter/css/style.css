@@ -862,4 +862,8 @@ form input.code-input {
   height: 40px;
   margin-bottom: -3px; }
 
+.kick-link {
+  font-size: 80%;
+  color: red; }
+
 /*# sourceMappingURL=style.css.map */

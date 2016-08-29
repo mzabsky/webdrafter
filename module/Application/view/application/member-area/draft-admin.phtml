@@ -7,6 +7,12 @@ if($this->draftOpened)
 	<div class="success-message">Event opened!</div>
 <?php 
 }
+if($this->playerKicked)
+{
+?>
+	<div class="success-message">Player kicked!</div>
+<?php 
+}
 ?>
 
 <div id="draft_players">Loading...</div>
@@ -81,7 +87,13 @@ function refreshPage()
 				if(val["userId"] == <?php echo $this->auth()->getUser()->userId ?>) hostInviteKey = val["inviteKey"];
 				
 				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) : "<i>&lt;PENDING&gt;</i>");
+
+				if(val["hasJoined"]){
+					url += " <a href='/member-area/draft/kick/<?php echo $this->draft->draftId ?>?user_id=" + val["userId"] + "' class='kick-link' title='Kick this player from the event'>X</a>";
+				}
+				
 				$("#draft_players").append("<div>" + url + "</div>");
+				
 				$("#start-event").show();
 				//alert();
 			});

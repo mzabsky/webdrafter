@@ -413,6 +413,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		
 		$viewModel = new ViewModel();
 		$viewModel->draftOpened = isset($_GET["draft-opened"]);
+		$viewModel->playerKicked = isset($_GET["player-kicked"]);
 		$viewModel->draft = $draftTable->getDraft($draftId);
 		
 		if($viewModel->draft->hostId != $auth->getUser()->userId)
@@ -1189,5 +1190,32 @@ class MemberAreaController extends WebDrafterControllerBase
 		$viewModel->draft = $draft;
 		return $viewModel;
 	}
+	
+	public function kickAction()
+	{
+		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
+		$userId = $_GET['user_id'];
+	
+		$sm = $this->getServiceLocator();
+		$draftTable = $sm->get('Application\Model\DraftTable');
+		$draftPlayerTable = $sm->get('Application\Model\DraftPlayerTable');
+		$auth = $this->auth();
+	
+		$draft = $draftTable->getDraft($draftId);
+		if($draft->status != Draft::STATUS_OPEN)
+		{
+			throw new Exception("Invalid status");
+		}
+		
+		if($draft->hostId != $auth->getUser()->userId)
+		{
+			throw new Exception("Unauthorized");
+		}
+		
+		$draftPlayerTable->deleteDraftPlayerByUserId($draftId, $userId);
+		
+		return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'player-kicked'));
+	}
+	
 }
 ?>
