@@ -576,7 +576,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			{
 				$packGenerator = new CubePackGenerator();				
 				$draftSetVersion = $draftSetVersionTable->fetchByDraft($draftId)->current();
-				$cards = $cardTable->fetchBySet($draftSetVersion->setId);
+				$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 				
 				$cardArray = array();				
 				foreach($cards as $card)
@@ -804,7 +804,7 @@ class MemberAreaController extends WebDrafterControllerBase
 							
 							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
 							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
-							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->firstVersionCardId : NULL;
+							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? ($currentVersionCardArray[$card->name]->firstVersionCardId != NULL ? $currentVersionCardArray[$card->name]->firstVersionCardId : $currentVersionCardArray[$card->name]->cardId) : NULL;
 							$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
 						}
 						
