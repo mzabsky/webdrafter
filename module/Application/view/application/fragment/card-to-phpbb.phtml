@@ -124,6 +124,8 @@ $cardCode = "[quote][b][url=" . $this->url('browse-card', array('set_url_name' =
             "": "") .
         "[/quote]";
 
+$cardCode = str_replace("\\r", '', $cardCode);
+$cardCode = str_replace("\r", '', $cardCode);
 $cardCode = str_replace("\n", '\\n', $cardCode);
 $cardCode = str_replace("\\n\\n", '\\n', $cardCode);
 //$cardCode = str_replace("\\n[/quote]", '[/quote]', $cardCode);
