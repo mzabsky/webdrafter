@@ -1105,6 +1105,7 @@ class MemberAreaController extends WebDrafterControllerBase
 					$setVersion->name = $formData["name"];
 					$setVersion->urlName = $formData["url_name"];
 					$setVersion->about = $formData["about"];
+					$setVersion->downloadUrl = $formData["download_url"];
 					$setVersion->basicLandSlot = $formData["basic_land_slot"];
 					$setVersion->basicLandSlotNeedle = $formData["basic_land_slot_needle"];
 	

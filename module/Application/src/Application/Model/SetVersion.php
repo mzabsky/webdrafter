@@ -38,6 +38,7 @@ class SetVersion implements InputFilterAwareInterface
 			'set_id' => $this->setId,
 			'created_on' => $this->createdOn,
 			'about' => $this->about,
+			'download_url' => $this->downloadUrl,
 			'basic_land_slot' => $this->basicLandSlot,
 			'basic_land_slot_needle' => $this->basicLandSlotNeedle,
 		);
