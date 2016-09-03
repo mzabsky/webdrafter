@@ -37,7 +37,7 @@ foreach($this->cards as $card)
 	    artUrl: "<?php echo $card->artUrl ?>",
 	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName), array('force_canonical' => true)) ?>",
 	    rulesText: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $this->symbols($card->rulesText))) ?>',
-	    flavorText: "<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $card->flavorText)) ?>",
+	    flavorText: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $card->flavorText)) ?>',
 	    rarity: "<?php echo $card->rarity ?>",
 	    rarityName: "<?php echo $card->getRarityName() ?>",
 	    ptString: "<?php echo $card->ptString ?>",
@@ -47,7 +47,7 @@ foreach($this->cards as $card)
 	    manaCost2: '<?php echo $this->symbols($card->manaCost2) ?>',
 	    types2: "<?php echo escapeForJavascript($card->types2) ?>",
 	    rulesText2: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $this->symbols($card->rulesText2))) ?>',
-	    flavorText2: "<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $card->flavorText2)) ?>",
+	    flavorText2: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $card->flavorText2)) ?>',
 	    ptString2: "<?php echo escapeForJavascript($card->ptString2) ?>",
 	    illustrator2: "<?php echo escapeForJavascript($card->illustrator2) ?>",
 	    
