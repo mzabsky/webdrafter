@@ -54,8 +54,6 @@ function showCopyable (str) {
 }
 
 $( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
-	if(jqxhr.statusText == "abort") return;
-	
 	var report = "A background HTTP request has unexpectedly failed. Please send this error report to mzabsky@gmail.com, along with any additional information pertaining to the error.\n\n"; 
 	report += "You may try to reload the page and to retry the action which has failed.\n\n";		
 	report += "PlaneSculptors.net Error Report (XHR request failed)\n";
@@ -68,8 +66,11 @@ $( document ).ajaxError(function(event, jqxhr, settings, thrownError) {
 	report += "Response Body: \n";
 	report += jqxhr.responseText;
 
-	showCopyable(report);
 	console.log(report);	
+	
+	if(jqxhr.statusText == "abort" || (jqxhr.status == 0 && jqxhr.statusText == "error")) return;
+	
+	showCopyable(report);
 });
 
 var hasUnsavedChanges = false;
