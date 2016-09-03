@@ -110,7 +110,17 @@ class CardTable
 		//$select->forUpdate();
 		$select->columns(array('*'));
 		$select->join('set_version', 'set_version.set_version_id = card.set_version_id', array('set_version_name' => 'name', 'set_version_url_name' => 'url_name'), 'left');
-		$select->where(array('first_version_card_id' => $firstVersionCardId, 'is_changed' => true));
+
+		$where = new \Zend\Db\Sql\Where();
+		$where->NEST
+		->equalTo('card_id', $firstVersionCardId)
+		->OR
+		->equalTo('first_version_card_id', $firstVersionCardId)
+		->UNNEST
+		->AND
+		->equalTo('is_changed', true);
+		
+		$select->where($where);
 		$select->order("card.card_id DESC");
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		//var_dump($selectString);

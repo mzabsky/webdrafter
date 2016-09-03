@@ -303,7 +303,11 @@ class BrowseController extends WebDrafterControllerBase
     	}    	
     	else 
     	{
-    		$viewModel->changeHistory = NULL;
+    		$viewModel->changeHistory = \Application\resultSetToArray($cardTable->getCardHistory($viewModel->card->cardId));
+    	}
+    	
+    	if(count($viewModel->changeHistory) <= 1) {
+    		$viewModel->changeHistory = null;
     	}
     	
     	return $viewModel;
