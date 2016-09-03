@@ -504,6 +504,11 @@
 	
 			// Make the newly constructed UI elements are properly sized
 			updateSizes($("#card-size-slider").slider("value")); 
+		}).fail(function(xhr, textStatus, errorThrown) {
+			console.log("JqXHR failed, retrying");
+			console.log(textStatus);	
+			console.log(errorThrown);
+			reloadDraft();
 		});
 	}
 	
