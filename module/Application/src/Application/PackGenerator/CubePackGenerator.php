@@ -11,7 +11,7 @@ class CubePackGenerator
 		
 		// Resultset can't be iterated over repeatedly
 		$cardsArray = array();
-		while(count($cardsArray) < $numberOfPacks * 15)
+		while(count($cardsArray) <= $numberOfPacks * 15)
 		{
 			foreach($cards as $card)
 			{
