@@ -44,7 +44,7 @@
 	<?php
 	foreach ($this->cards as $card)
 	{
-		echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' src='" . $card->artUrl . "' class='card card-" . $card->getShapeName() . "'/>\n"; 	
+		echo "<img cardId='" . $card->cardId . "' alt='" . $card->name . "' artsrc='" . $card->artUrl . "' class='card card-" . $card->getShapeName() . "'/>\n"; 	
 	}
 	?>
 	</div>
@@ -290,7 +290,7 @@
 					}
 					
 					$.each( data["booster"], function( key, val ) {
-						$(".draft-booster").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone().attr("pickId", val["pickId"]));
+						$(".draft-booster").append(getCardFromPool("img[cardId=" + val["cardId"] + "]").attr("pickId", val["pickId"]));
 					});
 										
 					$(".draft-booster img").dblclick(function() {
@@ -313,7 +313,7 @@
 	
 				
 				$.each( data["picks"], function( key, val ) {
-					$(".draft-picks").append($("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone());
+					$(".draft-picks").append(getCardFromPool("img[cardId=" + val["cardId"] + "]"));
 				});
 
 				$(document).tooltip({
@@ -383,7 +383,7 @@
 				$("#deckbuilder tbody tr").append("<td zone='<?php echo \Application\Model\Pick::ZONE_SIDEBOARD?>' zoneColumn='0'></td>");
 				
 				$.each( data["picks"], function( key, val ) {
-					var card = $("img[cardId=" + val["cardId"] + "]", $("#cardpool")).clone();
+					var card = getCardFromPool("img[cardId=" + val["cardId"] + "]");
 					//card.css("vertical-align", "top");
 					card.attr("pickId", val["pickId"]);
 					
@@ -505,10 +505,12 @@
 			// Make the newly constructed UI elements are properly sized
 			updateSizes($("#card-size-slider").slider("value")); 
 		}).fail(function(xhr, textStatus, errorThrown) {
+			if(textStatus == "abort") return;
+			
 			console.log("JqXHR failed, retrying");
 			console.log(textStatus);	
 			console.log(errorThrown);
-			reloadDraft();
+			refreshDraft();
 		});
 	}
 	
@@ -527,6 +529,12 @@
 		$("#deckbuilder #labels-row td, #deckbuilder tbody td").width(cellWidth);
 		$("#deckbuilder img").css("margin-bottom", (-266) * (size) / (300));	
 		$(".draft-picks img").css("margin-bottom", (-266) * (size) / (300));			
+	}
+
+	function getCardFromPool(selector){
+		var card = $(selector, $("#cardpool")).clone();
+		card.attr("src", card.attr("artsrc"));
+		return card;
 	}
 	
 	$("#card-size-slider").slider({
