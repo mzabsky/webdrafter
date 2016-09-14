@@ -7,7 +7,7 @@ var Spoiler = function (options){
     this.initializeStructure();
     this.initializeCardElements();
     this.initializeSorting();
-    this.redraw();
+    this.redraw();   
 };
 
 Spoiler.prototype.initializeStructure = function () {
@@ -73,13 +73,13 @@ Spoiler.prototype.initializeCardElements = function () {
         var card = this.data[i];
 
         this.imageCardElements[card.cardId] = $("" +
-        	"<a href='" + card.url + "'><img src='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' /></a>");
+        	"<a href='" + card.url + "'><img class='lazyload' data-original='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' /></a>");
         
         this.spoilerCardElements[card.cardId] = $("" +
             "<table class='card-detail shape-" + card.shape + "'>" +
             "   <tr>" +
-            "       <td class='card-image-day card-front' rowspan='15'><div style='background-image: url(\"" + card.artUrl + "\")'></td>" +
-            (card.shape == "flip" || card.shape == "double" ? "<td class='card-image-night card-back' rowspan='15'><div style='background-image: url(\"" + card.artUrl + "\")'></td>" : "") +
+            "       <td class='card-image-day card-front' rowspan='15'><div class='lazyload' data-original='" + card.artUrl + "'></td>" +
+            (card.shape == "flip" || card.shape == "double" ? "<td class='card-image-night card-back' rowspan='15'><div class='lazyload' data-original='" + card.artUrl + "'></td>" : "") +
             "       <td class='card-main-row card-front'><div class='card-name'><a href='" + card.url + "'>" + card.name + "</a> " + (this.showVersion ? "<span class='card-set-version'>(" + card.setVersionLink + ")</span>" : "") +"</div>" + (card.manaCost != null ?"<div class='card-cost'>" + card.manaCost + "</div></td>" : "</td>")+            
             "   </tr>" +
             "   <tr>" +
@@ -345,4 +345,12 @@ Spoiler.prototype.redraw = function () {
         	}
         }        
     }
+    
+    this.lazyload = $(".lazyload", this.mainElement).lazyload({
+    	effect : "fadeIn",
+        skip_invisible : true
+	});
+    
+    //if(this.lazyload) this.lazyload.update();
+    //$(window).trigger('resize');
 }
