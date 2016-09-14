@@ -17,6 +17,7 @@ use Application\Model\Draft;
 use Application\Model\Pick;
 use Application\Model\DraftPlayerTable;
 use Zend\View\Model\JsonModel;
+use Application\Model\SetVersion;
 
 class DraftController extends WebDrafterControllerBase
 {	
@@ -201,6 +202,8 @@ class DraftController extends WebDrafterControllerBase
 			if($picksMade + 1 == $picksRequired)
 			{
 				$draftSets = \Application\resultSetToArray($this->draftSetVersionTable->fetchByDraft($this->draft->draftId));
+				$currentDraftSetVersion = $draftSets[$this->draft->packNumber - 1];
+				$currentSetVersion = $this->setVersionTable->getSetVersion($currentDraftSetVersion->setVersionId);
 				
 				switch($this->draft->gameMode)
 				{
@@ -216,7 +219,13 @@ class DraftController extends WebDrafterControllerBase
 						throw new \Exception("Invalid game mode " . $this->gameMode);
 				}
 				
-				if($this->draft->pickNumber < 14)
+				$packSize = 14;
+				if($currentSetVersion->basicLandSlot != SetVersion::BASIC_LAND_SLOT_BASIC_LAND || $this->draft->gameMode == Draft::MODE_CUBE_DRAFT)
+				{
+					$packSize = 15;
+				}
+				
+				if($this->draft->pickNumber < $packSize)
 				{
 					//DIE("shift");
 					// Advance to next card in pack				

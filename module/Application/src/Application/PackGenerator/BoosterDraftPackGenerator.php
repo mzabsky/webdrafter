@@ -175,10 +175,10 @@ class BoosterDraftPackGenerator
 			$pack[] = array_pop($commons);
 		}
 
-		if(count($pack) != $numberOfCommons + $numberOfUncommons + 1)
+		/*if(count($pack) != $numberOfCommons + $numberOfUncommons + 1)
 		{
 			throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
-		}
+		}*/
 		
 		if(count($basicLandSlotCards) > 0)
 		{
@@ -192,6 +192,11 @@ class BoosterDraftPackGenerator
 					$pack[] = $card;
 					break;
 				} 	
+			}
+		
+			if(count($pack) != $numberOfCommons + $numberOfUncommons + 2)
+			{
+				throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
 			}
 		}
 		
