@@ -25,8 +25,4 @@ return array(
                      => 'Zend\Db\Adapter\AdapterServiceFactory',
          ),
      ),
-	'auth' => array(
-		'clientId' => '391601156174-34sp5faa4qfn68f89gom58ospc0tnppt.apps.googleusercontent.com',
-		'clientSecret' => 'Um8YQhlKwLLQ1tvVzqgd20z-',
-	)
  );
