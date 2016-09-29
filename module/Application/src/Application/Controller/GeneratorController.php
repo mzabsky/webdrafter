@@ -34,13 +34,14 @@ class GeneratorController extends WebDrafterControllerBase
     	{
     		foreach ($pack as $card)
     		{
-    			if(isset($pool[$card->name]))
+    			$name = $card->name . ' ' . $card->rarity;
+    			if(isset($pool[$name]))
     			{
-    				$pool[$card->name]++;
+    				$pool[$name]++;
     			}
     			else
     			{
-    				$pool[$card->name] = 1;
+    				$pool[$name] = 1;
     			}
     		}
     	}

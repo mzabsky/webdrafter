@@ -26,6 +26,7 @@ class BoosterDraftPackGenerator
 		$basicLandSlotCardCountByRarity = array();
 		
 		$cardsArray = array();
+		$weightSum = 0;
 		foreach($cards as $card)
 		{
 			$belongsToBasicLandSlot = false;
@@ -55,7 +56,7 @@ class BoosterDraftPackGenerator
 				else {
 					$basicLandSlotCardCountByRarity[$card->rarity] = 1;
 				}
-					
+				
 				$basicLandSlotCardsArray[] = $card;
 			}
 			else 
@@ -64,7 +65,7 @@ class BoosterDraftPackGenerator
 			}
 		}
 		
-		/*$sum = 0;
+		$sum = 0;
 		foreach($basicLandSlotCardsArray as $card)
 		{
 			$card->weight = $card->weight / ($basicLandSlotCardCountByRarity[$card->rarity] * 1.0);
@@ -72,7 +73,7 @@ class BoosterDraftPackGenerator
 			$sum += $card->weight / 14.0 * 100;
 		}
 		
-		echo $sum;*/
+		//echo $sum;*/
 		
 		//foreach ($basicLandSlotCardsArray as $card) echo $card->name . " - " . ($card->weight / 14.0 * 100) . "%<br/>";
 		
@@ -87,6 +88,7 @@ class BoosterDraftPackGenerator
 	
 	private function GeneratePack($cards, $basicLandSlotCards, $basicLandSlotWeightSum)
 	{
+		//var_dump($basicLandSlotWeightSum);
 		$hasMythics = false;
 		$hasRares = false;
 		$hasUncommons = false;
@@ -180,24 +182,44 @@ class BoosterDraftPackGenerator
 			throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
 		}*/
 		
+		//$pack = array();
+		
+		$exploredWeight = 0;
+		foreach($basicLandSlotCards as $card){
+			$exploredWeight += $card->weight;
+			//echo $card->name . " " . $exploredWeight. '<br>';
+		}
+		
 		if(count($basicLandSlotCards) > 0)
 		{
 			// Select a card for the basic land slot
 			$randomWeight = mt_rand(0, $basicLandSlotWeightSum * 100) / 100.0; // We need more precise weight than integers (since mythics have weight 1/8)
+			
+			/*foreach($basicLandSlotCards as $card){
+				$pack[] = $card;
+			}*/
+			
 			$exploredWeight = 0;
-			foreach($basicLandSlotCards as $card){
+			foreach($basicLandSlotCards as $card){				
 				$exploredWeight += $card->weight;
 				if($exploredWeight > $randomWeight)
 				{
+					//echo $randomWeight . ' ' . $exploredWeight  .  '<br>';
 					$pack[] = $card;
 					break;
 				} 	
 			}
 		
-			if(count($pack) != $numberOfCommons + $numberOfUncommons + 2)
+			/*if(count($pack) != $numberOfCommons + $numberOfUncommons + 2)
 			{
 				throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
-			}
+			}*/
+		}
+		else {
+			/**if(count($pack) != $numberOfCommons + $numberOfUncommons + 1)
+			{
+				throw new \Exception("Could not generate booster pack, because the set doesn't have the necessary cards in it - it must have at least 10 commons, 3 uncommons a rare and a mythic rare.");
+			}*/
 		}
 		
 		// Make sure initial five commons are not the pre-planned WUBRG commons
