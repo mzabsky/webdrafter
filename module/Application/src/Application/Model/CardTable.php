@@ -87,20 +87,71 @@ class CardTable
 		return $row;
 	}
 	
-	public function getCardForBot($setVersionId, $name)
+	public function getCardsForBot($setVersionId, $name, $limit)
 	{
-		$setVersionId  = (int) $setVersionId;
+		$setVersionId  = $setVersionId !== null ? (int) $setVersionId : null;
 		
-		$where = new \Zend\Db\Sql\Where();
-		$where->equalTo('set_version_id', $setVersionId);
-		$where->like('name', '%' . $name . '%');
+		$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('card');
+			if($setVersionId !== null){
+				$select->where->equalTo('set_version_id', $setVersionId);
+			}
+			else {
+				$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
+				$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+				$select->where->equalTo('set.is_private', 0);
+			}
+			$select->where->like('card.name', '%' . $name . '%');
+			$select->order('name ASC')->limit($limit);
+		//});
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
 		
-		$rowset = $this->tableGateway->select($where);
-		$row = $rowset->current();
-		if (!$row) {
-			return null;
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+		
+
+		$resultArray = array();
+		foreach ($resultSet as $result)
+		{
+			$o = new \Application\Model\Card();
+			$o->cardId = $result->card_id;
+			$o->setVersionId = $result->set_version_id;
+			$o->shape = $result->shape;
+			$o->cardNumber = $result->card_number;
+			$o->cmc = $result->cmc;
+			$o->rarity = $result->rarity;
+			$o->artUrl = $result->art_url;
+			$o->urlName = $result->url_name;
+			$o->firstVersionCardId = $result->first_version_card_id;
+			$o->isChanged = $result->is_changed;
+			$o->name = $result->name;
+			$o->colors = $result->colors;
+			$o->manaCost = $result->mana_cost;
+			$o->types = $result->types;
+			$o->rulesText = $result->rules_text;
+			$o->flavorText = $result->flavor_text;
+			$o->power = $result->power;
+			$o->toughness = $result->toughness;
+			$o->ptString = $result->pt_string;
+			$o->illustrator = $result->illustrator;
+			$o->name2 = $result->name_2;
+			$o->colors2 = $result->colors_2;
+			$o->manaCost2 = $result->mana_cost_2;
+			$o->types2 = $result->types_2;
+			$o->rulesText2 = $result->rules_text_2;
+			$o->flavorText2 = $result->flavor_text_2;
+			$o->power2 = $result->power_2;
+			$o->toughness2 = $result->toughness_2;
+			$o->ptString2 = $result->pt_string_2;
+			$o->llustrator2 = $result->illustrator_2;
+					
+			$o->setVersionName = $result->set_version_name;
+			$o->setName = $result->set_name;
+			
+			$resultArray[] = $o;
 		}
-		return $row;
+		
+		return $resultArray;
 	}
 	
 	public function getCardHistory($firstVersionCardId)

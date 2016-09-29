@@ -172,61 +172,82 @@ class BrowseController extends WebDrafterControllerBase
     		$set = $setTable->getSet($setVersion->setId);
     	}
     	else {
+    		$setSpecified = false;
     		if(is_numeric($setIdentifier))
     		{
+    			$setSpecified = true;
     			$set = $setTable->getSet((int)$setIdentifier);
     		}
-    		else if($setIdentifier != null && $setIdentifier  != "") {
+    		else if($setIdentifier == "*"){
+    			$set = null;
+    		}
+    		else if($setIdentifier != null && $setIdentifier  != "") 
+    		{
+    			$setSpecified = true;
     			$set = $setTable->getSetForBot($setIdentifier);
     		}
     		else if($contextIdentifier != null && $contextIdentifier != "") {
     			$set = $setTable->getSetByUrlName($contextIdentifier);
     		}
+    		else if(($contextIdentifier == null || $contextIdentifier == "") && ($setIdentifier == null || $setIdentifier  == "")) {
+    			$set = null;
+    		}
     		else {
+    			die("b");
     			return $this->notFoundAction();
     		}
 
     		if($set === null){
-    			if($isBot)
+    			if($isBot && $setSpecified == true)
     			{
     				$viewModel->message = "Set not found.";
     				return $viewModel;
     			}
-    			else 
+    			else if(!$isBot) 
     			{
+    				die("a");
     				return $this->notFoundAction();
     			}
     		}
-    		 
-    		if(is_numeric($setVersionIdentifier))
+    		
+    		$setVersionSpecified = false;
+    		if($set === null) {
+    			$setVersion = null;
+    		}
+    		else if(is_numeric($setVersionIdentifier))
     		{
+    			$setVersionSpecified = true;
     			$setVersion = $setVersionTable->getSetVersion((int)$setVersionIdentifier);
     		}
     		else if($setVersionIdentifier != null && $setVersionIdentifier != ""){
+    			$setVersionSpecified = true;
     			$setVersion = $setVersionTable->getSetVersionByUrlName($set->setId, $setVersionIdentifier);
     		}
     		else if($contextVersionIdentifier != null && $contextVersionIdentifier != ""){
     			$setVersion = $setVersionTable->getSetVersionByUrlName($set->setId, $contextVersionIdentifier);
     		}
     		else {
+    			$setVersionSpecified = true;
     			$setVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
     		}
     		
     		if($setVersion === null){
-    		    if($isBot)
+    		    if($isBot && $setVersionSpecified)
     			{
     				$viewModel->message = "Set version not found.";
     				return $viewModel;
     			}
-    			else 
+    			else if(!$isBot)
     			{
+    				die("c");
     				return $this->notFoundAction();
     			}
     		}
     		
-    		$card = $cardTable->getCardForBot($setVersion->setVersionId, $cardIdentifier);
-    		
-    		if($card === null){
+    		//var_dump(@$setVersion->setVersionId, $cardIdentifier, $isBot ? 4 : 1);
+    		$cards = \Application\resultSetToArray($cardTable->getCardsForBot($setVersion != null ? $setVersion->setVersionId : null, $cardIdentifier, $isBot ? 4 : 1));
+    		//var_dump($cards);
+    		if(count($cards) == 0){
     		    if($isBot)
     			{
     				$viewModel->message = "Card not found.";
@@ -241,6 +262,7 @@ class BrowseController extends WebDrafterControllerBase
     	
     	if(isset($_GET["image"]))
     	{
+    		$card = $cards->current();
     		return $this->redirect()->toUrl($card->artUrl);//->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
     	else if(isset($_GET["bot"]))
@@ -251,12 +273,13 @@ class BrowseController extends WebDrafterControllerBase
     		$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');    		
     		
     		$viewModel->set = $set;
-    		$viewModel->card = $card;
+    		$viewModel->cards = $cards;
     		
     		return $viewModel;
     	}
     	else //if(!isset($_GET["ajax"]))
     	{
+    		$card = $cards->current();
     		return $this->redirect()->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
     	
