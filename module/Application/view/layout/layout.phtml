@@ -20,7 +20,8 @@
                         ->prependStylesheet($this->basePath('css/themes/tooltipster-light.css'))
                         ->prependStylesheet($this->basePath('css/tooltipster.css'))
                         ->prependStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css')
-        				->prependStylesheet($this->basePath('css/jquery-ui.css')) ?>
+        				->prependStylesheet($this->basePath('css/jquery-ui.css'))
+        				->prependStylesheet($this->basePath('css/dropzone.css')) ?>
 
         <!-- Scripts -->
         <script type="text/javascript">
@@ -32,6 +33,7 @@
             ->prependFile($this->basePath('js/spoiler.js'))
             ->prependFile($this->basePath('js/webdrafter.js'))
             ->prependFile($this->basePath('js/simplemde.min.js'))
+            ->prependFile($this->basePath('js/dropzone.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
             ->prependFile($this->basePath('js/jquery.lazyload.js'))
             ->prependFile($this->basePath('js/jquery.tooltipster.min.js'))

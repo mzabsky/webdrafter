@@ -1,5 +1,7 @@
 <?php $this->headTitle()->append("Manage " . $this->set->name); ?>
 <script>
+var uploadId = Math.floor(Math.random() * 10000000);
+
 function makePublicDialog(){
 	$("#makePublicDialog").dialog("open");
 	return false;
@@ -51,6 +53,28 @@ $(function(){
 			window.location = $(this).attr('url');
 		}
 	});
+
+	var txtRegex = new RegExp("\\.txt$");
+	var dz = new Dropzone("div.dropzone", { 
+		url: "/member-area/upload-handler?upload_id=" + uploadId, 
+		maxFiles: 721,
+		maxFilesize: 0.5,
+		parallelUploads: 5,
+		acceptedFiles: ".jpeg, .jpg, .png, .txt",
+		/*success: function(file){
+			$("input[name=file_list]").val($("input[name=file_list]").val() + file.name + ";");
+		},*/
+		renameFilename: function(name){
+			if(txtRegex.test(name)){
+				return "set";
+			}
+			return name;
+		}
+	});
+
+	$("input[name=upload_id]").val(uploadId);
+
+	return;
 });
 
 var createPicker = function() {
@@ -278,19 +302,40 @@ if(count($this->setVersions) == 0)
 		</table>
 	</div>
 	<div id="upload">
-		<p>The first step is to upload the file and to specify where will the images be loaded from. We will then check all the card image URLs and ask you to fill in some additional information.
+		<p>The first step is to upload the set file and all the card images. We will the process them and in the next step you will be able to specify additional information about this version of the set file.
 		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial', array(), array('fragment' => 'set-import'))?>">the tutorial</a>.</p>
 		<?php
+		if($this->uploadErrorMessages !== null) {
+			?>
+		<ul class="error-list">
+		<?php foreach($this->uploadErrorMessages as $message){
+		?>
+			<li><?php echo $message ?></li>
+		<?php 
+		}
+		?>
+		</ul>
+		<?php
+		}
+		
 		$form = $this->uploadForm;
 		
 		$form->prepare();
 		 
 		echo $this->form()->openTag($form);
-		echo $this->fullFormInput($form->get('art_url'), null, " <button class='google_drive_button'>Pick from Google Drive</button>");
+		//echo $this->fullFormInput($form->get('art_url'), null, " <button class='google_drive_button'>Pick from Google Drive</button>");
 		echo $this->fullFormInput($form->get('art_url_format'));
-		echo $this->fullFormInput($form->get('file'));
+		//echo $this->formElement($form->get('file_list'));
+		echo $this->formElement($form->get('upload_id'));
+		//echo $this->fullFormInput($form->get('file'));
 		
 		?>
+		<div class="form-element ">
+			<label>Files:</label>
+			<span class="description">Upload a single text (*.txt) file exported using <a href="/download/magic-planesculptors.mse-export-template.zip">PlaneSculptors MSE2 set exporter</a> and a single image file for each card in the file.</span>
+			<div class="dropzone"></div>
+		</div>
+		<p><strong>Do not proceed until all the files have finished uploading!</strong></p>
 		<div class="form_element">
 		<?php
 		echo $this->formSubmit($form->get('submit_upload'));

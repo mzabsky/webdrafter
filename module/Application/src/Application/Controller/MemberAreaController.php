@@ -26,6 +26,17 @@ use Application\GoogleAuthentication;
 use Application\ChallongeAPI;
 use Application\Form\UploadCardsForm;
 
+function rmdir_recursive($dir) {
+	$result = true;
+	foreach(scandir($dir) as $file) {
+		if ('.' === $file || '..' === $file) continue;
+		if (is_dir("$dir/$file")) $result &= rmdir_recursive("$dir/$file");
+		else $result &= unlink("$dir/$file");
+	}
+	$result &= rmdir($dir);
+	return $result;
+}
+
 class MemberAreaController extends WebDrafterControllerBase
 {
 	protected function isAuthRequired(\Zend\Mvc\MvcEvent $e)
@@ -705,6 +716,8 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function manageSetAction()
 	{
+		$uploadErrorMessages = null;
+		
 		$sm = $this->getServiceLocator();
 		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
@@ -757,50 +770,77 @@ class MemberAreaController extends WebDrafterControllerBase
 			}
 			else if(isset($formData["submit_upload"]))
 			{
-				$uploadForm->setInputFilter($form->getInputFilter());
+				//$uploadForm->setInputFilter($form->getInputFilter());
 				
 				$uploadForm->setData($formData);
-				
-				if ($uploadForm->isValid($formData)) 
+				//if ($uploadForm->isValid($formData)) 
 				{
-					$artUrl = $formData["art_url"];
-					
-					$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
-					
-					// Get cards from the current version so that we can compare the uploaded file against it
-					$cardTable = $sm->get('Application\Model\CardTable');
-					$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
-					$currentVersionCardArray = array();
-					foreach($currentVersionCards as $card)
+
+					try
 					{
-						$currentVersionCardArray[$card->name] = $card;
-					}
+						$ds = DIRECTORY_SEPARATOR;
+						$uploadId = (int)$formData["upload_id"];
+						$config = $this->getServiceLocator()->get('Config');
+						$dataDir = $config["data_dir"];
+						
+						$userId = $this->auth()->getUser()->userId;
+						$setDir = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
+						
+						$setFile = $setDir . 'set';
+						
+						if(!file_exists($setFile)){
+							throw new \Exception("Set file not uploaded. Add a single *.txt file.");
+						}
+						
+						$fileContents = file_get_contents($setFile); 
+						
+						//$artUrl = $dataDir . $userId . $ds . "{set_id}" . $ds . $uploadId . $ds;
+						
+						//$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
+						
+						// Get cards from the current version so that we can compare the uploaded file against it
+						$cardTable = $sm->get('Application\Model\CardTable');
+						$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+						$currentVersionCardArray = array();
+						foreach($currentVersionCards as $card)
+						{
+							$currentVersionCardArray[$card->name] = $card;
+						}
 					
-					try 
-					{
 						$parser = new \Application\SetParser\IsochronDrafterSetParser();
 						$cards = $parser->Parse($fileContents);
 						
+						if(count($cards) > 720){
+							throw new \Exception("Maximum allowed number of cards in a set is 720.");
+						}
+						
 						foreach($cards as $card)
 						{
-							$cardName = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
+							$cardArtName = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
+
 							switch($formData["art_url_format"])
 							{
 								case UploadCardsForm::NAME_DOT_PNG:
-									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".png";
+									$cardArtName = $cardArtName . ".png"; // rawurlencode(
 									break;
 								case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
-									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.png";
+									$cardArtName = $cardArtName . ".full.png";
 									break;
 								case UploadCardsForm::NAME_DOT_JPG:
-									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".jpg";
+									$cardArtName = $cardArtName . ".jpg";
 									break;
 								case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
-									$card->artUrl = $artUrl . "/" . rawurlencode($cardName) . ".full.jpg";
+									$cardArtName = $cardArtName . ".full.jpg";
 									break;
 								default:
 									throw new \Exception("Invalid art URL format.");
 							}
+							
+							if(!file_exists($setDir . $cardArtName)){
+								throw new \Exception("Image for card \"" . $card->name . "\" is missing, file named \"" . $cardArtName . "\" was expected.");
+							}
+							
+							$card->artUrl = $cardArtName; // This is not a full URL yet
 							
 							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
 							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
@@ -809,20 +849,19 @@ class MemberAreaController extends WebDrafterControllerBase
 						}
 						
 						//die();
-	
-						$guid = \uniqid();
 						
 						$_SESSION["card_file_cards"] = serialize($cards);
-						$_SESSION["card_file_guid"] = $guid;
+						$_SESSION["upload_id"] = $uploadId;
 				
-						return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload' => $guid)));
+						return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload_id' => $uploadId)));
 					}
 					catch (\Exception $e)
 					{
-						$uploadForm->get("file")->setMessages(array($e->getMessage()));
+						//die($e->getMessage());
+						$uploadErrorMessages = array($e->getMessage());
 					}
 				} 
-				else 
+				//else 
 				{
 					//var_dump($form->getMessages());
 				}
@@ -848,6 +887,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$viewModel->uploadForm = $uploadForm;
 		$viewModel->driveAppId = $this->getServiceLocator()->get('Config')['auth']['driveAppId'];
 		$viewModel->accessToken = $_SESSION['access_token'];
+		$viewModel->uploadErrorMessages = $uploadErrorMessages;
 		return $viewModel;
 	}
 	
@@ -885,6 +925,8 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 		$sm = $this->getServiceLocator();
 		$auth = $this->auth();
+		$userId = $this->auth()->getUser()->userId;
+		$config = $this->getServiceLocator()->get('Config');
 		$setTable = $sm->get('Application\Model\SetTable');
 
 		$set = $setTable->getSet($setId);
@@ -896,7 +938,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			throw new Exception("You don't own this set.");
 		}
 		
-		if(!isset($_GET["upload"]) || $_GET["upload"] != $_SESSION["card_file_guid"])
+		if(!isset($_GET["upload_id"]) || $_GET["upload_id"] != $_SESSION["upload_id"] || (int)$_GET["upload_id"] == 0)
 		{
 			$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload', 'query' => 'upload-expired'));
 		}
@@ -922,11 +964,8 @@ class MemberAreaController extends WebDrafterControllerBase
 		
 		if ($this->getRequest()->isPost())
 		{
-			$formData = array_merge_recursive(
-					$this->getRequest()->getPost()->toArray(),
-					$this->getRequest()->getFiles()->toArray()
-			);
-				
+			$formData = $this->getRequest()->getPost()->toArray();
+		
 			$setVersion = $sm->get('Application\Model\SetVersion');
 			$setVersion->setId = $set->setId;
 			$form->setInputFilter($setVersion->getInputFilter());
@@ -936,7 +975,18 @@ class MemberAreaController extends WebDrafterControllerBase
 			if ($form->isValid($formData))
 			{
 				$adapter->getDriver()->getConnection()->beginTransaction();
-		
+
+				$uploadId = (int)$_GET["upload_id"];
+				$dataDir = $config["data_dir"];
+					
+				$ds = DIRECTORY_SEPARATOR;
+					
+				// Validate that the temp dir exists for this upload (it's consistency should be guaranteed by the previous step, which is in turn guaranteed by the session key)
+				$tempSetDir = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
+				if(!is_dir($tempSetDir)){
+					$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload', 'query' => 'upload-expired'));
+				}
+				
 				try
 				{
 					$setVersion->name = $formData["name"];
@@ -948,19 +998,33 @@ class MemberAreaController extends WebDrafterControllerBase
 					//$setVersion->createdOn = $formData["about"];
 						
 					$setVersionTable->saveSetVersion($setVersion);
-
+					
 					$set->currentSetVersionId = $setVersion->setVersionId;
 					$setTable->saveSet($set);
+
+					$finalSetDir = $dataDir . $userId . $ds . $setVersion->setVersionId . $ds;
+					if(!mkdir($finalSetDir, 0777, true)){
+						throw new \Exception("Could not create dir for the set.");
+					}
+					
+					if(!rename($tempSetDir . 'set', $finalSetDir . 'set')){
+						throw new \Exception("Could not move set file to the final location.");
+					}	
 					
 					foreach($cards as $card)
 					{
+						if(!rename($tempSetDir . $card->artUrl, $finalSetDir . $card->artUrl)){
+							throw new \Exception("Could move file \"" . $card->artUrl . "\" to the final location.");;
+						}
+						$card->artUrl = rawurlencode("/upload/" . $userId . "/" . $setVersion->setVersionId ."/" . $card->artUrl);
 						$card->setVersionId = $setVersion->setVersionId;
 
 						$cardTable->saveCard($card);
 					}
 		
-					unset($_SESSION["card_file_guid"]);
-					unset($_SESSION["card_file_cards"]);
+					if(!rmdir_recursive($dataDir . $userId . $ds . "temp" . $ds)){
+						throw new \Exception("Could not delete the temp dir.");
+					}
 					
 					$adapter->getDriver()->getConnection()->commit();
 				}
@@ -969,6 +1033,9 @@ class MemberAreaController extends WebDrafterControllerBase
 					$adapter->getDriver()->getConnection()->rollback();
 					throw $e;
 				}
+
+				unset($_SESSION["upload_id"]);
+				unset($_SESSION["card_file_cards"]);
 		
 				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
 			}
@@ -1054,7 +1121,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$viewModel->set = $set;
 		$viewModel->cards = $cards;
 		$viewModel->form = $form;	
-		$viewModel->uploadGuid = $_GET["upload"];
+		$viewModel->uploadId = $_GET["upload_id"];
 		return $viewModel;
 	}
 	
@@ -1224,6 +1291,38 @@ class MemberAreaController extends WebDrafterControllerBase
 		
 		return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'player-kicked'));
 	}
-	
+
+	public function uploadHandlerAction()
+	{
+		//$viewModel = new ViewModel();
+		//$viewModel->setTerminal(true);
+		
+		$uploadId = (int)$_GET["upload_id"];
+		
+		$userId = $this->auth()->getUser()->userId;
+		
+		$config = $this->getServiceLocator()->get('Config');
+		$dataDir = $config["data_dir"];
+		
+		$response = $this->getResponse();
+		$headers = $response->getHeaders();
+		$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');
+		
+		$ds = DIRECTORY_SEPARATOR;
+		
+		if (!empty($_FILES)) {
+			$tempFile = $_FILES['file']['tmp_name']; 
+			
+			$targetPath = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
+			if(!is_dir($targetPath)){
+				mkdir($targetPath, 0777, true);
+			}
+			
+			$targetFile =  $targetPath. $_FILES['file']['name'];
+			move_uploaded_file($tempFile,$targetFile); //6  
+		}
+
+		return $response;
+	}
 }
 ?>

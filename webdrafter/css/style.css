@@ -873,4 +873,9 @@ form input.code-input {
 #basic-land-slot-needle span {
   font-size: 0.8em; }
 
+.error-list {
+  list-style: none;
+  color: red;
+  padding-left: 0; }
+
 /*# sourceMappingURL=style.css.map */

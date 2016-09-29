@@ -32,7 +32,7 @@ class UploadCardsForm extends Form
 		
 		
 		
-		$this->add($factory->createElement(array(
+		/*$this->add($factory->createElement(array(
 			'name' => 'art_url',
 			'type' => 'url',
 			'required' => true,
@@ -51,7 +51,7 @@ class UploadCardsForm extends Form
 					),
 				),
 			),
-		)));
+		)));*/
 		
 		$this->add($factory->createElement(array(
 				'name' => 'art_url_format',
@@ -100,64 +100,74 @@ class UploadCardsForm extends Form
 		$this->add($factory->createElement(array(
 			'name' => 'submit_upload',
             'attributes' => array(
-                'value' => 'Upload',
+                'value' => 'Proceed',
             ),
 			'type' => 'submit',
 			'required' => true,
+		)));
+		
+		/*$this->add($factory->createElement(array(
+				'name' => 'file_list',
+				'type' => 'hidden',
+		)));*/
+
+		$this->add($factory->createElement(array(
+				'name' => 'upload_id',
+				'type' => 'hidden',
 		)));
 
 		//$this->addElements(array($name, $code, $infoUrl, $artUrl, $file));
 	}
 	
-	public function getInputFilter()
-	{
-		if (!$this->inputFilter) {
-			$inputFilter = new InputFilter();
+// 	public function getInputFilter()
+// 	{
+// 		if (!$this->inputFilter) {
+// 			$inputFilter = new InputFilter();
 	
-			$inputFilter->add(array(
-				'name'     => 'art_url',
-				'required' => true,
-				'filters'  => array(
-					array('name' => 'StringTrim'),
-				),
-				'validators' => array(
-					array(
-						'name'    => 'StringLength',
-						'options' => array(
-							'encoding' => 'UTF-8',
-							'min'      => 1,
-							'max'      => 255,
-						),
-					),
-					array(
-						'name'    => 'Uri',
-					),
-				),
-			));
+// 			/*$inputFilter->add(array(
+// 				'name'     => 'art_url',
+// 				'required' => true,
+// 				'filters'  => array(
+// 					array('name' => 'StringTrim'),
+// 				),
+// 				'validators' => array(
+// 					array(
+// 						'name'    => 'StringLength',
+// 						'options' => array(
+// 							'encoding' => 'UTF-8',
+// 							'min'      => 1,
+// 							'max'      => 255,
+// 						),
+// 					),
+// 					array(
+// 						'name'    => 'Uri',
+// 					),
+// 				),
+// 			));*/
 	
-			$inputFilter->add(array(
-				'name'     => 'file',
-				'required' => true,
-				'filters'  => array(
-					//array('name' => 'StringTrim'),
-				),
-				'validators' => array(
-					array(
-						'name'    => 'File\Size',
-						'options' => array(
-							'max' => '1MB'
-						),
-					),
-					array(
-						'name'    => 'File\UploadFile',
-						'options' => array(),
-					),
-				),
-			));
+// 			$inputFilter->add(array(
+// 				'name'     => 'file',
+// 				'required' => true,
+// 				'filters'  => array(
+// 					//array('name' => 'StringTrim'),
+// 				),
+// 				'validators' => array(
+// 					array(
+// 						'name'    => 'File\Size',
+// 						'options' => array(
+// 							'max' => '1MB'
+// 						),
+// 					),
+// 					array(
+// 						'name'    => 'File\UploadFile',
+// 						'options' => array(),
+// 					),
+// 				),
+// 			));
 	
-			$this->inputFilter = $inputFilter;
-		}
+// 			$this->inputFilter = $inputFilter;
+// 		}
 	
-		return $this->inputFilter;
-	}
+// 		return $this->inputFilter;
+// 	}
 }

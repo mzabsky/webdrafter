@@ -2,11 +2,6 @@
 <script>
 var draftStatuses = {"open":1, "running":2, "finished":3};
 
-var numRemainingImages;
-var numSucceededImages;
-var numFailedImages;
-var numImagesTotal = <?php echo count($this->cards); ?>;
-
 function updateNeedle(){
 	var mode = $("select[name='basic_land_slot']").val();
 	var needleNeeded = mode == <?php echo \Application\Model\SetVersion::BASIC_LAND_SLOT_TYPE ?> || mode == <?php echo \Application\Model\SetVersion::BASIC_LAND_SLOT_RULES_TEXT ?>;
@@ -18,71 +13,7 @@ function updateNeedle(){
 	}
 }
 
-function updatePreviewStats()
-{
-	$("#previewSucceeded").html(numSucceededImages);
-	$("#previewFailed").html(numFailedImages);
-	$("#previewRemaining").html(numRemainingImages);
-
-	if(numSucceededImages != numImagesTotal)
-	{
-		$("[name=submit]").prop('disabled', true);
-		$("#cardImageCheckResult").show();
-	}
-	else 
-	{
-		$("[name=submit]").prop('disabled', false);
-		$("#cardImageCheckResult").hide();
-	}
-}
-
-function cardImageCheck()
-{
-	numRemainingImages = numImagesTotal;
-	numSucceededImages = 0;
-	numFailedImages = 0;
-	
-	updatePreviewStats();
-
-	$("#setPreviewFailureList").empty();
-	
-	$("#setPreview img").each(function(index) {
-		$(this).unbind();
-		$(this).attr("src", "/");
-		
-		$(this).load(function() {
-			if(this.error)
-			{
-				numFailedImages++;
-				$("#setPreviewFailureList").append("Could not load card image for \"" + $(this).attr("alt") + "\" from URL \"" + $(this).attr("url") + "\".<br />");
-				console.log("Failed: " + $(this).attr("src"));
-			}
-			else 
-			{
-				numSucceededImages++;
-				console.log("Succeeded: " + $(this).attr("src"));
-			}		
-
-			numRemainingImages--;
-			
-			updatePreviewStats();		
-	   	}).error(function() {
-			numFailedImages++;
-			console.log("Failed: " + $(this).attr("src"));
-			$("#setPreviewFailureList").append("Could not load card image for \"" + $(this).attr("alt") + "\" from URL \"" + $(this).attr("url") + "\".<br />");
-
-			numRemainingImages--;
-			
-			updatePreviewStats();		
-	   	});
-
-		$(this).attr("src", $(this).attr("url"));
-	});
-}
-
 $(document).ready(function(){
-	cardImageCheck();
-
 	var simplemde = createEditor('input[name="about"]');
 	$("input[name='submit']").click(function(){ hasUnsavedChanges = false; });
 
@@ -101,7 +32,7 @@ $(document).ready(function(){
 <?php
 $form = $this->form;
 
-$form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload' => $this->uploadGuid)))); 
+$form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload_id' => $this->uploadId)))); 
 $form->prepare();
 
 $replacementToken = 'XYZ1234';
@@ -117,24 +48,9 @@ echo $this->fullFormInput($form->get('about'));
 ?>
 <div class="form_element">
 <?php
-echo $this->formSubmit($form->get('submit')) . " <span id='cardImageCheckResult'>Card image check did not pass yet. Please make sure all images display correctly before submitting.</span>";
+echo $this->formSubmit($form->get('submit'));
 ?>
 </div>
 <?php
 echo $this->form()->closeTag();
 ?>
-
-<div id="setPreview">
-<h3>Card image check</h3>
-<button onclick="cardImageCheck()">Try again</button>
-<div id="setPreviewStats">
-	Images succeeded: <span id="previewSucceeded">0</span><br />Images failed: <span id="previewFailed">0</span> <br />Images remaining: <span id="previewRemaining">0</span>
-</div>
-<div id="setPreviewFailureList">
-</div>
-<?php foreach($this->cards as $card)
-{
-	echo "<img url='" . $card->artUrl . "' src=''  alt='" . $card->name . "' />";
-}
-?>
-</div>

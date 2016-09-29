@@ -25,4 +25,5 @@ return array(
                      => 'Zend\Db\Adapter\AdapterServiceFactory',
          ),
      ),
+	'data_dir' => 'C:/Users/matej_000/Documents/GitHub/webdrafter/webdrafter/upload/' 
  );
