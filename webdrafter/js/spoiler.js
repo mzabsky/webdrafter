@@ -347,9 +347,11 @@ Spoiler.prototype.redraw = function () {
     }
     
     this.lazyload = $(".lazyload", this.mainElement).lazyload({
-    	effect : "fadeIn",
+    	//effect : "fadeIn",
         skip_invisible : true
 	});
+    
+    $(window).scroll();
     
     //if(this.lazyload) this.lazyload.update();
     //$(window).trigger('resize');
