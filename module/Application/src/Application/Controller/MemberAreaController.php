@@ -1016,7 +1016,7 @@ class MemberAreaController extends WebDrafterControllerBase
 						if(!rename($tempSetDir . $card->artUrl, $finalSetDir . $card->artUrl)){
 							throw new \Exception("Could move file \"" . $card->artUrl . "\" to the final location.");;
 						}
-						$card->artUrl = rawurlencode("/upload/" . $userId . "/" . $setVersion->setVersionId ."/" . $card->artUrl);
+						$card->artUrl = "/upload/" . $userId . "/" . $setVersion->setVersionId ."/" . rawurlencode($card->artUrl);
 						$card->setVersionId = $setVersion->setVersionId;
 
 						$cardTable->saveCard($card);
