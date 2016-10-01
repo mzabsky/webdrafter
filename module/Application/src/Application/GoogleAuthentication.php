@@ -69,7 +69,7 @@ class GoogleAuthentication
 	
 		$scopes = implode(' ', array(
 				//\Google_Service_Drive::DRIVE_METADATA_READONLY,
-				\Google_Service_Drive::DRIVE_READONLY,
+				//\Google_Service_Drive::DRIVE_READONLY,
 				\Google_Service_Oauth2::USERINFO_EMAIL,
 				\Google_Service_Oauth2::USERINFO_PROFILE)
 		);
