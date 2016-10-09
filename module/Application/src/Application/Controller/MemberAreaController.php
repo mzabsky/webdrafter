@@ -222,6 +222,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			$this->redirect()->toRoute('member-area');	
 		}
 		else {
+			session_destroy();
 			header("Location: " . $client->createAuthUrl());
 			exit;
 		}
