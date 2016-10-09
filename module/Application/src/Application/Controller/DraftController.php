@@ -213,7 +213,7 @@ class DraftController extends WebDrafterControllerBase
 						break;
 					case Draft::MODE_CHAOS_DRAFT:
 					case Draft::MODE_CUBE_DRAFT:
-						$actualNumberOfPacks = 3;
+						$actualNumberOfPacks = count($draftSets);
 						break;
 					default:
 						throw new \Exception("Invalid game mode " . $this->gameMode);

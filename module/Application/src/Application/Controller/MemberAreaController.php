@@ -171,7 +171,7 @@ class MemberAreaController extends WebDrafterControllerBase
 	}
 	
 	public function loginAction()
-	{
+	{	
 		$client = $this->auth()->getGoogleClient();
 		
 		if (isset($_GET['code'])) {
@@ -586,7 +586,8 @@ class MemberAreaController extends WebDrafterControllerBase
 			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT)
 			{
 				$packGenerator = new CubePackGenerator();				
-				$draftSetVersion = $draftSetVersionTable->fetchByDraft($draftId)->current();
+				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
+				$draftSetVersion = $draftSetVersions->current();
 				$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 				
 				$cardArray = array();				
@@ -597,14 +598,14 @@ class MemberAreaController extends WebDrafterControllerBase
 					}
 				}
 				
-				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * 3);
+				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * count($draftSetVersions));
 				
 				$picks = array();
 				foreach($draftPlayerArray as $playerIndex => $player)
 				{
-					for($i = 0; $i < 3; $i++)
+					for($i = 0; $i < count($draftSetVersions); $i++)
 					{
-						foreach ($packs[$playerIndex * 3 + $i] as $card)
+						foreach ($packs[$playerIndex * count($draftSetVersions) + $i] as $card)
 						{
 							$pick = new Pick();
 							$pick->cardId = $card->cardId;
@@ -627,7 +628,7 @@ class MemberAreaController extends WebDrafterControllerBase
 				$draftSetVersionArray = array();				
 				
 				$convertedDraftSetVersionss = \Application\resultSetToArray($draftSetVersions);
-				while(count($draftSetArray) < 3 * $numberOfPlayers)
+				while(count($draftSetArray) < count($draftSetVersions) * $numberOfPlayers)
 				{
 					foreach($convertedDraftSetVersions as $draftSetVersion)
 					{
