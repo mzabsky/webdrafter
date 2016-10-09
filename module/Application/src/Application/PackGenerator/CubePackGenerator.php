@@ -15,7 +15,10 @@ class CubePackGenerator
 		{
 			foreach($cards as $card)
 			{
-				$cardsArray[] = $card;
+				if(strpos($card->types, "Basic") === false && strpos($card->types, "Token") === false)
+				{
+					$cardsArray[] = $card;
+				}
 			}	
 		}
 		
