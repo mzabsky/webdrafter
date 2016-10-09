@@ -24,6 +24,7 @@ script:
 		if (contains(card.shape, match:"normal") or contains(card.shape, match:"planeswalker") or card.loyalty_2 != "") and card.name_2 != "" then "double"
 		else if contains(card.shape, match:"leveler") then "normal"
 		else if contains(card.shape, match:"planeswalker") then "normal"
+		else if contains(card.shape, match:"shifted") then "normal"
 		else card.shape
 	}
 	
