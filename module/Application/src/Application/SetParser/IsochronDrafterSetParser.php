@@ -12,28 +12,28 @@ class IsochronDrafterSetParser
 		$cards = array();
 		$usedNames = array();
 		$usedUrlNames = array();
-		
+
 		$rows = explode("\n", $string);
 		array_shift($rows); // Three meaningless lines in the start
 		$version = array_shift($rows);
 		array_shift($rows);
-		
+
 		if(trim($version) != "1.0"){
 			throw new \Exception("Invalid or outdated version of the exporter.");
 		}
-		
+
 		$currentCard = new \Application\Model\Card();
-		$state = "shape";		
+		$state = "shape";
 		foreach($rows as $row => $data)
 		{
-			$line = $row + 1; 
-			
+			$line = $row + 1;
+
 			$data = trim($data);
-			
+
 			//echo $state . " => " . $data . "<br/>";
-			
+
 			switch($state)
-			{							
+			{
 				case "shape":
 					if($data == "normal") $currentCard->shape = Card::SHAPE_NORMAL;
 					else if($data == "split") $currentCard->shape = Card::SHAPE_SPLIT;
@@ -44,13 +44,13 @@ class IsochronDrafterSetParser
 					$state = "cardNumber";
 					break;
 				case "cardNumber":
-					$currentCard->cardNumber = (int)(explode("/", $data)[0]);		
+					$currentCard->cardNumber = (int)(explode("/", $data)[0]);
 
 					if(!is_numeric($currentCard->cardNumber))
 					{
 						throw new \Exception("Card number must be an integer on line " . $line . ".");
 					}
-					
+
 					$state = "cmc";
 					break;
 				case "cmc":
@@ -58,8 +58,8 @@ class IsochronDrafterSetParser
 					{
 						throw new \Exception("CMC must be an integer on line " . $line . ".");
 					}
-					
-					$currentCard->cmc = (int)$data;					
+
+					$currentCard->cmc = (int)$data;
 					$state = "rarity";
 					break;
 				case "rarity":
@@ -72,20 +72,20 @@ class IsochronDrafterSetParser
 					else throw new \Exception("Invalid rarity \"" . $data . "\" on line " . $line . ".");
 					$state = "name";
 					break;
-					
-				case "name":			
+
+				case "name":
 					if(in_array($data, $usedNames))
 					{
 						throw new \Exception("Name \"" . $data . "\" is used for more than one card on line " . $line . ".");
 					}
-					
+
 					if(preg_match('/[;\[\]<>:|]/', $data))
 					{
 						throw new \Exception("Card name \"" . $data . "\" must not contain characters ;, |, :, [, ], < and >.");
 					}
-					
+
 					$usedNames[] = $data;
-					$currentCard->name = $data;					
+					$currentCard->name = $data;
 					$state = "colors";
 					break;
 				case "colors":
@@ -95,10 +95,10 @@ class IsochronDrafterSetParser
 					if(strpos($data, 'black') !== false) $currentCard->colors .= "B";
 					if(strpos($data, 'red') !== false) $currentCard->colors .= "R";
 					if(strpos($data, 'green') !== false) $currentCard->colors .= "G";
-					
+
 					if(strpos($data, 'land') !== false) $currentCard->colors = "";
 					elseif($data == "multicolor") $currentCard->colors = "WUBRG";
-					
+
 					$state = "manaCost";
 					break;
 				case "manaCost":
@@ -115,8 +115,8 @@ class IsochronDrafterSetParser
 					$state = "toughness";
 					break;
 				case "toughness":
-					$currentCard->toughness = $data != "" ? (int)$data : null;	
-					$currentCard->ptString .= $data;				
+					$currentCard->toughness = $data != "" ? (int)$data : null;
+					$currentCard->ptString .= $data;
 					$state = "rulesText";
 					break;
 				case "rulesText":
@@ -131,7 +131,7 @@ class IsochronDrafterSetParser
 					$currentCard->illustrator = $data;
 					$state = "name2";
 					break;
-					
+
 				case "name2":
 					$currentCard->name2 = $data;
 					$state = "colors2";
@@ -160,8 +160,8 @@ class IsochronDrafterSetParser
 					$state = "toughness2";
 					break;
 				case "toughness2":
-					$currentCard->toughness2 = $data != "" ? (int)$data : null;	
-					$currentCard->ptString2 .= $data;				
+					$currentCard->toughness2 = $data != "" ? (int)$data : null;
+					$currentCard->ptString2 .= $data;
 					$state = "rulesText2";
 					break;
 				case "rulesText2":
@@ -182,12 +182,12 @@ class IsochronDrafterSetParser
 					{
 						$currentCard->rarity = "T";
 					}
-					
+
 					if(strpos($currentCard->types, 'Basic') !== false)
 					{
 						$currentCard->rarity = "B";
 					}
-					
+
 					/*if(strpos($currentCard->types, 'Token') === false)
 					{*/
 						$originalUrlName = \Application\toUrlName($currentCard->name);
@@ -198,33 +198,34 @@ class IsochronDrafterSetParser
 							$urlName = $originalUrlName . $i;
 						}
 						$currentCard->urlName = $urlName;
-						
+
 						$cards[] = $currentCard;
 					//}
-					
+
 					$currentCard = new \Application\Model\Card();
 					$state = "shape";
 					break;
 				default:
 					throw new \Exception("Invalid state on line " . $line . ".");
-			}			
+			}
 		}
-		
+
 		if($state != "shape" && $state != "empty") throw new \Exception("Unexpected end of file, was in state " . $state . ".");
-		
+
 		return $cards;
 	}
-	
+
 	private function replaceSymbols($str) {
  		$str = str_replace("<img src='magic-mana-small-T.png' alt='T' width='14' height='14'>", '[T]', $str);
  		$str = str_replace("<img src='magic-mana-small-Q.png' alt='Q' width='14' height='14'>", '[Q]', $str);
 		$str = str_replace("<img src='magic-mana-small-S.png' alt='S' width='14' height='14'>", '[S]', $str);
 		$str = str_replace("<img src='magic-mana-small-C.png' alt='C' width='14' height='14'>", '[C]', $str);
-		
+		$str = str_replace("<img src='magic-mana-small-H.png' alt='H' width='16' height='16'>", '[P]', $str);
+
 		$str = str_replace("<img src='magic-mana-small-X.png' alt='X' width='14' height='14'>", '[X]', $str);
 		$str = str_replace("<img src='magic-mana-small-Y.png' alt='Y' width='14' height='14'>", '[Y]', $str);
 		$str = str_replace("<img src='magic-mana-small-Z.png' alt='Z' width='14' height='14'>", '[Z]', $str);
-		
+
 		$str = str_replace("<img src='magic-mana-small-0.png' alt='0' width='14' height='14'>", '[0]', $str);
 		$str = str_replace("<img src='magic-mana-small-1.png' alt='1' width='14' height='14'>", '[1]', $str);
 		$str = str_replace("<img src='magic-mana-small-2.png' alt='2' width='14' height='14'>", '[2]', $str);
@@ -246,25 +247,25 @@ class IsochronDrafterSetParser
 		$str = str_replace("<img src='magic-mana-small-18.png' alt='18' width='14' height='14'>", '[18]', $str);
 		$str = str_replace("<img src='magic-mana-small-19.png' alt='19' width='14' height='14'>", '[19]', $str);
 		$str = str_replace("<img src='magic-mana-small-20.png' alt='20' width='14' height='14'>", '[20]', $str);
-		
+
 		$str = str_replace("<img src='magic-mana-small-W.png' alt='W' width='14' height='14'>", '[W]', $str);
 		$str = str_replace("<img src='magic-mana-small-U.png' alt='U' width='14' height='14'>", '[U]', $str);
 		$str = str_replace("<img src='magic-mana-small-B.png' alt='B' width='14' height='14'>", '[B]', $str);
 		$str = str_replace("<img src='magic-mana-small-R.png' alt='R' width='14' height='14'>", '[R]', $str);
 		$str = str_replace("<img src='magic-mana-small-G.png' alt='G' width='14' height='14'>", '[G]', $str);
-		
+
 		$str = str_replace("<img src='magic-mana-small-2W.png' alt='2/W' width='16' height='16'>", '[2W]', $str);
 		$str = str_replace("<img src='magic-mana-small-2U.png' alt='2/U' width='16' height='16'>", '[2U]', $str);
 		$str = str_replace("<img src='magic-mana-small-2B.png' alt='2/B' width='16' height='16'>", '[2B]', $str);
 		$str = str_replace("<img src='magic-mana-small-2R.png' alt='2/R' width='16' height='16'>", '[2R]', $str);
 		$str = str_replace("<img src='magic-mana-small-2G.png' alt='2/G' width='16' height='16'>", '[2G]', $str);
-		
+
 		$str = str_replace("<img src='magic-mana-small-HW.png' alt='H/W' width='16' height='16'>", '[PW]', $str);
 		$str = str_replace("<img src='magic-mana-small-HU.png' alt='H/U' width='16' height='16'>", '[PU]', $str);
 		$str = str_replace("<img src='magic-mana-small-HB.png' alt='H/B' width='16' height='16'>", '[PB]', $str);
 		$str = str_replace("<img src='magic-mana-small-HR.png' alt='H/R' width='16' height='16'>", '[PR]', $str);
 		$str = str_replace("<img src='magic-mana-small-HG.png' alt='H/G' width='16' height='16'>", '[PG]', $str);
-		
+
 		$str = str_replace("<img src='magic-mana-small-WU.png' alt='W/U' width='16' height='16'>", '[WU]', $str);
 		$str = str_replace("<img src='magic-mana-small-UW.png' alt='U/W' width='16' height='16'>", '[WU]', $str);
 		$str = str_replace("<img src='magic-mana-small-UB.png' alt='U/B' width='16' height='16'>", '[UB]', $str);
@@ -285,10 +286,10 @@ class IsochronDrafterSetParser
 		$str = str_replace("<img src='magic-mana-small-WR.png' alt='W/R' width='16' height='16'>", '[RW]', $str);
 		$str = str_replace("<img src='magic-mana-small-UG.png' alt='U/G' width='16' height='16'>", '[UG]', $str);
 		$str = str_replace("<img src='magic-mana-small-GU.png' alt='G/U' width='16' height='16'>", '[UG]', $str);
-		
+
 		$str = str_replace("<span class=\"symbol\">", "", $str);
 		$str = str_replace("</span>", "", $str);
-		
+
 		return $str;
 	}
 }
