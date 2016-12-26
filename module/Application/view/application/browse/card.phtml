@@ -42,7 +42,7 @@ var bbCode = '<?php echo $this->partial('/application/fragment/card-to-phpbb', a
 		<span class="info-bar-item">Stage: <span class="set-status-label set-status-label-<?php echo $this->set->status ?>"><?php echo $this->set->getStatusName() ?></span></span>		
 		<!-- <span class="info-bar-item">Privacy: <?php echo $this->set->isPrivate ? "Private" : "Public"?></span> -->
 		<span class="info-bar-item">Last changed: <?php echo $this->card->changedOn?></span>
-		<span class="info-bar-item"><a href="#" onclick="showCopyable('<?php echo $this->card->artUrl?>')">Copy image link</a></span>
+		<span class="info-bar-item"><a href="#" onclick="showCopyable('<?php echo $this->fullArtUrl($this->card->artUrl)?>')">Copy image link</a></span>
 		<span class="info-bar-item"><a href="#" onclick="showCopyable(bbCode)">Copy forum code</a></span>
 	</div>
 	<table class="card-detail shape-<?php echo $this->card->getShapeName() ?>">

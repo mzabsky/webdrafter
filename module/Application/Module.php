@@ -206,6 +206,10 @@ class Module
      					'wideMode' => function($sm) {
      						$helper = new \Application\View\Helper\WideMode() ;
      						return $helper;
+     					},
+     					'fullArtUrl' => function($sm) {
+     						$helper = new \Application\View\Helper\FullArtUrl() ;
+     						return $helper;
      					}
      			)
      	);

@@ -35,7 +35,7 @@ foreach($this->cards as $card)
 	    cmc: <?php echo $card->cmc ?>,
 	    colors: [<?php echo implode(',', $colors) ?>],
 	    types: "<?php echo escapeForJavascript($card->types) ?>",
-	    artUrl: "<?php echo $card->artUrl ?>",
+	    artUrl: "<?php echo $this->fullArtUrl($card->artUrl) ?>",
 	    url: "<?php echo $this->url('browse-card', array('set_url_name' => $this->set->urlName, 'version_url_name' => $versionUrlName, 'card_url_name' => $card->urlName), array('force_canonical' => true)) ?>",
 	    rulesText: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $this->symbols($card->rulesText))) ?>',
 	    flavorText: '<?php echo escapeApostrophes(preg_replace('/[\n\r]+/', '', $card->flavorText)) ?>',
