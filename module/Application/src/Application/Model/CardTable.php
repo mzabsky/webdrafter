@@ -306,6 +306,66 @@ class CardTable
 					->unnest();
 				}
 			}
+			else if($matches["attribute"] == "is"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with is'\n";
+					continue;
+				}
+				
+				switch(strtolower($matches["value"])){
+					case "normal":
+						$where = $where->and->equalTo("shape", Card::SHAPE_NORMAL);
+						break;
+					case "dfc":
+					case "transform":
+						$where = $where->and->equalTo("shape", Card::SHAPE_DOUBLE);
+						break;
+					case "flip":
+						$where = $where->and->equalTo("shape", Card::SHAPE_FLIP);
+						break;
+					case "split":
+						$where = $where->and->equalTo("shape", Card::SHAPE_SPLIT);
+						break;
+					case "spell":
+						$where = $where->and->nest()
+						->or->like("card.types", "%instant%")
+						->or->like("card.types_2", "%instant%")
+						->or->like("card.types", "%sorcery%")
+						->or->like("card.types_2", "%sorcery%")
+						->unnest();
+						break;
+					case "token":
+						$where = $where->and->nest()
+						->or->like("card.types", "%token%")
+						->unnest();
+						break;
+					case "emblem":
+						$where = $where->and->nest()
+						->or->like("card.types", "%emblem%")
+						->unnest();
+						break;
+					case "permanent":
+						$where = $where->and->nest()
+						->or->like("card.types", "%creature%")
+						->or->like("card.types", "%artifact%")
+						->or->like("card.types", "%enchantment%")
+						->or->like("card.types", "%planeswalker%")
+						->or->like("card.types", "%land%")
+						->or->like("card.types_2", "%creature%")
+						->or->like("card.types_2", "%artifact%")
+						->or->like("card.types_2", "%enchantment%")
+						->or->like("card.types_2", "%planeswalker%")
+						->or->like("card.types_2", "%land%")
+						->unnest();
+						break;
+					case "etb":
+						$where = $where->and->nest()
+						->or->like("card.rules_text", "%enters the battlefield%")
+						->or->like("card.rules_text_2", "%enters the battlefield%")
+						->unnest();
+						break;
+				} 
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
 			}
