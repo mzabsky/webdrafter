@@ -878,4 +878,8 @@ form input.code-input {
   color: red;
   padding-left: 0; }
 
+#query-input {
+  width: 100%;
+  margin-bottom: 5px; }
+
 /*# sourceMappingURL=style.css.map */
