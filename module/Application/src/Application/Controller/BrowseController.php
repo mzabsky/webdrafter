@@ -262,7 +262,7 @@ class BrowseController extends WebDrafterControllerBase
     	
     	if(isset($_GET["image"]))
     	{
-    		$card = $cards->current();
+    		$card = $cards[0];
     		return $this->redirect()->toUrl($card->artUrl);//->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
     	else if(isset($_GET["bot"]))
@@ -279,7 +279,7 @@ class BrowseController extends WebDrafterControllerBase
     	}
     	else //if(!isset($_GET["ajax"]))
     	{
-    		$card = $cards->current();
+    		$card = $cards[0];
     		return $this->redirect()->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
     	
