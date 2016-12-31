@@ -73,7 +73,7 @@ $(function(){
 		</table>
 	</div>
 	<div id="cards">
-		<form action="#cards"><input name="query" type="text" value="<?php echo $this->query?>" /><input type="submit" value="Search" /></form>
+		<form action="#cards"><input name="query" type="text" value="<?php echo htmlspecialchars($this->query)?>" /><input type="submit" value="Search" /></form>
 		<div id='spoiler'>
 			<div class='spoiler-cards'>
 			<p>Found <?php echo count($this->cards)?> cards.</p>

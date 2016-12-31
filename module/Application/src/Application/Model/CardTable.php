@@ -58,6 +58,12 @@ class CardTable
 	{
 		$sql = new Sql($this->tableGateway->adapter);
 		
+		$unroll = false;
+		if(substr($query,0,2) == "++"){
+			$unroll = true;
+			$query = substr($query, 2, strlen($query) - 2);
+		}		
+		
 		$where = new \Zend\Db\Sql\Where();
 		$where->greaterThan("set_version.created_on", "2016-09-29"); // Do not query cards that were uploaded before the on-site hosting was introduced
 		
@@ -558,7 +564,13 @@ class CardTable
 		//$selectString = var_dump($sql->getSqlStringForSqlObject($where));
 		$select = new Select('card');
 		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
-		$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+		if($unroll){
+			$select->join('set', 'set_version.set_id = set.set_id', array('set_name' => 'name'));
+		}
+		else {
+			$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+		}		
+		
 		$select->where->equalTo('set.is_private', 0);
 		$select->limit(1000);
 		
