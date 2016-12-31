@@ -56,6 +56,8 @@ class CardTable
 	
 	public function queryCards($query)
 	{
+		$sql = new Sql($this->tableGateway->adapter);
+		
 		$where = new \Zend\Db\Sql\Where();
 		$where->greaterThan("set_version.created_on", "2016-09-29"); // Do not query cards that were uploaded before the on-site hosting was introduced
 		
@@ -98,7 +100,8 @@ class CardTable
 		
 			if($matches["prefix"] == "-")
 			{
-				$where = $where->not->nest();
+				$completeWhere = $where;				
+				$where = new \Zend\Db\Sql\Where();
 			}
 			
 			$value = $matches["value"];
@@ -139,27 +142,27 @@ class CardTable
 				);
 				$str = strtr($str, $trans);
 				if(strpos($str, "w") !== false){
-					$where = $where->and->like("colors", "W");					
+					$where = $where->and->like("colors", "%W%");					
 				}
 				
 				if(strpos($str, "u") !== false){
-					$where = $where->and->like("colors", "U");
+					$where = $where->and->like("colors", "%U%");
 				}
 				
 				if(strpos($str, "u") !== false){
-					$where = $where->and->like("colors", "U");
+					$where = $where->and->like("colors", "%U%");
 				}
 				
 				if(strpos($str, "b") !== false){
-					$where = $where->and->like("colors", "B");
+					$where = $where->and->like("colors", "%B%");
 				}
 				
 				if(strpos($str, "r") !== false){
-					$where = $where->and->like("colors", "R");
+					$where = $where->and->like("colors", "%R%");
 				}
 				
 				if(strpos($str, "g") !== false){
-					$where = $where->and->like("colors", "G");
+					$where = $where->and->like("colors", "%G%");
 				}
 				
 				if(strpos($str, "c") !== false){
@@ -176,11 +179,16 @@ class CardTable
 			
 			if($matches["prefix"] == "-")
 			{
-				$where = $where->unnest();
+				// ZF doesn't support NOT. Some...fiddling is required to achieve it.
+				$openSelect = new \Application\OpenSelect('card');
+				$subExpression = $openSelect->processExpressionCallable($where, $this->tableGateway->adapter->getPlatform(), null, null, null);
+				$where = $completeWhere;
+				$where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("NOT({$subExpression})"));
 			}
 		}
 		
-		$sql = new Sql($this->tableGateway->adapter);
+		//var_dump($where->getExpressionData());
+		//$selectString = var_dump($sql->getSqlStringForSqlObject($where));
 		$select = new Select('card');
 		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
 		$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
