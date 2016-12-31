@@ -16,6 +16,8 @@ class User implements InputFilterAwareInterface
 	public $about;
 	public $createdOn;
 	public $refreshToken;
+	public $challongeApiKey;
+	public $apiKey;
 	
 	private $inputFilter;
 	private $dbAdapter;
@@ -31,6 +33,7 @@ class User implements InputFilterAwareInterface
         $this->createdOn = (!empty($data['created_on'])) ? $data['created_on'] : null;
         $this->challongeApiKey = (!empty($data['challonge_api_key'])) ? $data['challonge_api_key'] : null;
         $this->refresh_token = (!empty($data['refresh_token'])) ? $data['refresh_token'] : null;
+        $this->apiKey = (!empty($data['api_key'])) ? $data['api_key'] : null;
     }
     
     public function getArray()
@@ -45,6 +48,7 @@ class User implements InputFilterAwareInterface
     		'created_on' => $this->createdOn,
     		'challonge_api_key' => $this->challongeApiKey,
     		'refresh_token' => $this->refreshToken,
+    		'api_key' => $this->apiKey,
     	);
     }
     

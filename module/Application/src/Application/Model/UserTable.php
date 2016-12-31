@@ -81,6 +81,17 @@ class UserTable
 		return $row;
 	}
 	
+	public function tryGetUserByApiKey($apiKey)
+	{
+	
+		$rowset = $this->tableGateway->select(array('api_key' => $apiKey));
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
+		}
+		return $row;
+	}
+	
 	public function saveUser(User $user)
 	{
 		$data = array(

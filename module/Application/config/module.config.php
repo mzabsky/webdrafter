@@ -225,7 +225,16 @@ return array(
      					'action'     => 'index',
         			),
         		),
-        	),    
+        	),
+        	'api' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        				'route' => '/api/:action',
+        				'defaults' => array(
+        						'controller' => 'Application\Controller\Api',
+        				),
+        		),
+        	),  
             'application' => array(
                 'type'    => 'Literal',
                 'options' => array(
@@ -271,7 +280,8 @@ return array(
             'Application\Controller\Browse' => 'Application\Controller\BrowseController',
             'Application\Controller\Generator' => 'Application\Controller\GeneratorController',
             'Application\Controller\Lobby' => 'Application\Controller\LobbyController',
-            'Application\Controller\Tutorial' => 'Application\Controller\TutorialController'
+            'Application\Controller\Tutorial' => 'Application\Controller\TutorialController',
+            'Application\Controller\Api' => 'Application\Controller\ApiController'
         ),
     ),
     'view_manager' => array(
