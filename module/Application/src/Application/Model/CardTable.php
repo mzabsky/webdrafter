@@ -441,6 +441,39 @@ class CardTable
 					->or->like("card.illustrator_2", "%".$value."%")
 					->unnest();
 			}
+			else if($attribute == "d" || $attribute == "date"){
+				$date = strtotime($value);
+				
+				if($date === false){
+					$dateObject = \DateTime::createFromFormat("Y-m-d", $value);
+					if($dateObject == null){
+						$messages[] = "Date '{$matches["value"]}' could not be parsed'\n";
+						continue;
+					}
+					else {
+						$date = $dateObject->getTimestamp();
+					}
+				}
+				
+				
+				$date = date("Y-m-d H:i:s", $date);
+				
+				if($matches["infix"] == ":" || $matches["infix"] == "="){
+					$where = $where->and->equalTo("set_version.created_on", $date);
+				}
+				else if($matches["infix"] == ">"){
+					$where = $where->and->greaterThan("set_version.created_on", $date);
+				}
+				else if($matches["infix"] == ">="){
+					$where = $where->and->greaterThanOrEqualTo("set_version.created_on", $date);
+				}
+				else if($matches["infix"] == "<"){
+					$where = $where->and->lessThan("set_version.created_on", $date);
+				}
+				else if($matches["infix"] == "<="){
+					$where = $where->and->lessThanOrEqualTo("set_version.created_on", $date);
+				}
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}'\n";
 			}
