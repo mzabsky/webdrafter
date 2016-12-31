@@ -97,16 +97,23 @@ class CardTable
 				$messages[] = "Could not parse '{$token}'\n";
 				continue;
 			}
-		
-			if($matches["prefix"] == "-")
-			{
-				$completeWhere = $where;				
-				$where = new \Zend\Db\Sql\Where();
-			}
 			
 			$value = $matches["value"];
+			$attribute = $matches["attribute"];
+		
+			$negated = false;
+			if($matches["prefix"] == "-" || $attribute == "not")
+			{
+				$negated = true;
+				$completeWhere = $where;				
+				$where = new \Zend\Db\Sql\Where();
+				
+				if($attribute == "not"){
+					$attribute = "is";
+				}
+			}
 			if($matches["prefix"] == "!"){
-				if($matches["attribute"] != "" || $matches["infix"] != ""){
+				if($attribute != "" || $matches["infix"] != ""){
 					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
 					continue;
 				}
@@ -116,7 +123,7 @@ class CardTable
 					->equalTo('card.name_2', $value)
 					->unnest();
 			}
-			else if($matches["attribute"] == "" || $matches["infix"] == ""){
+			else if($attribute == "" || $matches["infix"] == ""){
 				$where = $where->and->nest()
 					->or->like("card.name", "%".$value."%")
 					->or->like("card.rules_text", "%".$value."%")
@@ -124,7 +131,7 @@ class CardTable
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
 			}
-			else if($matches["attribute"] == "c" || $matches["attribute"] == "color"){
+			else if($attribute == "c" || $attribute == "color"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with color'\n";
 					continue;
@@ -173,7 +180,7 @@ class CardTable
 					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"));
 				}				
 			}
-			else if($matches["attribute"] == "t" || $matches["attribute"] == "type"){
+			else if($attribute == "t" || $attribute == "type"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with type'\n";
 					continue;
@@ -181,7 +188,7 @@ class CardTable
 				
 				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
-			else if($matches["attribute"] == "o" || $matches["attribute"] == "oracle" || $matches["attribute"] == "rules" || $matches["attribute"] == "text"){
+			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rules text'\n";
 					continue;
@@ -192,7 +199,7 @@ class CardTable
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
 			}
-			else if($matches["attribute"] == "pow" || $matches["attribute"] == "power"){
+			else if($attribute == "pow" || $attribute == "power"){
 				$isNumericValid = false;
 				if(is_numeric($value)){
 					$isNumericValid = true;
@@ -249,7 +256,7 @@ class CardTable
 					->unnest();
 				}
 			}
-			else if($matches["attribute"] == "tou" || $matches["attribute"] == "toughness"){
+			else if($attribute == "tou" || $attribute == "toughness"){
 				$isNumericValid = false;
 				if(is_numeric($value)){
 					$isNumericValid = true;
@@ -306,7 +313,7 @@ class CardTable
 					->unnest();
 				}
 			}
-			else if($matches["attribute"] == "is"){
+			else if($attribute == "is"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with is'\n";
 					continue;
@@ -369,7 +376,7 @@ class CardTable
 						continue;
 				} 
 			}
-			else if($matches["attribute"] == "r" || $matches["attribute"] == "rarity"){
+			else if($attribute == "r" || $attribute == "rarity"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rarity'\n";
 					continue;
@@ -401,7 +408,7 @@ class CardTable
 						continue;
 				}
 			}
-			else if($matches["attribute"] == "s" || $matches["attribute"] == "set" || $matches["attribute"] == "e" || $matches["attribute"] == "edition"){
+			else if($attribute == "s" || $attribute == "set" || $attribute == "e" || $attribute == "edition"){
 				$orSets = explode("|", $value);
 				$where = $where->and->nest();
 				foreach ($orSets as $orSet){
@@ -419,10 +426,10 @@ class CardTable
 				$where = $where->unnest();
 			}
 			else {
-				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
+				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}'\n";
 			}
 			
-			if($matches["prefix"] == "-")
+			if($negated)
 			{
 				// ZF doesn't support NOT. Some...fiddling is required to achieve it.
 				$openSelect = new \Application\OpenSelect('card');
