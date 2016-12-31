@@ -88,7 +88,6 @@ class CardTable
 			echo $token;
 			$token = trim($token);
 			if(strlen($token) == 0){
-				echo "AAA";
 				continue;
 			}
 		
@@ -96,12 +95,14 @@ class CardTable
 			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=))?(?<value>.*)$/i", $token, $matches);
 			if(!$isMatch){
 				$messages[] = "Could not parse '{$token}'\n";
+				continue;
 			}
 		
 			$value = $matches["value"];
 			if($matches["prefix"] == "!"){
 				if($matches["attribute"] != "" || $matches["infix"] != ""){
 					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
+					continue;
 				}
 		
 				$where = $where->and->nest()
@@ -117,6 +118,55 @@ class CardTable
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
 			}
+			else if($matches["attribute"] == "c" || $matches["color"] == "c"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with color'\n";
+					continue;
+				}
+				
+				$str = strtolower($matches["value"]);
+				$trans = array(
+					"white" => "w",
+					"blue" => "u",
+					"black" => "b",
+					"red" => "r",
+					"green" => "g",
+					"colorless" => "c",
+					"multicolor" => "m"
+				);
+				$str = strtr($str, $trans);
+				if(strpos($str, "w") !== false){
+					$where = $where->and->like("colors", "W");					
+				}
+				
+				if(strpos($str, "u") !== false){
+					$where = $where->and->like("colors", "U");
+				}
+				
+				if(strpos($str, "u") !== false){
+					$where = $where->and->like("colors", "U");
+				}
+				
+				if(strpos($str, "b") !== false){
+					$where = $where->and->like("colors", "B");
+				}
+				
+				if(strpos($str, "r") !== false){
+					$where = $where->and->like("colors", "R");
+				}
+				
+				if(strpos($str, "g") !== false){
+					$where = $where->and->like("colors", "G");
+				}
+				
+				if(strpos($str, "c") !== false){
+					$where = $where->and->equalTo("colors", "");
+				}
+				
+				if(strpos($str, "m") !== false){
+					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"));
+				}				
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
 			}
@@ -127,6 +177,7 @@ class CardTable
 		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
 		$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
 		$select->where->equalTo('set.is_private', 0);
+		$select->limit(1000);
 		
 		//$select->forUpdate();
 		$select->where($where);
