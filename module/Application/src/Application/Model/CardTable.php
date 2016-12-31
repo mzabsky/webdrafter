@@ -92,7 +92,7 @@ class CardTable
 			}
 		
 			$matches = array();
-			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=))?(?<value>.*)$/i", $token, $matches);
+			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=|!=))?(?<value>[^=]*?)$/i", $token, $matches);
 			if(!$isMatch){
 				$messages[] = "Could not parse '{$token}'\n";
 				continue;
@@ -191,6 +191,120 @@ class CardTable
 					->or->like("card.rules_text", "%".$value."%")
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
+			}
+			else if($matches["attribute"] == "pow" || $matches["attribute"] == "power"){
+				$isNumericValid = false;
+				if(is_numeric($value)){
+					$isNumericValid = true;
+					$numericValue = (int)$value;
+					$numericValue2 = (int)$value;
+				}
+				else if($value == "tou" || $value == "toughness"){
+					$isNumericValid = true;
+					$numericValue = new \Zend\Db\Sql\Expression("card.toughness");
+					$numericValue2 = new \Zend\Db\Sql\Expression("card.toughness_2");
+				}
+				
+				if(($matches["infix"] == ">" || $matches["infix"] == "<" || $matches["infix"] == ">=" || $matches["infix"] == "<=") && !$isNumericValid){
+					$messages[] = "Power value '{$value}' is not valid\n";
+					continue;
+				}
+				
+				if($matches["infix"] == ":" || $matches["infix"] == "="){
+					$where = $where->and->nest()
+					->or->like("card.pt_string", "{$value}/%")
+					->or->like("card.pt_string_2", "{$value}/%")
+					->unnest();
+				}
+				if($matches["infix"] == "!="){
+					$where = $where
+					->and->nest()
+					->or->notLike("card.pt_string", "{$value}/%")
+					->or->notLike("card.pt_string_2", "{$value}/%")
+					->unnest()
+					->and->notEqualTo("card.pt_string", "");
+				}
+				else if($matches["infix"] == ">"){			
+					$where = $where->and->nest()
+					->or->greaterThan("card.power", $numericValue)
+					->or->greaterThan("card.power_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == ">="){
+					$where = $where->and->nest()
+					->or->greaterThanOrEqualTo("card.power", $numericValue)
+					->or->greaterThanOrEqualTo("card.power_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == "<"){
+					$where = $where->and->nest()
+					->or->lessThan("card.power", $numericValue)
+					->or->lessThan("card.power_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == "<="){
+					$where = $where->and->nest()
+					->or->lessThanOrEqualTo("card.power", $numericValue)
+					->or->lessThanOrEqualTo("card.power_2", $numericValue2)
+					->unnest();
+				}
+			}
+			else if($matches["attribute"] == "tou" || $matches["attribute"] == "toughness"){
+				$isNumericValid = false;
+				if(is_numeric($value)){
+					$isNumericValid = true;
+					$numericValue = (int)$value;
+					$numericValue2 = (int)$value;
+				}
+				else if($value == "pow" || $value == "power"){
+					$isNumericValid = true;
+					$numericValue = new \Zend\Db\Sql\Expression("card.power");
+					$numericValue2 = new \Zend\Db\Sql\Expression("card.power_2");
+				}
+				
+				if(($matches["infix"] == ">" || $matches["infix"] == "<" || $matches["infix"] == ">=" || $matches["infix"] == "<=") && !$isNumericValid){
+					$messages[] = "Toughness value '{$value}' is not valid\n";
+					continue;
+				}
+				
+				if($matches["infix"] == ":" || $matches["infix"] == "="){
+					$where = $where->and->nest()
+					->or->like("card.pt_string", "%/{$value}")
+					->or->like("card.pt_string_2", "%/{$value}")
+					->unnest();
+				}
+				if($matches["infix"] == "!="){
+					$where = $where
+					->and->nest()
+					->or->notLike("card.pt_string", "%/{$value}")
+					->or->notLike("card.pt_string_2", "%/{$value}")
+					->unnest()
+					->and->notEqualTo("card.pt_string", "");
+				}
+				else if($matches["infix"] == ">"){			
+					$where = $where->and->nest()
+					->or->greaterThan("card.toughness", $numericValue)
+					->or->greaterThan("card.toughness_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == ">="){
+					$where = $where->and->nest()
+					->or->greaterThanOrEqualTo("card.toughness", $numericValue)
+					->or->greaterThanOrEqualTo("card.toughness_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == "<"){
+					$where = $where->and->nest()
+					->or->lessThan("card.toughness", $numericValue)
+					->or->lessThan("card.toughness_2", $numericValue2)
+					->unnest();
+				}
+				else if($matches["infix"] == "<="){
+					$where = $where->and->nest()
+					->or->lessThanOrEqualTo("card.toughness", $numericValue)
+					->or->lessThanOrEqualTo("card.toughness_2", $numericValue2)
+					->unnest();
+				}
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
