@@ -28,9 +28,16 @@ $(function(){
 			window.location = $(this).attr('url');
 		}
 	});
-
+	
 	$(".lazyload").lazyload({
 	});
+
+	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
+		if(ui.newPanel.attr('id') == "cards"){
+			$(window).trigger('resize'); // Refresh lazyload
+		}
+	} );
+	
 });
 </script>
 
