@@ -181,9 +181,9 @@ class CardTable
 				
 				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
-			else if($matches["attribute"] == "o" || $matches["attribute"] == "oracle" || $matches["attribute"] == "r" || $matches["attribute"] == "rules" || $matches["attribute"] == "text"){
+			else if($matches["attribute"] == "o" || $matches["attribute"] == "oracle" || $matches["attribute"] == "rules" || $matches["attribute"] == "text"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with type'\n";
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rules text'\n";
 					continue;
 				}
 				
@@ -364,7 +364,42 @@ class CardTable
 						->or->like("card.rules_text_2", "%enters the battlefield%")
 						->unnest();
 						break;
+					default:
+						$messages[] = "'Is' value '{$value}' is not valid\n";
+						continue;
 				} 
+			}
+			else if($matches["attribute"] == "r" || $matches["attribute"] == "rarity"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rarity'\n";
+					continue;
+				}
+				
+				switch(strtolower($matches["value"])){
+					case "common":
+					case "c":
+						$where = $where->and->equalTo("rarity", "C");
+						break;
+					case "uncommon":
+					case "u":
+						$where = $where->and->equalTo("rarity", "U");
+						break;;
+					case "rare":
+					case "r":
+						$where = $where->and->equalTo("rarity", "R");
+						break;
+					case "mythic":					
+					case "m":
+						$where = $where->and->equalTo("rarity", "M");
+						break;
+					case "special":					
+					case "s":
+						$where = $where->and->equalTo("rarity", "S");
+						break;
+					default:
+						$messages[] = "Rarity value '{$value}' is not valid\n";
+						continue;
+				}
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
