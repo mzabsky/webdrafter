@@ -54,6 +54,94 @@ class CardTable
 		return $resultSet;
 	}
 	
+	public function queryCards($query)
+	{
+		$where = new \Zend\Db\Sql\Where();
+		$where->greaterThan("set_version.created_on", "2016-09-29"); // Do not query cards that were uploaded before the on-site hosting was introduced
+		
+		$tokens = explode(" ", $query);
+		
+		$processedTokens = array();
+		$openToken = NULL;
+		foreach($tokens as $token) {
+			var_dump($token);
+			if(strpos($token, '"') !== false){
+				if($openToken === NULL){
+					$openToken = $token;
+				}
+				else {
+					$openToken .= " " . $token;
+					$processedTokens[] = str_replace('"', '', $openToken);
+					$openToken = NULL;
+				}
+			}
+			else if($openToken !== NULL){
+				$openToken .= " " . $token;
+			}
+			else {
+				$processedTokens[] = $token;
+			}
+		}
+		
+		$messages = array();
+		foreach($processedTokens as $token) {
+			echo $token;
+			$token = trim($token);
+			if(strlen($token) == 0){
+				echo "AAA";
+				continue;
+			}
+		
+			$matches = array();
+			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=))?(?<value>.*)$/i", $token, $matches);
+			if(!$isMatch){
+				$messages[] = "Could not parse '{$token}'\n";
+			}
+		
+			$value = $matches["value"];
+			if($matches["prefix"] == "!"){
+				if($matches["attribute"] != "" || $matches["infix"] != ""){
+					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
+				}
+		
+				$where = $where->and->nest()
+					->equalTo('card.name', $value)->or
+					->equalTo('card.name_2', $value)
+					->unnest();
+			}
+			else if($matches["attribute"] == "" || $matches["infix"] == ""){
+				$where = $where->and->nest()
+					->or->like("card.name", "%".$value."%")
+					->or->like("card.rules_text", "%".$value."%")
+					->or->like("card.name_2", "%".$value."%")
+					->or->like("card.rules_text_2", "%".$value."%")
+					->unnest();
+			}
+			else {
+				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
+			}
+		}
+		
+		$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('card');
+		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
+		$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+		$select->where->equalTo('set.is_private', 0);
+		
+		//$select->forUpdate();
+		$select->where($where);
+		//$select->order('draft.created_on DESC');
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		var_dump($selectString);
+		
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+		
+		var_dump($messages);
+		
+		
+		return $resultSet;
+	}
+	
 	public function getCard($id)
 	{
 		$id  = (int) $id;

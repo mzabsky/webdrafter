@@ -28,6 +28,9 @@ $(function(){
 			window.location = $(this).attr('url');
 		}
 	});
+
+	$(".lazyload").lazyload({
+	});
 });
 </script>
 
@@ -70,7 +73,18 @@ $(function(){
 		</table>
 	</div>
 	<div id="cards">
-		WIP
+		<form action="#cards"><input name="query" type="text" value="<?php echo $this->query?>" /><input type="submit" /></form>
+		<div id='spoiler'>
+			<div class='spoiler-cards'>
+			<?php if($this->cards != NULL){
+				foreach($this->cards as $card){
+					?>
+					<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' />
+					<?php
+				}
+			}?>
+			</div>
+		</div>
 	</div>
 	<div id="users">
 		<table id="users-grid" class="display hover stripe clickableRows" >

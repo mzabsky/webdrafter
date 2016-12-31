@@ -19,8 +19,17 @@ class BrowseController extends WebDrafterControllerBase
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
     	$userTable = $sm->get('Application\Model\UserTable');
+    	$cardTable = $sm->get('Application\Model\CardTable');
+
+    	$viewModel = new ViewModel();
+    	if(isset($_GET["query"])){
+    		$viewModel->query = $_GET["query"];
+    		$viewModel->cards = $cardTable->queryCards($_GET["query"]);
+    	}
+    	else {
+    		$viewModel->query = "";
+    	}
     	
-    	$viewModel = new ViewModel(); 
     	$viewModel->sets = $setTable->getSets();
     	$viewModel->users = $userTable->getUsers();
     	
