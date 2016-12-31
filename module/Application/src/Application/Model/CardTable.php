@@ -100,6 +100,7 @@ class CardTable
 			
 			$value = $matches["value"];
 			$attribute = $matches["attribute"];
+			$infix = $matches["infix"];
 		
 			$negated = false;
 			if($matches["prefix"] == "-" || $attribute == "not")
@@ -113,7 +114,7 @@ class CardTable
 				}
 			}
 			if($matches["prefix"] == "!"){
-				if($attribute != "" || $matches["infix"] != ""){
+				if($attribute != "" || $infix != ""){
 					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
 					continue;
 				}
@@ -123,7 +124,7 @@ class CardTable
 					->equalTo('card.name_2', $value)
 					->unnest();
 			}
-			else if($attribute == "" || $matches["infix"] == ""){
+			else if($attribute == "" || $infix == ""){
 				$where = $where->and->nest()
 					->or->like("card.name", "%".$value."%")
 					->or->like("card.rules_text", "%".$value."%")
@@ -132,8 +133,8 @@ class CardTable
 					->unnest();
 			}
 			else if($attribute == "c" || $attribute == "color"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with color'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with color'\n";
 					continue;
 				}
 				
@@ -181,16 +182,16 @@ class CardTable
 				}				
 			}
 			else if($attribute == "t" || $attribute == "type"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with type'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with type'\n";
 					continue;
 				}
 				
 				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
 			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rules text'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
 					continue;
 				}
 				
@@ -212,18 +213,18 @@ class CardTable
 					$numericValue2 = new \Zend\Db\Sql\Expression("card.toughness_2");
 				}
 				
-				if(($matches["infix"] == ">" || $matches["infix"] == "<" || $matches["infix"] == ">=" || $matches["infix"] == "<=") && !$isNumericValid){
+				if(($infix == ">" || $infix == "<" || $infix == ">=" || $infix == "<=") && !$isNumericValid){
 					$messages[] = "Power value '{$value}' is not valid\n";
 					continue;
 				}
 				
-				if($matches["infix"] == ":" || $matches["infix"] == "="){
+				if($infix == ":" || $infix == "="){
 					$where = $where->and->nest()
 					->or->like("card.pt_string", "{$value}/%")
 					->or->like("card.pt_string_2", "{$value}/%")
 					->unnest();
 				}
-				if($matches["infix"] == "!="){
+				if($infix == "!="){
 					$where = $where
 					->and->nest()
 					->or->notLike("card.pt_string", "{$value}/%")
@@ -231,25 +232,25 @@ class CardTable
 					->unnest()
 					->and->notEqualTo("card.pt_string", "");
 				}
-				else if($matches["infix"] == ">"){			
+				else if($infix == ">"){			
 					$where = $where->and->nest()
 					->or->greaterThan("card.power", $numericValue)
 					->or->greaterThan("card.power_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == ">="){
+				else if($infix == ">="){
 					$where = $where->and->nest()
 					->or->greaterThanOrEqualTo("card.power", $numericValue)
 					->or->greaterThanOrEqualTo("card.power_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == "<"){
+				else if($infix == "<"){
 					$where = $where->and->nest()
 					->or->lessThan("card.power", $numericValue)
 					->or->lessThan("card.power_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == "<="){
+				else if($infix == "<="){
 					$where = $where->and->nest()
 					->or->lessThanOrEqualTo("card.power", $numericValue)
 					->or->lessThanOrEqualTo("card.power_2", $numericValue2)
@@ -269,18 +270,18 @@ class CardTable
 					$numericValue2 = new \Zend\Db\Sql\Expression("card.power_2");
 				}
 				
-				if(($matches["infix"] == ">" || $matches["infix"] == "<" || $matches["infix"] == ">=" || $matches["infix"] == "<=") && !$isNumericValid){
+				if(($infix == ">" || $infix == "<" || $infix == ">=" || $infix == "<=") && !$isNumericValid){
 					$messages[] = "Toughness value '{$value}' is not valid\n";
 					continue;
 				}
 				
-				if($matches["infix"] == ":" || $matches["infix"] == "="){
+				if($infix == ":" || $infix == "="){
 					$where = $where->and->nest()
 					->or->like("card.pt_string", "%/{$value}")
 					->or->like("card.pt_string_2", "%/{$value}")
 					->unnest();
 				}
-				if($matches["infix"] == "!="){
+				if($infix == "!="){
 					$where = $where
 					->and->nest()
 					->or->notLike("card.pt_string", "%/{$value}")
@@ -288,25 +289,25 @@ class CardTable
 					->unnest()
 					->and->notEqualTo("card.pt_string", "");
 				}
-				else if($matches["infix"] == ">"){			
+				else if($infix == ">"){			
 					$where = $where->and->nest()
 					->or->greaterThan("card.toughness", $numericValue)
 					->or->greaterThan("card.toughness_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == ">="){
+				else if($infix == ">="){
 					$where = $where->and->nest()
 					->or->greaterThanOrEqualTo("card.toughness", $numericValue)
 					->or->greaterThanOrEqualTo("card.toughness_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == "<"){
+				else if($infix == "<"){
 					$where = $where->and->nest()
 					->or->lessThan("card.toughness", $numericValue)
 					->or->lessThan("card.toughness_2", $numericValue2)
 					->unnest();
 				}
-				else if($matches["infix"] == "<="){
+				else if($infix == "<="){
 					$where = $where->and->nest()
 					->or->lessThanOrEqualTo("card.toughness", $numericValue)
 					->or->lessThanOrEqualTo("card.toughness_2", $numericValue2)
@@ -314,8 +315,8 @@ class CardTable
 				}
 			}
 			else if($attribute == "is"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with is'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with is'\n";
 					continue;
 				}
 				
@@ -377,8 +378,8 @@ class CardTable
 				} 
 			}
 			else if($attribute == "r" || $attribute == "rarity"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with rarity'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with rarity'\n";
 					continue;
 				}
 				
@@ -409,8 +410,8 @@ class CardTable
 				}
 			}
 			else if($attribute == "s" || $attribute == "set" || $attribute == "e" || $attribute == "edition"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with set'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
 					continue;
 				}
 				
@@ -431,8 +432,8 @@ class CardTable
 				$where = $where->unnest();
 			}
 			else if($attribute == "artist" || $attribute == "art" || $attribute == "a"){
-				if($matches["infix"] != ":" && $matches["infix"] != "="){
-					$messages[] = "Operator '{$matches["infix"]}' cannot be used with artist'\n";
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
 					continue;
 				}
 				
@@ -455,23 +456,88 @@ class CardTable
 					}
 				}
 				
-				
 				$date = date("Y-m-d H:i:s", $date);
 				
-				if($matches["infix"] == ":" || $matches["infix"] == "="){
+				if($infix == ":" || $infix == "="){
 					$where = $where->and->equalTo("set_version.created_on", $date);
 				}
-				else if($matches["infix"] == ">"){
+				else if($infix == ">"){
 					$where = $where->and->greaterThan("set_version.created_on", $date);
 				}
-				else if($matches["infix"] == ">="){
+				else if($infix == ">="){
 					$where = $where->and->greaterThanOrEqualTo("set_version.created_on", $date);
 				}
-				else if($matches["infix"] == "<"){
+				else if($infix == "<"){
 					$where = $where->and->lessThan("set_version.created_on", $date);
 				}
-				else if($matches["infix"] == "<="){
+				else if($infix == "<="){
 					$where = $where->and->lessThanOrEqualTo("set_version.created_on", $date);
+				}
+			}
+			else if($attribute == "st" || $attribute == "status"){
+				if($value == "play" || $value == "playable")
+				{
+					if($infix != ":" && $infix != "="){
+						$messages[] = "Operator '{$infix}' cannot be used with status:playable'\n";
+						continue;
+					}
+					
+					$value = "design";
+					$infix = ">=";
+				}
+				
+				$includeDiscontinued = false;
+				switch (strtolower($value)){
+					case "unplayable":
+					case "un":
+						$status = Set::STATUS_UNPLAYABLE;
+						break;
+					case "design":
+						$status = Set::STATUS_DESIGN;
+						break;
+					case "development":
+					case "develop":
+					case "dev":
+						$status = Set::STATUS_DEVELOPMENT;
+						break;
+					case "finishing":
+						$status = Set::STATUS_FINISHING;
+						break;
+					case "finished":
+					case "done":
+						$status = Set::STATUS_FINISHED;
+						break;
+					case "discontinued":
+					case "dis":
+						$status = Set::STATUS_FINISHED;
+						$includeDiscontinued = true;
+						break;
+					default:
+						$messages[] = "Status value '{$value}' is not valid\n";
+						continue;
+				}
+				
+				if($infix == ":" || $infix == "="){
+					$where = $where->and->equalTo("set.status", $status);
+				}
+				else if($infix == "!="){
+					$where = $where->and->notEqualTo("set.status", $status);
+				}
+				else if($infix == ">"){
+					$where = $where->and->greaterThan("set.status", $status);
+				}
+				else if($infix == ">="){
+					$where = $where->and->greaterThanOrEqualTo("set.status", $status);
+				}
+				else if($infix == "<"){
+					$where = $where->and->lessThan("set.status", $status);
+				}
+				else if($infix == "<="){
+					$where = $where->and->lessThanOrEqualTo("set.status", $status);
+				}
+				
+				if(!$includeDiscontinued || $infix == "!="){
+					$where = $where->and->notEqualto("set.status", Set::STATUS_DISCONTINUED);
 				}
 			}
 			else {
