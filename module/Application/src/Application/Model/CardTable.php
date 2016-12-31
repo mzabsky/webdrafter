@@ -181,6 +181,17 @@ class CardTable
 				
 				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
+			else if($matches["attribute"] == "o" || $matches["attribute"] == "oracle" || $matches["attribute"] == "r" || $matches["attribute"] == "rules" || $matches["attribute"] == "text"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with type'\n";
+					continue;
+				}
+				
+				$where = $where->and->nest()
+					->or->like("card.rules_text", "%".$value."%")
+					->or->like("card.rules_text_2", "%".$value."%")
+					->unnest();
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
 			}
