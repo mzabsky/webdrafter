@@ -402,14 +402,21 @@ class CardTable
 				}
 			}
 			else if($matches["attribute"] == "s" || $matches["attribute"] == "set" || $matches["attribute"] == "e" || $matches["attribute"] == "edition"){
-				$where = $where->and->nest()
-					->or->like("set.name", "%".$value."%")
-					->or->like("set.code", "%".$value."%")
-					->or->like("set.url_name", "%".$value."%")
-					->or->like("card.rules_text", "%".$value."%")
-					->or->like("card.name_2", "%".$value."%")
-					->or->like("card.rules_text_2", "%".$value."%")
-					->unnest();
+				$orSets = explode("|", $value);
+				$where = $where->and->nest();
+				foreach ($orSets as $orSet){
+					$andSets = explode("+", $orSet);
+					$where = $where->or->nest();
+					foreach ($andSets as $andSet){
+						$where = $where->and->nest()
+						->or->like("set.name", "%".$andSet."%")
+						->or->like("set.code", "%".$andSet."%")
+						->or->like("set.url_name", "%".$andSet."%")
+						->unnest();
+					}					
+					$where = $where->unnest();
+				}
+				$where = $where->unnest();
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
