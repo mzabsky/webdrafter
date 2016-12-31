@@ -64,7 +64,6 @@ class CardTable
 		$processedTokens = array();
 		$openToken = NULL;
 		foreach($tokens as $token) {
-			var_dump($token);
 			if(strpos($token, '"') !== false){
 				if($openToken === NULL){
 					$openToken = $token;
@@ -85,7 +84,6 @@ class CardTable
 		
 		$messages = array();
 		foreach($processedTokens as $token) {
-			echo $token;
 			$token = trim($token);
 			if(strlen($token) == 0){
 				continue;
@@ -98,6 +96,11 @@ class CardTable
 				continue;
 			}
 		
+			if($matches["prefix"] == "-")
+			{
+				$where = $where->not->nest();
+			}
+			
 			$value = $matches["value"];
 			if($matches["prefix"] == "!"){
 				if($matches["attribute"] != "" || $matches["infix"] != ""){
@@ -169,6 +172,11 @@ class CardTable
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
+			}
+			
+			if($matches["prefix"] == "-")
+			{
+				$where = $where->unnest();
 			}
 		}
 		
