@@ -401,6 +401,16 @@ class CardTable
 						continue;
 				}
 			}
+			else if($matches["attribute"] == "s" || $matches["attribute"] == "set" || $matches["attribute"] == "e" || $matches["attribute"] == "edition"){
+				$where = $where->and->nest()
+					->or->like("set.name", "%".$value."%")
+					->or->like("set.code", "%".$value."%")
+					->or->like("set.url_name", "%".$value."%")
+					->or->like("card.rules_text", "%".$value."%")
+					->or->like("card.name_2", "%".$value."%")
+					->or->like("card.rules_text_2", "%".$value."%")
+					->unnest();
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";
 			}
