@@ -409,6 +409,11 @@ class CardTable
 				}
 			}
 			else if($attribute == "s" || $attribute == "set" || $attribute == "e" || $attribute == "edition"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with set'\n";
+					continue;
+				}
+				
 				$orSets = explode("|", $value);
 				$where = $where->and->nest();
 				foreach ($orSets as $orSet){
@@ -424,6 +429,17 @@ class CardTable
 					$where = $where->unnest();
 				}
 				$where = $where->unnest();
+			}
+			else if($attribute == "artist" || $attribute == "art" || $attribute == "a"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with artist'\n";
+					continue;
+				}
+				
+				$where = $where->and->nest()
+					->or->like("card.illustrator", "%".$value."%")
+					->or->like("card.illustrator_2", "%".$value."%")
+					->unnest();
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}'\n";
