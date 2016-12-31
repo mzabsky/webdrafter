@@ -124,7 +124,7 @@ class CardTable
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
 			}
-			else if($matches["attribute"] == "c" || $matches["color"] == "c"){
+			else if($matches["attribute"] == "c" || $matches["attribute"] == "color"){
 				if($matches["infix"] != ":" && $matches["infix"] != "="){
 					$messages[] = "Operator '{$matches["infix"]}' cannot be used with color'\n";
 					continue;
@@ -172,6 +172,14 @@ class CardTable
 				if(strpos($str, "m") !== false){
 					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"));
 				}				
+			}
+			else if($matches["attribute"] == "t" || $matches["attribute"] == "type"){
+				if($matches["infix"] != ":" && $matches["infix"] != "="){
+					$messages[] = "Operator '{$matches["infix"]}' cannot be used with type'\n";
+					continue;
+				}
+				
+				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
 			else {
 				$messages[] = "Unrecognized attribute '{$matches["attribute"]}' in '{$token}'\n";

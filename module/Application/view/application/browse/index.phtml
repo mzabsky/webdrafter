@@ -76,10 +76,11 @@ $(function(){
 		<form action="#cards"><input name="query" type="text" value="<?php echo $this->query?>" /><input type="submit" value="Search" /></form>
 		<div id='spoiler'>
 			<div class='spoiler-cards'>
+			<p>Found <?php echo count($this->cards)?> cards.</p>
 			<?php if($this->cards != NULL){
 				foreach($this->cards as $card){
 					?>
-					<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' />
+					<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' height="300"/>
 					<?php
 				}
 			}?>
