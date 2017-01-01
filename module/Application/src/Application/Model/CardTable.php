@@ -109,7 +109,9 @@ class CardTable
 			$infix = $matches["infix"];
 		
 			$negated = false;
-			if($matches["prefix"] == "-" || $attribute == "not")
+			
+			
+			if($matches["prefix"] == "-" || $attribute == "not" )
 			{
 				$negated = true;
 				$completeWhere = $where;				
@@ -165,36 +167,58 @@ class CardTable
 				
 				$numberOfColors = 0;
 				if(strpos($str, "w") !== false){
-					$where = $where->and->like("colors", "%W%");
+					$where = $where->and->nest()
+					->like('card.colors', "%W%")->or
+					->like('card.colors_2', "%W%")
+					->unnest();
 					$numberOfColors++;					
 				}
 				
 				if(strpos($str, "u") !== false){
-					$where = $where->and->like("colors", "%U%");
+					$where = $where->and->nest()
+					->like('card.colors', "%U%")->or
+					->like('card.colors_2', "%U%")
+					->unnest();
 					$numberOfColors++;
 				}
 				
 				if(strpos($str, "b") !== false){
-					$where = $where->and->like("colors", "%B%");
+					$where = $where->and->nest()
+					->like('card.colors', "%B%")->or
+					->like('card.colors_2', "%B%")
+					->unnest();
 					$numberOfColors++;
 				}
 				
 				if(strpos($str, "r") !== false){
-					$where = $where->and->like("colors", "%R%");
+					$where = $where->and->nest()
+					->like('card.colors', "%R%")->or
+					->like('card.colors_2', "%G%")
+					->unnest();
 					$numberOfColors++;
 				}
 				
 				if(strpos($str, "g") !== false){
-					$where = $where->and->like("colors", "%G%");
+					$where = $where->and->nest()
+					->like('card.colors', "%UG")->or
+					->like('card.colors_2', "%G%")
+					->unnest();
 					$numberOfColors++;
 				}
 				
 				if(strpos($str, "c") !== false){
-					$where = $where->and->equalTo("colors", "");
+					$where = $where->and->nest()
+					->equalTo('card.colors', "")->or
+					->equalTo('card.colors_2', "")
+					->unnest();
 					$numberOfColors = 0;
 				}
 				
 				if(strpos($str, "m") !== false){
+					$where = $where->and->nest()
+					->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"))
+					->orPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"))
+					->unnest();
 					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"));
 				}				
 				
