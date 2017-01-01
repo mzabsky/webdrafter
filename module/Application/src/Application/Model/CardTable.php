@@ -119,6 +119,11 @@ class CardTable
 					$attribute = "is";
 				}
 			}
+			
+			if($infix == ":") {
+				$infix = "=";
+			}
+			
 			if($matches["prefix"] == "!"){
 				if($attribute != "" || $infix != ""){
 					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
@@ -141,7 +146,7 @@ class CardTable
 					->unnest();
 			}
 			else if($attribute == "c" || $attribute == "color"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with color'\n";
 					continue;
 				}
@@ -190,7 +195,7 @@ class CardTable
 				}				
 			}
 			else if($attribute == "t" || $attribute == "type"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with type'\n";
 					continue;
 				}
@@ -198,7 +203,7 @@ class CardTable
 				$where = $where->and->like("types", "%{$matches["value"]}%");			
 			}
 			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
 					continue;
 				}
@@ -226,7 +231,7 @@ class CardTable
 					continue;
 				}
 				
-				if($infix == ":" || $infix == "="){
+				if($infix == "="){
 					$where = $where->and->nest()
 					->or->like("card.pt_string", "{$value}/%")
 					->or->like("card.pt_string_2", "{$value}/%")
@@ -283,7 +288,7 @@ class CardTable
 					continue;
 				}
 				
-				if($infix == ":" || $infix == "="){
+				if($infix == "="){
 					$where = $where->and->nest()
 					->or->like("card.pt_string", "%/{$value}")
 					->or->like("card.pt_string_2", "%/{$value}")
@@ -323,7 +328,7 @@ class CardTable
 				}
 			}
 			else if($attribute == "is"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with is'\n";
 					continue;
 				}
@@ -386,7 +391,7 @@ class CardTable
 				} 
 			}
 			else if($attribute == "r" || $attribute == "rarity"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with rarity'\n";
 					continue;
 				}
@@ -418,7 +423,7 @@ class CardTable
 				}
 			}
 			else if($attribute == "s" || $attribute == "set" || $attribute == "e" || $attribute == "edition"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
 					continue;
 				}
@@ -440,7 +445,7 @@ class CardTable
 				$where = $where->unnest();
 			}
 			else if($attribute == "artist" || $attribute == "art" || $attribute == "a"){
-				if($infix != ":" && $infix != "="){
+				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
 					continue;
 				}
@@ -466,7 +471,7 @@ class CardTable
 				
 				$date = date("Y-m-d H:i:s", $date);
 				
-				if($infix == ":" || $infix == "="){
+				if($infix == "="){
 					$where = $where->and->equalTo("set_version.created_on", $date);
 				}
 				else if($infix == ">"){
@@ -485,7 +490,7 @@ class CardTable
 			else if($attribute == "st" || $attribute == "status"){
 				if($value == "play" || $value == "playable")
 				{
-					if($infix != ":" && $infix != "="){
+					if($infix != "="){
 						$messages[] = "Operator '{$infix}' cannot be used with status:playable'\n";
 						continue;
 					}
@@ -525,7 +530,7 @@ class CardTable
 						continue;
 				}
 				
-				if($infix == ":" || $infix == "="){
+				if($infix == "="){
 					$where = $where->and->equalTo("set.status", $status);
 				}
 				else if($infix == "!="){
@@ -549,8 +554,8 @@ class CardTable
 				}
 			}
 			else if($attribute == "m" || $attribute == "mana"){
-				if($infix != ":" && $infix != "="){
-					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
+				if($infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with mana cost'\n";
 					continue;
 				}
 				
@@ -585,7 +590,7 @@ class CardTable
 					}
 				}
 				
-				if($infix == ":" || $infix == "="){
+				if($infix == "="){
 					$where = $where->and->nest()->like("card.mana_cost", "%{$processedValue}%")->or->like("card.mana_cost_2", "%{$processedValue}%")->unnest();
 				}
 			}
