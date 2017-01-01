@@ -693,6 +693,41 @@ class CardTable
 					->unnest();
 				}
 			}
+			else if($attribute == "cmc"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
+				$isNumericValid = false;
+				if(is_numeric($value)){
+					$isNumericValid = true;
+					$numericValue = (int)$value;
+				}
+				
+				if(!$isNumericValid){
+					$messages[] = "CMC value '{$value}' is not valid\n";
+					continue;
+				}
+				
+				if($infix == "="){
+					$where = $where->and->equalTo("card.cmc", $numericValue);
+				}
+				else if($infix == ">"){			
+					$where = $where->and->greaterThan("card.cmc", $numericValue);
+				}
+				else if($infix == ">="){
+					$where = $where->and->greaterThanOrEqualTo("card.cmc", $numericValue);
+				}
+				else if($infix == "<"){
+					$where = $where->and->lessThan("card.cmc", $numericValue);
+				}
+				else if($infix == "<="){
+					$where = $where->and->nest()
+					->or->lessThanOrEqualTo("card.toughness", $numericValue)
+					->or->lessThanOrEqualTo("card.toughness_2", $numericValue2)
+					->unnest();
+				}
+			}
 			else {
 				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}'\n";
 			}
