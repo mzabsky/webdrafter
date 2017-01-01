@@ -940,7 +940,7 @@ $shape-double-height: 523px;
 	padding: 5px;
 }
 
-.code-sample-inline {
+.code-sample-inline, code {
 	display: inline-block;
 	background: #EEEEEE;
 	border: lightgray 1px solid;
@@ -1222,4 +1222,10 @@ $shape-double-height: 523px;
 #query-input {
 	width: 100%;
 	margin-bottom: 5px;
+}
+
+.query-help
+{
+	font-size: 65%;	
+	margin-left: 50px;
 }
