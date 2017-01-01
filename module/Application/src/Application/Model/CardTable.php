@@ -568,6 +568,25 @@ class CardTable
 					->unnest();
 				}
 			}
+			else if($attribute == "au" || $attribute == "author"){
+				if($infix != "=" && $infix != "!"){
+					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
+					continue;
+				}
+
+				if($infix == "="){
+					$where = $where->and->nest()
+					->or->like("user.name", "%".$value."%")
+					->or->like("user.url_name", "%".$value."%")
+					->unnest();
+				}
+				else if($infix == "!"){
+					$where = $where->and->nest()
+					->or->equalTo("user.name", $value)
+					->or->equalTo("user.url_name", $value)
+					->unnest();
+				}
+			}
 			else if($attribute == "d" || $attribute == "date"){
 				$date = strtotime($value);
 				
@@ -772,7 +791,8 @@ class CardTable
 		}
 		else {
 			$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
-		}		
+		}	
+		$select->join('user', 'set.user_id = user.user_id');
 		
 		$select->where->equalTo('set.is_private', 0);
 		$select->limit(1000);
