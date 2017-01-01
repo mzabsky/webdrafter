@@ -658,7 +658,7 @@ class CardTable
 						break;
 					case "discontinued":
 					case "dis":
-						$status = Set::STATUS_FINISHED;
+						$status = Set::STATUS_DISCONTINUED;
 						$includeDiscontinued = true;
 						break;
 					default:
