@@ -256,15 +256,23 @@ class CardTable
 				}
 			}
 			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
-				if($infix != "="){
+				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
 					continue;
 				}
 				
-				$where = $where->and->nest()
+				if($infix == "="){
+					$where = $where->and->nest()
 					->or->like("card.rules_text", "%".$value."%")
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
+				}
+				else if($infix == "!"){
+					$where = $where->and->nest()
+					->or->equalTo("card.rules_text", $value)
+					->or->nest()->notEqualTo("shape", Card::SHAPE_NORMAL)->and->equalTo('card.rules_text_2', $value)->unnest()
+					->unnest();
+				}
 			}
 			else if($attribute == "pow" || $attribute == "power"){
 				$isNumericValid = false;
