@@ -28,6 +28,28 @@ $(function(){
 			window.location = $(this).attr('url');
 		}
 	});
+	
+	$(".lazyload").lazyload({
+	});
+	
+	/*$(document).tooltip({
+		items: ".card-image",
+		track: true,
+		show: false,
+		hide: false,
+		content: function(){
+			var element = $(this);
+			return "<img src='" + element.attr("src") + "' class='tooltip-card'>";
+		}
+	});*/
+	
+	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
+		if(ui.newPanel.attr('id') == "cards"){
+			$(window).trigger('resize'); // Refresh lazyload
+		}
+	} );
+
+	
 });
 </script>
 
@@ -70,7 +92,33 @@ $(function(){
 		</table>
 	</div>
 	<div id="cards">
-		WIP
+		<form action="#cards">
+			<p>Search query: <span class="query-help"><a href="<?php echo $this->url('tutorial') ?>#querying"/>(Query syntax reference)</a></span></p>
+			<input name="query" type="text" value="<?php echo htmlspecialchars($this->query)?>" id="query-input" /><br />
+			<input type="submit" value="Search" />
+		</form>
+		<?php if(count($this->messages) > 0){?>
+		<ul class="error-list">
+			<?php foreach($this->messages as $message){?>
+				<li><?php echo $message ?></li>
+			<?php } ?>
+		</ul>
+		<?php } else if($this->cards != null) { ?>
+		<div id='spoiler'>
+			<div class='spoiler-cards'>
+			<p>Found <?php echo count($this->cards)?> cards.</p>
+			<?php if($this->cards != NULL){
+				foreach($this->cards as $card){
+					?>
+					<a href="<?php echo $this->url("browse-card", array('set_url_name' => $card->set_url_name, 'version_url_name' => $card->version_url_name, 'card_url_name' => $card->url_name))?>" title="<?php echo $card->name ?>">
+						<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' height="300"/>
+					</a>
+					<?php
+				}
+			}?>
+			</div>
+		</div>
+		<?php } ?>
 	</div>
 	<div id="users">
 		<table id="users-grid" class="display hover stripe clickableRows" >

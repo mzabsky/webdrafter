@@ -691,7 +691,7 @@ form input.code-input {
   border: lightgray 1px solid;
   padding: 5px; }
 
-.code-sample-inline {
+.code-sample-inline, code {
   display: inline-block;
   background: #EEEEEE;
   border: lightgray 1px solid;
@@ -877,5 +877,13 @@ form input.code-input {
   list-style: none;
   color: red;
   padding-left: 0; }
+
+#query-input {
+  width: 100%;
+  margin-bottom: 5px; }
+
+.query-help {
+  font-size: 65%;
+  margin-left: 50px; }
 
 /*# sourceMappingURL=style.css.map */
