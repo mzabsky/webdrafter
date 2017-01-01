@@ -110,7 +110,7 @@ class CardTable
 			}
 			
 			$value = $matches["value"];
-			$attribute = $matches["attribute"];
+			$attribute = strtolower($matches["attribute"]);
 			$infix = $matches["infix"];
 			$prefix = $matches["prefix"];
 		
@@ -145,7 +145,7 @@ class CardTable
 			
 			if($prefix == "!"){
 				if($attribute != "" || $infix != ""){
-					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
+					$messages[] = "Prefix operator '!' can be only used with a string literal in '{$token}'\n";
 					continue;
 				}
 		
@@ -166,7 +166,7 @@ class CardTable
 			}
 			else if($attribute == "c" || $attribute == "color"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with color'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with color\n";
 					continue;
 				}
 				
@@ -246,7 +246,7 @@ class CardTable
 			}
 			else if($attribute == "t" || $attribute == "type"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with type'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with type\n";
 					continue;
 				}
 				
@@ -262,7 +262,7 @@ class CardTable
 			}
 			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "rt" || $attribute == "text"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with rules text\n";
 					continue;
 				}
 				
@@ -281,7 +281,7 @@ class CardTable
 			}
 			else if($attribute == "f" || $attribute == "ft" || $attribute == "flavor"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with flavor text'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with flavor text\n";
 					continue;
 				}
 				
@@ -426,7 +426,7 @@ class CardTable
 				}
 				
 				if($infix != "="){
-					$messages[] = "Operator '{$infix}' cannot be used with is'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with is\n";
 					continue;
 				}
 				
@@ -493,7 +493,7 @@ class CardTable
 				}
 				
 				if($infix != "="){
-					$messages[] = "Operator '{$infix}' cannot be used with rarity'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with rarity\n";
 					continue;
 				}
 				
@@ -529,7 +529,7 @@ class CardTable
 				}
 				
 				if($infix != "="){
-					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with set\n";
 					continue;
 				}
 				
@@ -551,7 +551,7 @@ class CardTable
 			}
 			else if($attribute == "artist" || $attribute == "art" || $attribute == "a"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with artist\n";
 					continue;
 				}
 
@@ -570,7 +570,7 @@ class CardTable
 			}
 			else if($attribute == "au" || $attribute == "author"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with author\n";
 					continue;
 				}
 
@@ -593,7 +593,7 @@ class CardTable
 				if($date === false){
 					$dateObject = \DateTime::createFromFormat("Y-m-d", $value);
 					if($dateObject == null){
-						$messages[] = "Date '{$matches["value"]}' could not be parsed'\n";
+						$messages[] = "Date '{$matches["value"]}' could not be parsed\n";
 						continue;
 					}
 					else {
@@ -627,7 +627,7 @@ class CardTable
 				if($value == "play" || $value == "playable")
 				{
 					if($infix != "="){
-						$messages[] = "Operator '{$infix}' cannot be used with status:playable'\n";
+						$messages[] = "Operator '{$infix}' cannot be used with status:playable\n";
 						continue;
 					}
 					
@@ -691,7 +691,7 @@ class CardTable
 			}
 			else if($attribute == "m" || $attribute == "mana"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with mana cost'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with mana cost\n";
 					continue;
 				}
 				
@@ -769,7 +769,7 @@ class CardTable
 				}
 			}
 			else {
-				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}'\n";
+				$messages[] = "Unrecognized attribute '{$attribute}' in '{$token}\n";
 			}
 			
 			if($negated)
