@@ -274,6 +274,25 @@ class CardTable
 					->unnest();
 				}
 			}
+			else if($attribute == "f" || $attribute == "flavor"){
+				if($infix != "=" && $infix != "!"){
+					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
+					continue;
+				}
+				
+				if($infix == "="){
+					$where = $where->and->nest()
+					->or->like("card.flavor_text", "%".$value."%")
+					->or->like("card.flavor_text_2", "%".$value."%")
+					->unnest();
+				}
+				else if($infix == "!"){
+					$where = $where->and->nest()
+					->or->equalTo("card.flavor_text", $value)
+					->or->nest()->notEqualTo("shape", Card::SHAPE_NORMAL)->and->equalTo('card.flavor_text_2', $value)->unnest()
+					->unnest();
+				}
+			}
 			else if($attribute == "pow" || $attribute == "power"){
 				if($infix == "!") {
 					$infix = "=";
@@ -722,10 +741,7 @@ class CardTable
 					$where = $where->and->lessThan("card.cmc", $numericValue);
 				}
 				else if($infix == "<="){
-					$where = $where->and->nest()
-					->or->lessThanOrEqualTo("card.toughness", $numericValue)
-					->or->lessThanOrEqualTo("card.toughness_2", $numericValue2)
-					->unnest();
+					$where = $where->and->lessThanOrEqualTo("card.cmc", $numericValue);
 				}
 			}
 			else {
