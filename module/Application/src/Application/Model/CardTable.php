@@ -805,11 +805,11 @@ class CardTable
 		$select->where($where);
 		$select->order('set.set_id DESC, card.card_number ASC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
-		var_dump($selectString);
+		//var_dump($selectString);
 		
 		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
 		
-		var_dump($messages);
+		//var_dump($messages);
 		
 		
 		return $resultSet;

@@ -31,12 +31,24 @@ $(function(){
 	
 	$(".lazyload").lazyload({
 	});
-
+	
+	/*$(document).tooltip({
+		items: ".card-image",
+		track: true,
+		show: false,
+		hide: false,
+		content: function(){
+			var element = $(this);
+			return "<img src='" + element.attr("src") + "' class='tooltip-card'>";
+		}
+	});*/
+	
 	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
 		if(ui.newPanel.attr('id') == "cards"){
 			$(window).trigger('resize'); // Refresh lazyload
 		}
 	} );
+
 	
 });
 </script>
