@@ -98,7 +98,7 @@ class CardTable
 			}
 		
 			$matches = array();
-			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=|!=))?(?<value>[^=]*?)$/i", $token, $matches);
+			$isMatch = preg_match("/^(?<prefix>-|!)?((?<attribute>[a-z]+)(?<infix>:|>|<|=|<=|>=|!|!=))?(?<value>[^=]*?)$/i", $token, $matches);
 			if(!$isMatch){
 				$messages[] = "Could not parse '{$token}'\n";
 				continue;
@@ -146,7 +146,7 @@ class CardTable
 					->unnest();
 			}
 			else if($attribute == "c" || $attribute == "color"){
-				if($infix != "="){
+				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with color'\n";
 					continue;
 				}
@@ -162,37 +162,46 @@ class CardTable
 					"multicolor" => "m"
 				);
 				$str = strtr($str, $trans);
+				
+				$numberOfColors = 0;
 				if(strpos($str, "w") !== false){
-					$where = $where->and->like("colors", "%W%");					
+					$where = $where->and->like("colors", "%W%");
+					$numberOfColors++;					
 				}
 				
 				if(strpos($str, "u") !== false){
 					$where = $where->and->like("colors", "%U%");
-				}
-				
-				if(strpos($str, "u") !== false){
-					$where = $where->and->like("colors", "%U%");
+					$numberOfColors++;
 				}
 				
 				if(strpos($str, "b") !== false){
 					$where = $where->and->like("colors", "%B%");
+					$numberOfColors++;
 				}
 				
 				if(strpos($str, "r") !== false){
 					$where = $where->and->like("colors", "%R%");
+					$numberOfColors++;
 				}
 				
 				if(strpos($str, "g") !== false){
 					$where = $where->and->like("colors", "%G%");
+					$numberOfColors++;
 				}
 				
 				if(strpos($str, "c") !== false){
 					$where = $where->and->equalTo("colors", "");
+					$numberOfColors = 0;
 				}
 				
 				if(strpos($str, "m") !== false){
 					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) >= 2"));
 				}				
+				
+				if($infix == "!") {
+					// We have already tested presence of all the colors. Now test that there are no others
+					$where = $where->andPredicate(new \Zend\Db\Sql\Predicate\Expression("LENGTH(card.colors) = $numberOfColors"));
+				}
 			}
 			else if($attribute == "t" || $attribute == "type"){
 				if($infix != "="){
