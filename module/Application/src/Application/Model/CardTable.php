@@ -240,12 +240,20 @@ class CardTable
 				}
 			}
 			else if($attribute == "t" || $attribute == "type"){
-				if($infix != "="){
+				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with type'\n";
 					continue;
 				}
 				
-				$where = $where->and->like("types", "%{$matches["value"]}%");			
+				$value = str_replace("--", mb_convert_encoding("\x20\x14", 'UTF-8', 'UTF-16BE'), $value);
+				$value = str_replace("-", mb_convert_encoding("\x20\x14", 'UTF-8', 'UTF-16BE'), $value);
+				
+				if($infix == "="){
+					$where = $where->and->like("types", "%{$value}%");
+				}			
+				else if($infix == "!") {
+					$where = $where->and->equalTo("types", $value);
+				}
 			}
 			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
 				if($infix != "="){
