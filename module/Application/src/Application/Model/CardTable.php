@@ -70,24 +70,29 @@ class CardTable
 		$tokens = explode(" ", $query);
 		
 		$processedTokens = array();
-		$openToken = NULL;
+		$openToken = null;
 		foreach($tokens as $token) {
 			if(strpos($token, '"') !== false){
-				if($openToken === NULL){
+				if($openToken === null){
 					$openToken = $token;
 				}
 				else {
 					$openToken .= " " . $token;
 					$processedTokens[] = str_replace('"', '', $openToken);
-					$openToken = NULL;
+					$openToken = null;
 				}
 			}
-			else if($openToken !== NULL){
+			else if($openToken !== null){
 				$openToken .= " " . $token;
 			}
 			else {
 				$processedTokens[] = $token;
 			}
+		}
+		
+		if($openToken !== null) {
+			$processedTokens[] = str_replace('"', '', $openToken);
+			$openToken = null;
 		}
 		
 		$messages = array();
