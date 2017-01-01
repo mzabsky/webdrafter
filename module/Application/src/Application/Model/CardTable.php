@@ -205,14 +205,14 @@ class CardTable
 				if(strpos($str, "r") !== false){
 					$where = $where->and->nest()
 					->like('card.colors', "%R%")->or
-					->like('card.colors_2', "%G%")
+					->like('card.colors_2', "%R%")
 					->unnest();
 					$numberOfColors++;
 				}
 				
 				if(strpos($str, "g") !== false){
 					$where = $where->and->nest()
-					->like('card.colors', "%UG")->or
+					->like('card.colors', "%G")->or
 					->like('card.colors_2', "%G%")
 					->unnest();
 					$numberOfColors++;
