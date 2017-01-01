@@ -275,6 +275,10 @@ class CardTable
 				}
 			}
 			else if($attribute == "pow" || $attribute == "power"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				$isNumericValid = false;
 				if(is_numeric($value)){
 					$isNumericValid = true;
@@ -332,6 +336,10 @@ class CardTable
 				}
 			}
 			else if($attribute == "tou" || $attribute == "toughness"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				$isNumericValid = false;
 				if(is_numeric($value)){
 					$isNumericValid = true;
@@ -389,6 +397,10 @@ class CardTable
 				}
 			}
 			else if($attribute == "is"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with is'\n";
 					continue;
@@ -452,6 +464,10 @@ class CardTable
 				} 
 			}
 			else if($attribute == "r" || $attribute == "rarity"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with rarity'\n";
 					continue;
@@ -484,6 +500,10 @@ class CardTable
 				}
 			}
 			else if($attribute == "s" || $attribute == "set" || $attribute == "e" || $attribute == "edition"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				if($infix != "="){
 					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
 					continue;
@@ -506,15 +526,23 @@ class CardTable
 				$where = $where->unnest();
 			}
 			else if($attribute == "artist" || $attribute == "art" || $attribute == "a"){
-				if($infix != "="){
+				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with artist'\n";
 					continue;
 				}
-				
-				$where = $where->and->nest()
+
+				if($infix == "="){
+					$where = $where->and->nest()
 					->or->like("card.illustrator", "%".$value."%")
 					->or->like("card.illustrator_2", "%".$value."%")
 					->unnest();
+				}
+				else if($infix == "!"){
+					$where = $where->and->nest()
+					->or->equalTo("card.illustrator", $value)
+					->or->nest()->notEqualTo("shape", Card::SHAPE_NORMAL)->and->equalTo('card.illustrator_2', $value)->unnest()
+					->unnest();
+				}
 			}
 			else if($attribute == "d" || $attribute == "date"){
 				$date = strtotime($value);
@@ -532,7 +560,7 @@ class CardTable
 				
 				$date = date("Y-m-d H:i:s", $date);
 				
-				if($infix == "="){
+				if($infix == "=" || $infix == "!"){
 					$where = $where->and->equalTo("set_version.created_on", $date);
 				}
 				else if($infix == ">"){
@@ -549,6 +577,10 @@ class CardTable
 				}
 			}
 			else if($attribute == "st" || $attribute == "status"){
+				if($infix == "!") {
+					$infix = "=";
+				}
+				
 				if($value == "play" || $value == "playable")
 				{
 					if($infix != "="){
@@ -615,7 +647,7 @@ class CardTable
 				}
 			}
 			else if($attribute == "m" || $attribute == "mana"){
-				if($infix != "="){
+				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with mana cost'\n";
 					continue;
 				}
@@ -653,6 +685,12 @@ class CardTable
 				
 				if($infix == "="){
 					$where = $where->and->nest()->like("card.mana_cost", "%{$processedValue}%")->or->like("card.mana_cost_2", "%{$processedValue}%")->unnest();
+				}
+				else if($infix == "!"){
+					$where = $where->and->nest()
+					->or->equalTo("card.mana_cost", $processedValue)
+					->or->nest()->notEqualTo("shape", Card::SHAPE_NORMAL)->and->equalTo('card.mana_cost_2', $processedValue)->unnest()
+					->unnest();
 				}
 			}
 			else {
