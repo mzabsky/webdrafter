@@ -221,7 +221,7 @@ class CardTable
 				if(strpos($str, "c") !== false){
 					$where = $where->and->nest()
 					->equalTo('card.colors', "")->or
-					->equalTo('card.colors_2', "")
+					->nest()->notEqualTo("shape", Card::SHAPE_NORMAL)->and->equalTo('card.colors_2', "")->unnest()
 					->unnest();
 					$numberOfColors = 0;
 				}
