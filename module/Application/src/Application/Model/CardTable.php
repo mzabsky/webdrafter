@@ -789,14 +789,14 @@ class CardTable
 		//var_dump($where->getExpressionData());
 		//$selectString = var_dump($sql->getSqlStringForSqlObject($where));
 		$select = new Select('card');
-		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
+		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('version_url_name' => 'url_name'));
 		if($unroll){
 			$select->join('set', 'set_version.set_id = set.set_id', array('set_name' => 'name'));
 		}
 		else {
-			$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+			$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_url_name' => 'url_name'));
 		}	
-		$select->join('user', 'set.user_id = user.user_id');
+		$select->join('user', 'set.user_id = user.user_id', array());
 		
 		$select->where->equalTo('set.is_private', 0);
 		$select->limit(1000);

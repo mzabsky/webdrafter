@@ -98,7 +98,9 @@ $(function(){
 			<?php if($this->cards != NULL){
 				foreach($this->cards as $card){
 					?>
-					<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' height="300"/>
+					<a href="<?php echo $this->url("browse-card", array('set_url_name' => $card->set_url_name, 'version_url_name' => $card->version_url_name, 'card_url_name' => $card->url_name))?>" title="<?php echo $card->name ?>">
+						<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' height="300"/>
+					</a>
 					<?php
 				}
 			}?>
