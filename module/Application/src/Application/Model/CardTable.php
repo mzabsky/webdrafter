@@ -133,8 +133,10 @@ class CardTable
 			else if($attribute == "" || $infix == ""){
 				$where = $where->and->nest()
 					->or->like("card.name", "%".$value."%")
+					->or->like("card.types", "%".$value."%")
 					->or->like("card.rules_text", "%".$value."%")
 					->or->like("card.name_2", "%".$value."%")
+					->or->like("card.types_2", "%".$value."%")
 					->or->like("card.rules_text_2", "%".$value."%")
 					->unnest();
 			}
@@ -544,6 +546,47 @@ class CardTable
 				
 				if(!$includeDiscontinued || $infix == "!="){
 					$where = $where->and->notEqualto("set.status", Set::STATUS_DISCONTINUED);
+				}
+			}
+			else if($attribute == "m" || $attribute == "mana"){
+				if($infix != ":" && $infix != "="){
+					$messages[] = "Operator '{$infix}' cannot be used with set'\n";
+					continue;
+				}
+				
+				$value = strtr($value, "{}", "[]");
+				
+				// Wrap stand-alone letters in square braces (eg. 7GG -> [7][G][G] and 2[2/R] -> [2][2/R])
+				$processedValue = "";
+				$isInBrace = false;
+				for ($i = 0; $i < strlen($value); $i++){
+					$c = $value[$i];
+					switch($c){						
+						case "[":
+							$isInBrace = true;
+							$processedValue .= $c;
+							break;
+						case "]":
+							$isInBrace = false;
+							$processedValue .= $c;
+							break;
+						case "/":
+							if(!$isInBrace){
+								$processedValue .= $c;
+							}
+							break;
+						default:
+							if($isInBrace){
+								$processedValue .= $c;
+							}
+							else {
+								$processedValue .= "[{$c}]";
+							}
+					}
+				}
+				
+				if($infix == ":" || $infix == "="){
+					$where = $where->and->nest()->like("card.mana_cost", "%{$processedValue}%")->or->like("card.mana_cost_2", "%{$processedValue}%")->unnest();
 				}
 			}
 			else {
