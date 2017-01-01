@@ -107,11 +107,23 @@ class CardTable
 			$value = $matches["value"];
 			$attribute = $matches["attribute"];
 			$infix = $matches["infix"];
+			$prefix = $matches["prefix"];
 		
 			$negated = false;
 			
+			// Transform != a negated prefix
+			if($infix == "!=") {
+				if($prefix == "-"){
+					$prefix = "";
+					$infix = "=";
+				}
+				else if($prefix == ""){
+					$prefix = "-";
+					$infix = "=";
+				}
+			}
 			
-			if($matches["prefix"] == "-" || $attribute == "not" )
+			if($prefix == "-" || $attribute == "not" )
 			{
 				$negated = true;
 				$completeWhere = $where;				
@@ -126,7 +138,7 @@ class CardTable
 				$infix = "=";
 			}
 			
-			if($matches["prefix"] == "!"){
+			if($prefix == "!"){
 				if($attribute != "" || $infix != ""){
 					$messages[] = "Operator '!' can be only used with a string literal in '{$token}'\n";
 					continue;
