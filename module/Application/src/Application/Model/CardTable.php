@@ -260,7 +260,7 @@ class CardTable
 					$where = $where->and->equalTo("types", $value);
 				}
 			}
-			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "text"){
+			else if($attribute == "o" || $attribute == "oracle" || $attribute == "rules" || $attribute == "rt" || $attribute == "text"){
 				if($infix != "=" && $infix != "!"){
 					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
 					continue;
@@ -279,9 +279,9 @@ class CardTable
 					->unnest();
 				}
 			}
-			else if($attribute == "f" || $attribute == "flavor"){
+			else if($attribute == "f" || $attribute == "ft" || $attribute == "flavor"){
 				if($infix != "=" && $infix != "!"){
-					$messages[] = "Operator '{$infix}' cannot be used with rules text'\n";
+					$messages[] = "Operator '{$infix}' cannot be used with flavor text'\n";
 					continue;
 				}
 				
