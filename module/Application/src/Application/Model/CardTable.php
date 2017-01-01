@@ -54,7 +54,7 @@ class CardTable
 		return $resultSet;
 	}
 	
-	public function queryCards($query)
+	public function queryCards($query, &$messages)
 	{
 		$sql = new Sql($this->tableGateway->adapter);
 		
@@ -782,6 +782,10 @@ class CardTable
 			}
 		}
 		
+		if(count($messages) > 0){
+			return null;
+		}
+		
 		//var_dump($where->getExpressionData());
 		//$selectString = var_dump($sql->getSqlStringForSqlObject($where));
 		$select = new Select('card');
@@ -799,7 +803,7 @@ class CardTable
 		
 		//$select->forUpdate();
 		$select->where($where);
-		//$select->order('draft.created_on DESC');
+		$select->order('set.set_id DESC, card.card_number ASC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		var_dump($selectString);
 		

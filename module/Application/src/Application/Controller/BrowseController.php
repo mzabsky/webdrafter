@@ -24,7 +24,8 @@ class BrowseController extends WebDrafterControllerBase
     	$viewModel = new ViewModel();
     	if(isset($_GET["query"])){
     		$viewModel->query = $_GET["query"];
-    		$viewModel->cards = $cardTable->queryCards($_GET["query"]);
+    		$viewModel->cards = $cardTable->queryCards($_GET["query"], $messages);
+    		$viewModel->messages = $messages;
     	}
     	else {
     		$viewModel->query = "";
