@@ -92,6 +92,17 @@ class Card
     	}
     }
     
+    public static function getShapeNameStatic($shape)
+    {
+    	switch($shape)
+    	{
+    		case self::SHAPE_NORMAL: return "normal";
+    		case self::SHAPE_SPLIT: return "split";
+    		case self::SHAPE_FLIP: return "flip";
+    		case self::SHAPE_DOUBLE: return "double";
+    	}
+    }
+    
     public function getRarityName()
     {
     	switch($this->rarity)

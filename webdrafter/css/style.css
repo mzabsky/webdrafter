@@ -886,4 +886,13 @@ form input.code-input {
   font-size: 65%;
   margin-left: 50px; }
 
+.query-results .card-image {
+  margin: 0 !important; }
+.query-results .card-image-normal, .query-results .card-image-flip {
+  height: 300px;
+  width: 216px; }
+.query-results .card-image-double {
+  height: 300px;
+  width: 431px; }
+
 /*# sourceMappingURL=style.css.map */

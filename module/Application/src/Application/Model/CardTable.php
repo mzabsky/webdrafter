@@ -791,7 +791,7 @@ class CardTable
 		$select = new Select('card');
 		$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('version_url_name' => 'url_name'));
 		if($unroll){
-			$select->join('set', 'set_version.set_id = set.set_id', array('set_name' => 'name'));
+			$select->join('set', 'set_version.set_id = set.set_id', array('set_url_name' => 'url_name'));
 		}
 		else {
 			$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_url_name' => 'url_name'));

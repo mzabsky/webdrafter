@@ -1229,3 +1229,19 @@ $shape-double-height: 523px;
 	font-size: 65%;	
 	margin-left: 50px;
 }
+
+.query-results {
+	.card-image {
+		margin: 0 !important;
+	}
+	
+	.card-image-normal, .card-image-flip {
+		height: 300px;
+		width: 216px;
+	}
+	
+	.card-image-double {
+		height: 300px;
+		width: 431px;
+	}
+}

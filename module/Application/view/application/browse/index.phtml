@@ -30,6 +30,8 @@ $(function(){
 	});
 	
 	$(".lazyload").lazyload({
+		effect : "fadeIn",
+		threshold : 200
 	});
 	
 	/*$(document).tooltip({
@@ -105,14 +107,12 @@ $(function(){
 		</ul>
 		<?php } else if($this->cards != null) { ?>
 		<div id='spoiler'>
-			<div class='spoiler-cards'>
+			<div class='spoiler-cards query-results'>
 			<p>Found <?php echo count($this->cards)?> cards.</p>
 			<?php if($this->cards != NULL){
 				foreach($this->cards as $card){
 					?>
-					<a href="<?php echo $this->url("browse-card", array('set_url_name' => $card->set_url_name, 'version_url_name' => $card->version_url_name, 'card_url_name' => $card->url_name))?>" title="<?php echo $card->name ?>">
-						<img class='lazyload' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" class='card-image card-image-<?php echo $card->shape ?>' height="300"/>
-					</a>
+					<a href="<?php echo $this->url("browse-card", array('set_url_name' => $card->set_url_name, 'version_url_name' => $card->version_url_name, 'card_url_name' => $card->url_name))?>" title="<?php echo $card->name ?>"><img class='lazyload card-image card-image-<?php echo \Application\Model\Card::getShapeNameStatic($card->shape) ?>' data-original="<?php echo $card->art_url ?>" alt="<?php echo $card->name ?>" height="300"/></a>
 					<?php
 				}
 			}?>
