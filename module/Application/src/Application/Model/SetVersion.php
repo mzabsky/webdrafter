@@ -185,7 +185,7 @@ class SetVersion implements InputFilterAwareInterface
     								'options' => array(
     										'encoding' => 'UTF-8',
     										'min'      => 0,
-    										'max'      => 5000,
+    										'max'      => 50000,
     								),
     						),
     				),
