@@ -533,7 +533,7 @@ class CardTable
 					continue;
 				}
 				
-				$orSets = explode("|", $value);
+				$orSets = $this->multiexplode(array("|", ","), $value);
 				$where = $where->and->nest();
 				foreach ($orSets as $orSet){
 					$andSets = explode("+", $orSet);
@@ -1035,6 +1035,13 @@ class CardTable
 				throw new \Exception('Card id does not exist');
 			}
 		}
+	}
+	
+	private function multiexplode ($delimiters,$string) {
+	
+		$ready = str_replace($delimiters, $delimiters[0], $string);
+		$launch = explode($delimiters[0], $ready);
+		return  $launch;
 	}
 	
 	/*public function delete($id)
