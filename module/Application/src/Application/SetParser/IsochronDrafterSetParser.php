@@ -36,6 +36,7 @@ class IsochronDrafterSetParser
 			{
 				case "shape":
 					if($data == "normal") $currentCard->shape = Card::SHAPE_NORMAL;
+					else if($data == "emblem") $currentCard->shape = Card::SHAPE_NORMAL;
 					else if($data == "split") $currentCard->shape = Card::SHAPE_SPLIT;
 					else if($data == "flip") $currentCard->shape = Card::SHAPE_FLIP;
 					else if($data == "double") $currentCard->shape = Card::SHAPE_DOUBLE;
@@ -178,7 +179,7 @@ class IsochronDrafterSetParser
 					break;
 
 				case "empty":
-					if(strpos($currentCard->types, 'Token') !== false)
+					if(strpos($currentCard->types, 'Token') !== false || strpos($currentCard->types, 'Emblem') !== false)
 					{
 						$currentCard->rarity = "T";
 					}
