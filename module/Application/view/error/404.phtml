@@ -8,6 +8,16 @@ Sorry, whatever it is you were looking for is not located on this website.
 <?php if (isset($this->reason) && $this->reason): ?>
 
 <?php
+
+/*$error_handler = new Raven_ErrorHandler($client);
+
+if($this->exception !== null){
+	$error_handler->handleException($e, true);
+}
+else {
+	$error_handler->handleError($type, $message)
+}*/
+
 $reasonMessage= '';
 switch ($this->reason) {
     case 'error-controller-cannot-dispatch':
