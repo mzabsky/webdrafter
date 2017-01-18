@@ -1,0 +1,14 @@
+<?php
+return array(
+	'db' => array(
+		'username' => 'root',
+		'password' => '',
+	),
+	'auth' => array( // Google auth
+		'clientId' => '<example>.apps.googleusercontent.com',
+		'clientSecret' => '<example>',
+		'driveAppId' => '<example>'
+	),
+	'gaTrackingCode' => '<example>', // Google analytics
+	'devRealm' => true // Shows a red warning that the instance is a dev realm
+);
