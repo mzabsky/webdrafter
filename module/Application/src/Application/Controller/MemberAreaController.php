@@ -625,11 +625,11 @@ class MemberAreaController extends WebDrafterControllerBase
 			else if($draft->gameMode == Draft::MODE_CHAOS_DRAFT)
 			{
 				$packGenerator = new BoosterDraftPackGenerator();
-				$draftSetVersions = $draftSetTable->fetchByDraft($draftId);
+				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
 				$draftSetVersionArray = array();				
 				
-				$convertedDraftSetVersionss = \Application\resultSetToArray($draftSetVersions);
-				while(count($draftSetArray) < count($draftSetVersions) * $numberOfPlayers)
+				$convertedDraftSetVersions = \Application\resultSetToArray($draftSetVersions);
+				while(count($draftSetVersionArray) < count($draftSetVersions) * $numberOfPlayers)
 				{
 					foreach($convertedDraftSetVersions as $draftSetVersion)
 					{
@@ -646,9 +646,11 @@ class MemberAreaController extends WebDrafterControllerBase
 				{
 					for($i = 0; $i < 3; $i++)
 					{
-
-						$cards = $cardTable->fetchBySet($draftSetVersionArray[$playerIndex * 3 + $i]->setId);
-						$pack = $packGenerator->generatePacks($cards, 1)[0];
+						$setVersionId = $draftSetVersionArray[$playerIndex * 3 + $i]->setVersionId;
+						$setVersion = $setVersionTable->getSetVersion($draftSetVersion->setVersionId);
+						
+						$cards = $cardTable->fetchBySetVersion($setVersionId);
+						$pack = $packGenerator->generatePacks($cards, 1, $setVersion->basicLandSlot, $setVersion->basicLandSlotNeedle)[0];
 						
 						foreach ($pack as $card)
 						{
