@@ -86,6 +86,7 @@ class LobbyController extends WebDrafterControllerBase
 		$draftPlayer->hasJoined = 1;
 		$draftPlayer->name = $name;
 		$draftPlayer->userId = $auth->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN ? $auth->getUser()->userId : null;
+		$draftPlayer->isAi = false;
 		$this->draftPlayerTable->saveDraftPlayer($draftPlayer);
 		
 		return $this->redirect()->toRoute('draft', array('invite_key' => $inviteKey));

@@ -459,6 +459,7 @@ class MemberAreaController extends WebDrafterControllerBase
 	
 	public function addDraftPlayerAction()
 	{
+		$isAi = (int)$_GET["is_ai"];	
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
 	
 		$sm = $this->getServiceLocator();
@@ -479,10 +480,19 @@ class MemberAreaController extends WebDrafterControllerBase
 		
 		$inviteKey = md5("draftplayer_" . time());
 		
+		// Count AI players
+		$aiPlayers = 0;
+		$draftPlayers = $draftPlayerTable->fetchJoinedByDraft($draftId);
+		foreach($draftPlayers as $draftPlayer){
+			if($draftPlayer->isAi == 1) $aiPlayers++;
+		}
+		
 		$draftPlayer = new DraftPlayer();
 		$draftPlayer->draftId = $draftId;
-		$draftPlayer->hasJoined = 0;
-		$draftPlayer->inviteKey = $inviteKey;
+		$draftPlayer->hasJoined = $isAi ? 1 : 0;
+		$draftPlayer->inviteKey = $isAi ? null : $inviteKey;
+		$draftPlayer->name = $isAi ? "AI Player #" . ($aiPlayers + 1) : null;
+		$draftPlayer->isAi = $isAi;
 		$draftPlayerTable->saveDraftPlayer($draftPlayer);
 		
 		$jsonModel = new JsonModel();

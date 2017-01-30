@@ -35,6 +35,14 @@ function addDraftPlayer()
 	});
 }
 
+function addAi()
+{
+	$("#draft_players").html("Loading...");
+	$.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'add-draft-player', 'draft_id' => $this->draft->draftId));?>?is_ai=1", function( data ) {		
+		refreshPage();
+	});
+}
+
 function refreshPlayersListExplicit()
 {
 	lastData = null;
@@ -83,10 +91,13 @@ function refreshPage()
 			//$("#draft_players").append("<button onclick=\"addDraftPlayer()\">Add player</button><button onclick=\"refreshPlayersListExplicit()\">Refresh</button>");
 			
 			var items = [];
+			var humanPlayers = 0;
 			$.each( data["draftPlayers"], function( key, val ) {
 				if(val["userId"] == <?php echo $this->auth()->getUser()->userId ?>) hostInviteKey = val["inviteKey"];
-				
-				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) : "<i>&lt;PENDING&gt;</i>");
+
+				var draftLink = val["isAi"] ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
+				var playerName = (val["isAi"] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"];
+				var url = "<input type='text' readonly value='" + draftLink + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + playerName + '</a>' : playerName) : "<i>&lt;PENDING&gt;</i>");
 
 				if(val["hasJoined"]){
 					url += " <a href='/member-area/draft/kick/<?php echo $this->draft->draftId ?>?user_id=" + val["userId"] + "' class='kick-link' title='Kick this player from the event'>X</a>";
@@ -96,11 +107,18 @@ function refreshPage()
 				
 				$("#start-event").show();
 				//alert();
+
+				if(val["isAi"] == 0) {
+					humanPlayers++;
+				}
 			});
 			
-			if(data["draftPlayers"].length > 0){
+			if(humanPlayers > 0){
 				$("#draft_players").append("<p>When all the players have joined, you can start the event by clicking \"Start event\". Once the event is started, players won't be able to join anymore.");
 				$("#draft_players").append("<input type='submit' onclick=\"startDraft()\" value='Start event' id='start-event' />");
+			}
+			else {
+				$("#draft_players").append("<p>At least one human player must join to allow you to start the event.</p>");
 			}
 		}
 		else if(data["draft"]["status"] == draftStatuses.running || data["draft"]["status"] == draftStatuses.finished)
@@ -144,8 +162,11 @@ function refreshPage()
 			else {
 				$("#draft_players").append(" <input type='submit' onclick=\"window.location='<?php echo $this->url('member-area-with-draft-id', array('action' => 'create-tournament', 'draft_id' => $this->draft->draftId));?>'\" value='Host a tournament' />");
 			}
-			
-		}		
+		}	
+		else
+		{
+			$("#draft_players").append(" <input type='submit' onclick=\"addAi()\" value='Add AI player' />");
+		}	
 
 		timer = setTimeout(function(){ refreshPage(); }, 1000);
 	});

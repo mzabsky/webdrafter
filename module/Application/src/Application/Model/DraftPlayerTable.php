@@ -53,6 +53,7 @@ class DraftPlayerTable
 			$obj->playerNumber = $result->player_number;
 			$obj->playerNumber = $result->player_number;
 			$obj->urlName = $result->url_name;
+			$obj->isAi = $result->is_ai;
 				
 			$resultArray[] = $obj;
 		}
@@ -95,6 +96,7 @@ class DraftPlayerTable
 			$obj->playerNumber = $result->player_number;
 			$obj->playerNumber = $result->player_number;
 			$obj->urlName = $result->url_name;
+			$obj->isAi = $result->is_ai;
 			
 			$resultArray[] = $obj;
 		}
@@ -167,7 +169,8 @@ class DraftPlayerTable
 			'user_id'  => $draftPlayer->userId,
 			'name'  => $draftPlayer->name,
 			'invite_key'  => $draftPlayer->inviteKey,
-			'player_number'  => $draftPlayer->playerNumber
+			'player_number'  => $draftPlayer->playerNumber,
+			'is_ai'  => $draftPlayer->isAi
 		);
 	
 		$id = (int) $draftPlayer->draftPlayerId;

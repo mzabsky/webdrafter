@@ -16,6 +16,8 @@ class GeneratorController extends WebDrafterControllerBase
 {
     public function sealedPoolAction()
     {
+	die("aaa");
+
     	$setVersionId = $this->getEvent()->getRouteMatch()->getParam('set_version_id');
     	$numberOfPacks = isset($_GET["n"]) ? (int)$_GET["n"] : 6;
     	
@@ -26,8 +28,8 @@ class GeneratorController extends WebDrafterControllerBase
     	$setVersion = $setVersionTable->getSetVersion($setVersionId);
     	
     	$cards = $cardTable->fetchBySetVersion($setVersionId);
-    	$generator = new \Application\PackGenerator\BoosterDraftPackGenerator();
-    	$packs = $generator->GeneratePacks($cards, $numberOfPacks, $setVersion->basicLandSlot, $setVersion->basicLandSlotNeedle);    	
+    	$generator = new \Application\PackGenerator\CubePackGenerator();
+    	$packs = $generator->GeneratePacks($cards, $numberOfPacks);    	
     	
     	$pool = array();
     	foreach ($packs as $pack)
@@ -48,6 +50,8 @@ class GeneratorController extends WebDrafterControllerBase
     	
     	//ksort($pool);
     	
+
+
     	$viewModel = new ViewModel();
     	$viewModel->pool = $pool;
     	return $viewModel;

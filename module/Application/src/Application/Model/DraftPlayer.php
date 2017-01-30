@@ -11,6 +11,7 @@ class DraftPlayer
 	public $draftId;
 	public $inviteKey;
 	public $playerNumber;
+	public $isAi;
     public function exchangeArray($data)
     {
         $this->draftPlayerId     = (!empty($data['draft_player_id'])) ? $data['draft_player_id'] : null;
@@ -20,5 +21,6 @@ class DraftPlayer
         $this->draftId = (!empty($data['draft_id'])) ? $data['draft_id'] : null;
         $this->inviteKey = (!empty($data['invite_key'])) ? $data['invite_key'] : null;
         $this->playerNumber = (!empty($data['player_number'])) ? $data['player_number'] : null;
+        $this->isAi = $data['is_ai'];
     }
 }
