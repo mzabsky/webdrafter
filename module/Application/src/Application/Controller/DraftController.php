@@ -178,8 +178,6 @@ class DraftController extends WebDrafterControllerBase
 			$adapter = $this->sm->get("Zend\Db\Adapter\Adapter");
 			$adapter->getDriver()->getConnection()->beginTransaction();
 		
-			
-			
 			// Validate the pick
 			$pick = $this->pickTable->getPick((int)$_GET["pickId"]);
 			if($pick->packNumber != $this->draft->packNumber || $pick->currentPlayerId != $this->draftPlayer->draftPlayerId || $pick->isPicked)
@@ -187,7 +185,6 @@ class DraftController extends WebDrafterControllerBase
 				throw new \Exception("Invalid pick");
 			}
 			
-
 			// If all players have picked, advance the entire draft to next pick
 			$picksMade = $this->pickTable->getNumberOfCurrentPicksMade($this->draft->draftId);
 			
@@ -197,7 +194,19 @@ class DraftController extends WebDrafterControllerBase
 			$this->pickTable->savePick($pick);
 
 			$draftPlayers = \Application\resultSetToArray($this->draftPlayerTable->fetchJoinedByDraft($this->draft->draftId));
-			$picksRequired = count($draftPlayers); 
+			$humanCount = 0;
+			$isAiByPlayerId = array();
+			foreach($draftPlayers as $draftPlayer)
+			{
+				if(!$draftPlayer->isAi)
+				{
+					$humanCount++;
+				}
+				
+				$isAiByPlayerId[$draftPlayer->draftPlayerId] = $draftPlayer->isAi; 
+			}
+			
+			$picksRequired = $humanCount; 
 			//var_dump($picksMade, $picksRequired); die();
 			if($picksMade + 1 == $picksRequired)
 			{
@@ -251,9 +260,22 @@ class DraftController extends WebDrafterControllerBase
 					
 					foreach($playerShiftMap as $fromPlayerId => $toPlayerId)
 					{
-						foreach($boosterByPlayer[$fromPlayerId] as $pick2)
+						$isAi = $isAiByPlayerId[$fromPlayerId];
+						if($isAi)
 						{
-							$pick2->currentPlayerId = $toPlayerId;
+							$aiPickIndex = rand(0, count($boosterByPlayer[$fromPlayerId]) - 1);
+						}
+						
+						foreach($boosterByPlayer[$fromPlayerId] as $i => $pick2)
+						{
+							if($isAi && $i == $aiPickIndex)
+							{
+								$pick2->isPicked = true;
+							}
+							else 
+							{
+								$pick2->currentPlayerId = $toPlayerId;
+							}
 							$this->pickTable->savePick($pick2);	
 						}
 						//$this->pickTable->shiftPicks($fromPlayerId, $toPlayerId, $this->draft->packNumber);
