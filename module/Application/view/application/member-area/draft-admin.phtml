@@ -95,8 +95,8 @@ function refreshPage()
 			$.each( data["draftPlayers"], function( key, val ) {
 				if(val["userId"] == <?php echo $this->auth()->getUser()->userId ?>) hostInviteKey = val["inviteKey"];
 
-				var draftLink = val["isAi"] ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
-				var playerName = (val["isAi"] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"];
+				var draftLink = val["isAi"] == 1 ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
+				var playerName = (val["isAi"] == 1 ? '<i class="fa fa-microchip"></i> ' : "") + val["name"];
 				var url = "<input type='text' readonly value='" + draftLink + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + playerName + '</a>' : playerName) : "<i>&lt;PENDING&gt;</i>");
 
 				if(val["hasJoined"]){
@@ -142,7 +142,9 @@ function refreshPage()
 
 				if(val["userId"] == <?php echo $this->auth()->getUser()->userId ?>) hostInviteKey = val["inviteKey"];
 
-				var url = "<input type='text' readonly value='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "' class='linkBox' onClick='selectAll(this)'/> " + (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) + " <small>(<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "/pick-list' target='blank'>pick list</a>)</small>";
+				var link = val["isAi"] == 1 ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
+				var pickList = val["isAi"] == 1 ? "" : "<small>(<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "/pick-list' target='blank'>pick list</a>)</small>";
+				var url = "<input type='text' readonly value='" + link + "' class='linkBox' onClick='selectAll(this)'/> " + (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) + " " + pickList;
 				$("#draft_players").append("<div>" + url + "</div>");
 			});
 		}
