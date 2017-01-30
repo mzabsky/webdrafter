@@ -594,9 +594,9 @@ class MemberAreaController extends WebDrafterControllerBase
 				$cardArray = array();				
 				foreach($cards as $card)
 				{
-					if(in_array($card->rarity, $allowedRarities)){
+					//if(in_array($card->rarity, $allowedRarities)){
 						$cardArray[] = $card;
-					}
+					//}
 				}
 				
 				$packs = $packGenerator->GeneratePacks($cardArray, $numberOfPlayers * count($draftSetVersions));
