@@ -209,7 +209,7 @@
 					$.each( data["draftPlayers"], function( key, val ) {
 						if(val["userId"] == null)
 						{
-							html += (val["isAi"] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"] + "<br/>";
+							html += (val["isAi" == 1] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"] + "<br/>";
 						}
 						else 
 						{
