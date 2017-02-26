@@ -268,7 +268,7 @@
 					var link;
 					if(val['userId'] == null)
 					{
-						link = (val["isAi"] ? '<i class="fa fa-microchip"></i> ' : "") + key;
+						link = (val["isAi"] == 1 ? '<i class="fa fa-microchip"></i> ' : "") + key;
 					}
 					else {
 						link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
