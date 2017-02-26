@@ -13,6 +13,6 @@ class Markdown extends \Zend\View\Helper\AbstractHelper
 {
     public function __invoke($text, $contextSetUrlName = null, $contextSetVersionUrlName = null)
     {
-    	return processMarkdown($text, $contextSetUrlName, $contextSetVersionUrlName);
+    	return '<div class="markdown-content">' . processMarkdown($text, $contextSetUrlName, $contextSetVersionUrlName) . '</div>';
     }
 }
