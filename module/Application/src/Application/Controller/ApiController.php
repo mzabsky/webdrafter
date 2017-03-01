@@ -72,4 +72,40 @@ class ApiController extends WebDrafterControllerBase
     	$jsonModel->sets = $jsonSets;
     	return $jsonModel;
     }
+    
+    public function uploadCardImageAction()
+    {
+    	$sm = $this->getServiceLocator();
+    	
+    	/*$this->getResponse()->setStatusCode(401);
+    	$this->getResponse()->setReasonPhrase("file ");
+    	$this->getResponse()->setContent(var_export($_FILES, true));
+    	return $this->getResponse();*/
+    	
+    	$userId = $this->user->userId;
+    	
+    	$config = $this->getServiceLocator()->get('Config');
+    	$dataDir = $config["data_dir"];
+    	
+    	$response = $this->getResponse();
+    	$headers = $response->getHeaders();
+    	$headers->addHeaderLine('Content-Type', 'text/plain; charset=utf-8');
+    	
+    	$ds = DIRECTORY_SEPARATOR;
+    	
+    	if (!empty($_FILES)) {
+    		$tempFile = $_FILES['file']['tmp_name'];
+    			
+    		$targetPath = $dataDir . $userId . $ds . "temp" . $ds . "api" . $ds;
+    		if(!is_dir($targetPath)){
+    			mkdir($targetPath, 0777, true);
+    		}
+    			
+    		$targetFile =  $targetPath. $_FILES['file']['name'];
+    		move_uploaded_file($tempFile,$targetFile); //6
+    	}
+    	 
+    	$jsonModel = new JsonModel();
+    	return $jsonModel;
+    }
 }
