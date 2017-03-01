@@ -36,6 +36,7 @@ function processSymbols($str, $contextSetUrlName = null, $contextSetVersionUrlNa
 	$str = preg_replace_callback("/!([lr]?)\\$openBracket\\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\\]\\$closeBracket/",
 			function($matches) use($contextSetUrlName, $contextSetVersionUrlName, $alignments)
 			{
+				if(strpos($matches[0], "<nowiki>") !== false) return $matches[0];
 				return '<a href="/autocard?context=' . $contextSetUrlName . '&contextVersion=' . $contextSetVersionUrlName . '&set=' . urlencode($matches[3]) . '&setVersion=' . urlencode($matches[5]) . '&card=' . urlencode($matches[6]) . '" class="autocard" target="_blank">
 		<img src="/autocard?image&context=' . $contextSetUrlName .'&contextVersion=' . $contextSetVersionUrlName . '&set=' . urlencode($matches[3]) .'&setVersion=' . urlencode($matches[5]) .'&card=' . urlencode($matches[6]) . '" class="autocard-image ' . ($matches[1] != NULL ? 'autocard-image-' . $alignments[$matches[1]] : '') . '" />
 		</a>';
@@ -43,6 +44,7 @@ function processSymbols($str, $contextSetUrlName = null, $contextSetVersionUrlNa
 
 	$str = preg_replace_callback("/\\$openBracket\\[(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):(([a-z][a-z0-9-]+|[0-9]+|[0-9]+):)?)?(.+?|[0-9]+)(\|(.+))?\\]\\$closeBracket/",
 			function($matches) use($contextSetUrlName, $contextSetVersionUrlName){
+				if(strpos($matches[0], "<nowiki>") !== false) return $matches[0];
 				return '<a href="/autocard?context=' . $contextSetUrlName . '&contextVersion=' . $contextSetVersionUrlName . '&set=' . urlencode($matches[2]) . '&setVersion=' . urlencode($matches[4]) . '&card=' . urlencode($matches[5]) . '" class="autocard" target="_blank">' . (count($matches) > 7 ? $matches[7] : $matches[5]) . '</a>';
 			}, $str);
 
