@@ -75,18 +75,19 @@ class IsochronDrafterSetParser
 					break;
 
 				case "name":
-					if(in_array($data, $usedNames))
+					$actualName = strip_tags($data);
+					if(in_array($actualName, $usedNames))
 					{
 						throw new \Exception("Name \"" . $data . "\" is used for more than one card on line " . $line . ".");
 					}
 
-					if(preg_match('/[;\[\]<>:|]/', $data))
+					if(preg_match('/[;\[\]<>:|]/', $actualName))
 					{
 						throw new \Exception("Card name \"" . $data . "\" must not contain characters ;, |, :, [, ], < and >.");
 					}
 
-					$usedNames[] = $data;
-					$currentCard->name = $data;
+					$usedNames[] = $actualName;
+					$currentCard->name = $actualName;
 					$state = "colors";
 					break;
 				case "colors":
@@ -134,7 +135,7 @@ class IsochronDrafterSetParser
 					break;
 
 				case "name2":
-					$currentCard->name2 = $data;
+					$currentCard->name2 = strip_tags($data);
 					$state = "colors2";
 					break;
 				case "colors2":
