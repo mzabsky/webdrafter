@@ -203,8 +203,6 @@ class MemberAreaController extends WebDrafterControllerBase
 			
 			$userTable->saveUser($user);
 			
-			//var_dump($client->getRefreshToken());die();
-			
 			if($user->name === null)
 			{
 				$_SESSION["not_registered"] = true;
@@ -214,12 +212,23 @@ class MemberAreaController extends WebDrafterControllerBase
 				$_SESSION["not_registered"] = false;
 			}
 			
-			$this->redirect()->toRoute('member-area');	
+			if(isset($_GET["state"])){
+				$this->redirect()->toUrl($_GET["state"]);
+			}
+			else {
+				$this->redirect()->toRoute('member-area');
+			}	
 		}
 		else if(isset($_SESSION['access_token']))
 		{
 			$client->setAccessToken($_SESSION['access_token']);
-			$this->redirect()->toRoute('member-area');	
+			
+			if(isset($_GET["return"])){
+				$this->redirect()->toUrl($_GET["return"]);
+			}
+			else {
+				$this->redirect()->toRoute('member-area');
+			}	
 		}
 		else {
 			session_destroy();
@@ -228,6 +237,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		}
 		
 		if ($client->isAccessTokenExpired()) {
+			//$_SESSION["return_url"] = $_GET["return"];
 			$client->refreshToken($client->getRefreshToken());
 		}
 		
