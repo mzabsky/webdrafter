@@ -80,7 +80,7 @@
 			        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
 			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
 			        	<?php } else  {?>
-			        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>?return=<?php echo urlencode($this->serverUrl(true)); ?>">Login</a>
+			        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>?return=<?php echo urlencode($this->serverUrl(true) == $this->serverUrl($this->url('home')) ? $this->url('member-area') : $this->serverUrl(true)); ?>">Login</a>
 			        	<?php } ?>
 		        	</div>
 	        		<div class="clear"></div>
