@@ -81,7 +81,7 @@ class GoogleAuthentication
 		$client->setAuthConfigFile('config/client_secret.json');
 		$client->setAccessType('offline');
 		$client->setRedirectUri($redirectUri);
-		$client->setPrompt("consent");
+		//$client->setPrompt("consent");
 	
 		return $client;
 	}
