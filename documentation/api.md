@@ -1,10 +1,10 @@
-#PlaneSculptors API Documentation
+# PlaneSculptors API Documentation
 Terminology:
 - **Client** is the application calling the PlaneSculptors API, regardless whether it is a web application, a desktop application or another kind of caller.
 - **Server** is PlaneSculptors.net.
 - **User** is the person using the Client to upload their set to the Server.
 
-##Set upload
+## Set upload
 The following diagram sums up the process of pushing a set to PS using the API:
 ![====](set-upload.png)
 ## User API key
@@ -21,9 +21,9 @@ All methods return a 2xx HTTP code if successful and 4xx or 5xx code if unsucces
 All requests are expected to be encoded in UTF8. All responses will be encoded in UTF8 as well.
 ### /api/get-user
 Returns information about the user owning the API key.
-**Requires API key:** Yes
-**Request:** No additional parameters.
-**Response:** 
+- **Requires API key:** Yes
+- **Request:** No additional parameters.
+- **Response:** 
 The response body contains following JSON object:
 ```
 {
@@ -39,9 +39,9 @@ The response body contains following JSON object:
 
 ### /api/get-user-sets
 Returns sets owned by the user owning the API key.
-**Requires API key:** Yes
-**Request:** No additional parameters.
-**Response:** 
+- **Requires API key:** Yes
+- **Request:** No additional parameters.
+- **Response:** 
 The response body contains following JSON object:
 ```
 {
@@ -60,16 +60,16 @@ Each set object looks like this:
 
 ### /api/reset-upload-session
 Resets the API upload session, deleting all files uploaded so far for the user owning the API key.
-**Requires API key:** Yes
-**Request:** No additional parameters.
-**Response:** An empty JSON object.
+- **Requires API key:** Yes
+- **Request:** No additional parameters.
+- **Response:** An empty JSON object.
 
 ### /api/upload-card-image
 Uploads a single card image to the current upload session for the user owning the API key.
-**Requires API key:** Yes
-**Request:** A single POST file upload named `file` with any (reasonable) file name containing a JPG or PNG file, using `multipart/form-data` content disposition.
-**Response:** An empty JSON object.
-**Notes:** 
+- **Requires API key:** Yes
+- **Request:** A single POST file upload named `file` with any (reasonable) file name containing a JPG or PNG file, using `multipart/form-data` content disposition.
+- **Response:** An empty JSON object.
+- **Notes:** 
 The image must be a valid JPG or PNG image. The image must be exactly 375 px wide and 523 px high. The file size must be no greater than 100 kB. No more than 1000 images are allowed (and cards).
 
 If the method is called repeatedly with the same name in the same upload session, the image will be overwritten and only the one uploaded the last will be used.
@@ -78,10 +78,10 @@ Feel free to initiate multiple card image uploads simultaneously (within reason,
 
 ### /api/upload-card-file
 Uploads a card file for the set to the current upload session for the user owning the API key.
-**Requires API key:** Yes
-**Request:** A single POST file upload named `file` with any (reasonable) file name containing a text file, using `multipart/form-data` content disposition.
-**Response:** An empty JSON object.
-**Notes:** 
+- **Requires API key:** Yes
+- **Request:** A single POST file upload named `file` with any (reasonable) file name containing a text file, using `multipart/form-data` content disposition.
+- **Response:** An empty JSON object.
+- **Notes:** 
 The file must be a text file in the format as described on the set file format page, encoded in UTF8. The file must be no larger than 100 kB.
 
 If the method is called repeatedly in the same upload session, the file will be overwritten and only the one uploaded the last will be used.
@@ -92,11 +92,11 @@ Note that detailed validations of the individual cards are not that at the time 
 
 ### /api/finalize-set-upload
 Finalizes the set upload session for the user owning the API key, returning a redirect URL which is to be opened for the user to actually finish the set upload process directly on PlaneSculptors.
-**Requires API key:** Yes
-**Request:** 
+- **Requires API key:** Yes
+- **Request:** 
 `returnUrl` - specifies a URL, to which the user will be redirected to when the upload process is finished. If this argument is not provided, a standard PlaneSculptors confirmation page will be shown.
 `setId` - specifies an ID of a set to which this set upload belongs to. This ID can be obtained using the `/api/get-user-sets` method. If this argument is not provided, the user will be
-**Response:**
+- **Response:**
 The response body contains following JSON object:
 ```
 {
@@ -105,7 +105,7 @@ The response body contains following JSON object:
 }
 ```
 The `redirectRequired` field specifies if opening the `redirectUrl` is required. If it is `false`, no further action from the client is required. If it is `true`, the client is expected to redirect to the `redirectUrl` (if the client is a web application, if it is a desktop/mobile application, it is expected to launch a browser opening this URL). This URL is only valid for several minutes, so the client needs to proceed as soon as possible.
-**Notes:**
+- **Notes:**
 When this URL is called, the current upload session is finalized (all the files are moved to another location). Calling this method again without re-uploading all the files with inevitably result in an error.
 
 This method also validates the set file and that all the images for all the cards were uploaded.
