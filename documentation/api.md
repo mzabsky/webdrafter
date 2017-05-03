@@ -13,7 +13,8 @@ Many methods require the client to provide a user's API key. The user can find t
 The client provides the API key using an `apiCode` POST parameter. If no (or an invalid) API key is provided to a method that expects it, a 401 HTTP code is returned.
 
 Methods that don't require API key are considered public.
-##Methods
+
+## Methods
 All methods are invoked using the POST HTTP method.
 
 All methods return a 2xx HTTP code if successful and 4xx or 5xx code if unsuccessful. If a detailed diagnostic message is available, it is provided using the reason phrase field in the HTTP response.
