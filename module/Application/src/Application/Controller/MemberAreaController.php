@@ -59,6 +59,53 @@ class MemberAreaController extends WebDrafterControllerBase
 		return false;
 	}
 	
+	private function processSetUpload($set, $artUrlFormat, $uploadId, $dir, $parser){
+		$setFile = $dir . 'set';
+		
+		if(!file_exists($setFile)){
+			throw new \Exception("Set file not uploaded. Add a single text file.");
+		}
+		
+		$fileContents = file_get_contents($setFile);
+		
+		// Get cards from the current version so that we can compare the uploaded file against it
+		$sm = $this->getServiceLocator();
+		$cardTable = $sm->get('Application\Model\CardTable');
+		$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
+		$currentVersionCardArray = array();
+		foreach($currentVersionCards as $card)
+		{
+			$currentVersionCardArray[$card->name] = $card;
+		}
+		
+		$cards = $parser->Parse($fileContents);
+		
+		if(count($cards) > 1000){
+			throw new \Exception("Maximum allowed number of cards in a set is 1000.");
+		}
+		
+		foreach($cards as $card)
+		{
+			if(!file_exists($dir . "/" . $card->imageName)){
+				throw new \Exception("Image for card \"" . $card->name . "\" is missing, file named \"" . $cardArtName . "\" was expected.");
+			}
+				
+			$card->artUrl = $card->imageName; // This is not a full URL yet
+				
+			//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
+			$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
+			$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? ($currentVersionCardArray[$card->name]->firstVersionCardId != NULL ? $currentVersionCardArray[$card->name]->firstVersionCardId : $currentVersionCardArray[$card->name]->cardId) : NULL;
+			$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
+		}
+		
+		//die();
+		
+		$_SESSION["card_file_cards"] = serialize($cards);
+		$_SESSION["upload_id"] = $uploadId;
+		$_SESSION["upload_dir"] = $dir;
+		return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload_id' => $uploadId)));
+	}
+	
 	public function keepAliveAction(){
 		return new JsonModel();
 	}
@@ -743,6 +790,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$uploadErrorMessages = null;
 		
 		$sm = $this->getServiceLocator();
+		$config = $this->getServiceLocator()->get('Config');
 		$auth = $this->auth();
 		$setTable = $sm->get('Application\Model\SetTable');
 		
@@ -799,85 +847,15 @@ class MemberAreaController extends WebDrafterControllerBase
 				$uploadForm->setData($formData);
 				//if ($uploadForm->isValid($formData)) 
 				{
-
 					try
 					{
-						$ds = DIRECTORY_SEPARATOR;
-						$uploadId = (int)$formData["upload_id"];
-						$config = $this->getServiceLocator()->get('Config');
-						$dataDir = $config["data_dir"];
-						
-						$userId = $this->auth()->getUser()->userId;
-						$setDir = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
-						
-						$setFile = $setDir . 'set';
-						
-						if(!file_exists($setFile)){
-							throw new \Exception("Set file not uploaded. Add a single *.txt file.");
-						}
-						
-						$fileContents = file_get_contents($setFile); 
-						
-						//$artUrl = $dataDir . $userId . $ds . "{set_id}" . $ds . $uploadId . $ds;
-						
-						//$fileContents = file_get_contents($this->getRequest()->getFiles('file')["tmp_name"]);
-						
-						// Get cards from the current version so that we can compare the uploaded file against it
-						$cardTable = $sm->get('Application\Model\CardTable');
-						$currentVersionCards = $cardTable->fetchBySetVersion($set->currentSetVersionId);
-						$currentVersionCardArray = array();
-						foreach($currentVersionCards as $card)
-						{
-							$currentVersionCardArray[$card->name] = $card;
-						}
-					
-						$parser = new \Application\SetParser\IsochronDrafterSetParser();
-						$cards = $parser->Parse($fileContents);
-						
-						if(count($cards) > 720){
-							throw new \Exception("Maximum allowed number of cards in a set is 720.");
-						}
-						
-						foreach($cards as $card)
-						{
-							$cardArtName = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
 
-							switch($formData["art_url_format"])
-							{
-								case UploadCardsForm::NAME_DOT_PNG:
-									$cardArtName = $cardArtName . ".png"; // rawurlencode(
-									break;
-								case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
-									$cardArtName = $cardArtName . ".full.png";
-									break;
-								case UploadCardsForm::NAME_DOT_JPG:
-									$cardArtName = $cardArtName . ".jpg";
-									break;
-								case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
-									$cardArtName = $cardArtName . ".full.jpg";
-									break;
-								default:
-									throw new \Exception("Invalid art URL format.");
-							}
-							
-							if(!file_exists($setDir . $cardArtName)){
-								throw new \Exception("Image for card \"" . $card->name . "\" is missing, file named \"" . $cardArtName . "\" was expected.");
-							}
-							
-							$card->artUrl = $cardArtName; // This is not a full URL yet
-							
-							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
-							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
-							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? ($currentVersionCardArray[$card->name]->firstVersionCardId != NULL ? $currentVersionCardArray[$card->name]->firstVersionCardId : $currentVersionCardArray[$card->name]->cardId) : NULL;
-							$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
-						}
-						
-						//die();
-						
-						$_SESSION["card_file_cards"] = serialize($cards);
-						$_SESSION["upload_id"] = $uploadId;
-				
-						return $this->redirect()->toRoute('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $set->setId), array('query' => array('upload_id' => $uploadId)));
+						$dataDir = $config["data_dir"];
+						$userId = $this->auth()->getUser()->userId;
+						$uploadId = (int)$formData["upload_id"];
+						$ds = DIRECTORY_SEPARATOR;
+						$setDir = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
+						return $this->processSetUpload($set, $uploadId, $setDir, new \Application\SetParser\IsochronDrafterSetParser($formData["art_url_format"]));
 					}
 					catch (\Exception $e)
 					{
@@ -885,10 +863,6 @@ class MemberAreaController extends WebDrafterControllerBase
 						$uploadErrorMessages = array($e->getMessage());
 					}
 				} 
-				//else 
-				{
-					//var_dump($form->getMessages());
-				}
 			}	
 		}
 		
@@ -1006,7 +980,7 @@ class MemberAreaController extends WebDrafterControllerBase
 				$ds = DIRECTORY_SEPARATOR;
 					
 				// Validate that the temp dir exists for this upload (it's consistency should be guaranteed by the previous step, which is in turn guaranteed by the session key)
-				$tempSetDir = $dataDir . $userId . $ds . "temp" . $ds . $uploadId . $ds;
+				$tempSetDir = $_SESSION["upload_dir"];
 				if(!is_dir($tempSetDir)){
 					$this->redirect()->toRoute('member-area-manage-set', array('set_id' => $setId), array('fragment' => 'upload', 'query' => 'upload-expired'));
 				}
@@ -1028,7 +1002,7 @@ class MemberAreaController extends WebDrafterControllerBase
 
 					$finalSetDir = $dataDir . $userId . $ds . $setVersion->setVersionId . $ds;
 					if(!mkdir($finalSetDir, 0777, true)){
-						throw new \Exception("Could not create dir for the set.");
+						throw new \Exception("Could not create dir \"$finalSetDir\" for the set.");
 					}
 					
 					if(!rename($tempSetDir . 'set', $finalSetDir . 'set')){
@@ -1038,7 +1012,7 @@ class MemberAreaController extends WebDrafterControllerBase
 					foreach($cards as $card)
 					{
 						if(!rename($tempSetDir . $card->artUrl, $finalSetDir . $card->artUrl)){
-							throw new \Exception("Could move file \"" . $card->artUrl . "\" to the final location.");;
+							throw new \Exception("Could not move file \"" . $card->artUrl . "\" to the final location.");;
 						}
 						$card->artUrl = "/upload/" . $userId . "/" . $setVersion->setVersionId ."/" . rawurlencode($card->artUrl);
 						$card->setVersionId = $setVersion->setVersionId;
@@ -1347,6 +1321,29 @@ class MemberAreaController extends WebDrafterControllerBase
 		}
 
 		return $response;
+	}
+	
+	public function finishSetImportAction()
+	{
+		$auth = $this->auth();
+		$sm = $this->getServiceLocator();
+		$config = $this->getServiceLocator()->get('Config');
+		$setTable = $sm->get('Application\Model\SetTable');
+		$set = $setTable->getSet((int)$_GET["setId"]);
+		if($set === null) {
+			return $this->notFoundAction();
+		}
+		
+		try {
+			$ds = DIRECTORY_SEPARATOR;
+			$dataDir = $config["data_dir"];
+			$setDir = $dataDir . $auth->getUser()->userId . $ds . "temp" . $ds . "api" . $ds;
+			
+			$redirect = $this->processSetUpload($set, UploadCardsForm::NAME_DOT_JPG, rand(), $setDir, new \Application\SetParser\JsonSetParser());
+			return $redirect;
+		} catch(\Exception $e) {
+			echo $e;			
+		}
 	}
 }
 ?>

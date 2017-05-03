@@ -7,6 +7,13 @@ use Application\Model\Card;
 
 class IsochronDrafterSetParser
 {
+	private $artUrlFormat;
+	
+	function __construct($artUrlFormat)
+	{
+		$this->artUrlFormat = $artUrlFormat;
+	}
+	
 	public function Parse($string)
 	{
 		$cards = array();
@@ -190,6 +197,25 @@ class IsochronDrafterSetParser
 						$currentCard->rarity = "B";
 					}
 
+					$imageName = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
+					switch($this->artUrlFormat)
+					{
+						case UploadCardsForm::NAME_DOT_PNG:
+							$currentCard->imageName = $imageName  . ".png";
+							break;
+						case UploadCardsForm::NAME_DOT_FULL_DOT_PNG:
+							$currentCard->imageName = $imageName . ".full.png";
+							break;
+						case UploadCardsForm::NAME_DOT_JPG:
+							$currentCard->imageName = $imageName . ".jpg";
+							break;
+						case UploadCardsForm::NAME_DOT_FULL_DOT_JPG:
+							$currentCard->imageName = $imageName . ".full.jpg";
+							break;
+						default:
+							throw new \Exception("Invalid art URL format.");
+					}
+					
 					/*if(strpos($currentCard->types, 'Token') === false)
 					{*/
 						$originalUrlName = \Application\toUrlName($currentCard->name);
