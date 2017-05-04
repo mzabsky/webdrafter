@@ -83,7 +83,7 @@ Uploads a card file for the set to the current upload session for the user ownin
 - **Request:** A single POST file upload named `file` with any (reasonable) file name containing a text file, using `multipart/form-data` content disposition.
 - **Response:** An empty JSON object.
 - **Notes:** 
-The file must be a text file in the format as described on the set file format page, encoded in UTF8. The file must be no larger than 100 kB.
+The file must be a text file in the format as described on the [set file format page](cardfile.md), encoded in UTF8. The file must be no larger than 100 kB.
 
 If the method is called repeatedly in the same upload session, the file will be overwritten and only the one uploaded the last will be used.
 
