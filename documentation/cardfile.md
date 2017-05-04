@@ -16,7 +16,7 @@ The file must contain no more than 1000 cards.
 ## Card object
 The card object has following fields (M = "is mandatory"):
 
- Field | Type | Example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| M | Description 
+Field | Type | Example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| M | Description 
 -------|------|---------|-------------
 layout | string | `'normal'` | N |  Only 'normal' is supported, for now. If ommitted, the layout is considered to be `'normal'`.
 name | string | `'Aven Harrier'` | Y | Actual name of the card. Any special characters are considered as they are, italics and other HTML tags are not evaluated. Must be unique within the file. Must be non-empty. Must be no longer than 30 characters. Must not contain any unprintable characters other than simple space. Must not start or end with whitespace. 
@@ -29,7 +29,7 @@ type | string | `'Legendary creature — Human Warrior'` | Y | Full type line of
 rarity | string | `'Mythic Rare'` | Y | Rarity of the card. Must be one of `'C'`, `'U'`, `'R'`, `'M'` or `'Common'`, `'Uncommon'`, `'Rare'`, `'Mythic Rare'`.
 text | string | '{T}: Add {G} to your mana pool.' | N | Rules text of the card. May contain Magic symbols (see below) and HTML tags `'<strong>'`, `'<b>'`, `'<i>'` and `'<em>'` (no other tags are allowed, the tags are not allowed to have any attributes, all opened tags must be closed). Must be no longer than 1000 characters.
 flavor | string | `“I never let reality dictate my potential.”` | 'N | Rules text of the card. May contain HTML tags `'<strong>'`, `'<b>'`, `'<i>'` and `'<em>'` (no other tags are allowed, the tags are not allowed to have any attributes, all opened tags must be closed). The meaning of italics tags (`em` and `i`) is inverted (entirety of the flavor text is considered italics, explicitly italicized are considered not italicized). Symbols in flavor text are not evaluated. Must be no longer than 1000 characters.
-artist | string | `Cris Yang` | N | Artist name for the card. Any special characters are considered as they are, italics and other HTML tags are not evaluated. Must be no longer than 30 characters. Must not contain any unprintable characters other than simple space. Must not start or end with whitespace.
+artist | string | `'Cris Yang'` | N | Artist name for the card. Any special characters are considered as they are, italics and other HTML tags are not evaluated. Must be no longer than 30 characters. Must not contain any unprintable characters other than simple space. Must not start or end with whitespace.
 number | string or int | `'123b'` | Y | Number of the card. Must be a number that optionally ends with `a` or `b`. The number must be greater than 0 and less than or equal to 1000.
 power | string or int | `'*'` | N | Power as printed on the card. Can be a number or a short expression. Must be no longer than 4 characters.
 toughness | string or int | `'*'` | N | Toughness as printed on the card. Can be a number or a short expression. Must be no longer than 4 characters.
