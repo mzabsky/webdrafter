@@ -4,7 +4,7 @@ Any fields that are not recognized are ignored by the set importer.
 The card file is a JSON file containing an array of card objects:
 ```
 [
-	{ 'name': 'Card One', ... },
+    { 'name': 'Card One', ... },
     { 'name': 'Card Two', ... },
     ...
 ]
@@ -16,8 +16,8 @@ The file must contain no more than 1000 cards.
 ## Card object
 The card object has following fields (M = "is mandatory"):
 
- Field | Type | Example&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| M | Description 
--------|------|---------|-------------
+Field | Type | Example | M | Description 
+------|------|---------|---|------------
 layout | string | `'normal'` | N |  Only 'normal' is supported, for now. If ommitted, the layout is considered to be `'normal'`.
 name | string | `'Aven Harrier'` | Y | Actual name of the card. Any special characters are considered as they are, italics and other HTML tags are not evaluated. Must be unique within the file. Must be non-empty. Must be no longer than 30 characters. Must not contain any unprintable characters other than simple space. Must not start or end with whitespace. 
 names | string[] | `[]` | N | Reserved for DFCs.
