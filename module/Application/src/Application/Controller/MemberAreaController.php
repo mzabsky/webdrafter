@@ -1329,20 +1329,27 @@ class MemberAreaController extends WebDrafterControllerBase
 		$sm = $this->getServiceLocator();
 		$config = $this->getServiceLocator()->get('Config');
 		$setTable = $sm->get('Application\Model\SetTable');
-		$set = $setTable->getSet((int)$_GET["setId"]);
-		if($set === null) {
-			return $this->notFoundAction();
-		}
-		
-		try {
-			$ds = DIRECTORY_SEPARATOR;
-			$dataDir = $config["data_dir"];
-			$setDir = $dataDir . $auth->getUser()->userId . $ds . "temp" . $ds . "api" . $ds;
+		if(isset($_GET["setId"])) {
+			$set = $setTable->getSet((int)$_GET["setId"]);
+			if($set === null) {
+				return $this->notFoundAction();
+			}
 			
-			$redirect = $this->processSetUpload($set, UploadCardsForm::NAME_DOT_JPG, rand(), $setDir, new \Application\SetParser\JsonSetParser());
-			return $redirect;
-		} catch(\Exception $e) {
-			echo $e;			
+			try {
+				$ds = DIRECTORY_SEPARATOR;
+				$dataDir = $config["data_dir"];
+				$setDir = $dataDir . $auth->getUser()->userId . $ds . "temp" . $ds . "api" . $ds;
+					
+				$redirect = $this->processSetUpload($set, UploadCardsForm::NAME_DOT_JPG, rand(), $setDir, new \Application\SetParser\JsonSetParser());
+				return $redirect;
+			} catch(\Exception $e) {
+				echo $e;
+			}	
+		}
+		else {
+			$viewModel = new ViewModel();
+			$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"], true);
+			return $viewModel;
 		}
 	}
 }
