@@ -15,7 +15,12 @@ class JsonSetParser
 		$cards = array();
 		$usedNames = array();
 		$usedUrlNames = array();
-		foreach ($jsonData as $cardData) 
+		
+		if(count($jsonData)) {
+			throw new \Exception("Too many cards in the card file (1000 is maximum)");	
+		}
+		
+		foreach ($jsonData as $i => $cardData) 
 		{
 			$currentCard = new \Application\Model\Card();
 			$currentCard->shape = Card::SHAPE_NORMAL;
@@ -23,11 +28,11 @@ class JsonSetParser
 			$currentCard->name = $cardData->name;
 			
 			$currentCard->colors = "";
-			if(in_array('White', $cardData->colors) !== false) $currentCard->colors .= "W";
-			if(in_array('Blue', $cardData->colors) !== false) $currentCard->colors .= "U";
-			if(in_array('Black', $cardData->colors) !== false) $currentCard->colors .= "B";
-			if(in_array('Red', $cardData->colors) !== false) $currentCard->colors .= "R";
-			if(in_array('Green', $cardData->colors) !== false) $currentCard->colors .= "G";
+			if(in_array('White', $cardData->colors) !== false || in_array('W', $cardData->colors) !== false) $currentCard->colors .= "W";
+			if(in_array('Blue', $cardData->colors) !== false || in_array('U', $cardData->colors) !== false) $currentCard->colors .= "U";
+			if(in_array('Black', $cardData->colors) !== falsein_array('B', $cardData->colors) !== false) $currentCard->colors .= "B";
+			if(in_array('Red', $cardData->colors) !== false || in_array('R', $cardData->colors) !== false) $currentCard->colors .= "R";
+			if(in_array('Green', $cardData->colors) !== false || in_array('G', $cardData->colors) !== false) $currentCard->colors .= "G";
 			
 			$currentCard->cmc = (int)$cardData->cmc;
 			
@@ -43,7 +48,29 @@ class JsonSetParser
 			$currentCard->toughness = (int)$cardData->toughness;
 			$currentCard->ptString = $cardData->power != null && $cardData->toughness != null ? $cardData->power . "/" . $cardData->toughness : null;
 			
-			$currentCard->rarity = $cardData->rarity;
+			switch($cardData->rarity) {
+				case "C":
+				case "Common":
+				case "B":
+				case "Basic Land":
+				case "T":
+				case "Token":
+					$currentCard->rarity = "C";
+				case "U":
+				case "Uncommon":
+					$currentCard->rarity = "U";
+				case "R":
+				case "Rare":
+					$currentCard->rarity = "R";
+				case "Mythic Rare":
+				case "M":
+					$currentCard->rarity = "M";
+				case "Special":
+				case "S":
+					$currentCard->rarity = "S";
+				default:
+				 	throw new Exception("Unrecognized rarity \"$currentCard->rarity\" in card \"$currentCard->name\" (card $i)");
+			}
 			
 			$currentCard->rulesText = $this->replaceSymbols($cardData->text);
 			
@@ -119,6 +146,12 @@ class JsonSetParser
 		$str = str_replace("{P/B}", '[PB]', $str);
 		$str = str_replace("{P/R}", '[PR]', $str);
 		$str = str_replace("{P/G}", '[PG]', $str);
+		
+		$str = str_replace("{W/P}", '[PW]', $str);
+		$str = str_replace("{U/P}", '[PU]', $str);
+		$str = str_replace("{B/P}", '[PB]', $str);
+		$str = str_replace("{R/P}", '[PR]', $str);
+		$str = str_replace("{G/P}", '[PG]', $str);
 		
 		$str = str_replace("{W/U}", '[WU]', $str);
 		$str = str_replace("{U/W}", '[WU]', $str);
