@@ -786,6 +786,8 @@ class CardTable
 			return null;
 		}
 		
+		$where->and->equalTo("set.is_private", 0);
+		
 		//var_dump($where->getExpressionData());
 		//$selectString = var_dump($sql->getSqlStringForSqlObject($where));
 		$select = new Select('card');
@@ -798,10 +800,8 @@ class CardTable
 		}	
 		$select->join('user', 'set.user_id = user.user_id', array());
 		
-		$select->where->equalTo('set.is_private', 0);
 		$select->limit(1000);
 		
-		//$select->forUpdate();
 		$select->where($where);
 		$select->order('set.set_id DESC, card.card_number ASC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
