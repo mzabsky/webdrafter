@@ -313,6 +313,8 @@ class DraftController extends WebDrafterControllerBase
 	
 	public function exportAction()
 	{
+		$fixApostrophes = function($cardName) { return str_replace("\xE2\x80\x99", "'", $cardName); };//’
+		
 		$this->init();
 		
 		if(!isset($_GET["type"]) || strlen($_GET["type"]) < 1)
@@ -330,26 +332,28 @@ class DraftController extends WebDrafterControllerBase
 		$maindeckArray = array();
 		foreach($maindeck as $card)
 		{
-			if(isset($maindeckArray[$card->name]))
+			$cardName = $fixApostrophes($card->name);
+			if(isset($maindeckArray[$cardName]))
 			{
-				$maindeckArray[$card->name]++;
+				$maindeckArray[$cardName]++;
 			}
 			else 
 			{
-				$maindeckArray[$card->name] = 1;
+				$maindeckArray[$cardName] = 1;
 			}
 		}
 		
 		$sideboardArray = array();
 		foreach($sideboard as $card)
 		{
-			if(isset($sideboardArray[$card->name]))
+			$cardName = $fixApostrophes($cardName);
+			if(isset($sideboardArray[$cardName]))
 			{
-				$sideboardArray[$card->name]++;
+				$sideboardArray[$cardName]++;
 			}
 			else 
 			{
-				$sideboardArray[$card->name] = 1;
+				$sideboardArray[$cardName] = 1;
 			}
 		}
 		
