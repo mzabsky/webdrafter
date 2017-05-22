@@ -16,7 +16,7 @@ class JsonSetParser
 		$usedNames = array();
 		$usedUrlNames = array();
 		
-		if(count($jsonData)) {
+		if(count($jsonData) > 1000) {
 			throw new \Exception("Too many cards in the card file (1000 is maximum)");	
 		}
 		
@@ -30,7 +30,7 @@ class JsonSetParser
 			$currentCard->colors = "";
 			if(in_array('White', $cardData->colors) !== false || in_array('W', $cardData->colors) !== false) $currentCard->colors .= "W";
 			if(in_array('Blue', $cardData->colors) !== false || in_array('U', $cardData->colors) !== false) $currentCard->colors .= "U";
-			if(in_array('Black', $cardData->colors) !== falsein_array('B', $cardData->colors) !== false) $currentCard->colors .= "B";
+			if(in_array('Black', $cardData->colors) !== false || in_array('B', $cardData->colors) !== false) $currentCard->colors .= "B";
 			if(in_array('Red', $cardData->colors) !== false || in_array('R', $cardData->colors) !== false) $currentCard->colors .= "R";
 			if(in_array('Green', $cardData->colors) !== false || in_array('G', $cardData->colors) !== false) $currentCard->colors .= "G";
 			
@@ -56,20 +56,25 @@ class JsonSetParser
 				case "T":
 				case "Token":
 					$currentCard->rarity = "C";
+					break;
 				case "U":
 				case "Uncommon":
 					$currentCard->rarity = "U";
+					break;
 				case "R":
 				case "Rare":
 					$currentCard->rarity = "R";
+					break;
 				case "Mythic Rare":
 				case "M":
 					$currentCard->rarity = "M";
+					break;
 				case "Special":
 				case "S":
 					$currentCard->rarity = "S";
+					break;
 				default:
-				 	throw new Exception("Unrecognized rarity \"$currentCard->rarity\" in card \"$currentCard->name\" (card $i)");
+				 	throw new \Exception("Unrecognized rarity \"$currentCard->rarity\" in card \"$currentCard->name\" (card $i)");
 			}
 			
 			$currentCard->rulesText = $this->replaceSymbols($cardData->text);
