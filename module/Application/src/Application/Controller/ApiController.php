@@ -18,13 +18,49 @@ class ApiController extends WebDrafterControllerBase
 {
 	protected $user;
 	
+	private function getApiUploadDir() 
+	{
+		$config = $this->getServiceLocator()->get('Config');
+		$dataDir = $config["data_dir"];
+			
+		$ds = DIRECTORY_SEPARATOR;
+		
+		return $dataDir . $this->user->userId . $ds . "temp" . $ds . "api";
+	}
+	
+	private function getCurrentUploadSessionId()
+	{
+		$targetPath = $this->getApiUploadDir() . DIRECTORY_SEPARATOR . "session";
+		if(file_exists($targetPath)){
+			return file_get_contents($targetPath);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	private function checkUploadSessionId(){
+		$uploadSessionId = @$_POST["uploadSessionId"];
+		if($uploadSessionId === null) {
+			$this->getResponse()->setStatusCode(400);
+			$this->getResponse()->setReasonPhrase("Upload session ID not set.");
+			return $this->getResponse();
+		}
+		else if($uploadSessionId != $this->getCurrentUploadSessionId()) {
+			$this->getResponse()->setStatusCode(409);
+			$this->getResponse()->setReasonPhrase("Bad upload session ID (another session is in progress).");
+			return $this->getResponse();
+		}
+
+		return null;
+	}
+	
 	public function onDispatch(\Zend\Mvc\MvcEvent $e)
 	{
 		$apiKey = @$_POST["apiKey"];
 		if($apiKey == null){
 			$this->getResponse()->setStatusCode(401);
 			$this->getResponse()->setReasonPhrase("API key not provided.");
-			$this->getResponse()->setContent(var_export($_POST, true));
         	return $this->getResponse();
 		}
 		
@@ -75,15 +111,28 @@ class ApiController extends WebDrafterControllerBase
     	$jsonModel->sets = $jsonSets;
     	return $jsonModel;
     }
-    
-    public function resetUploadSession()
+
+    public function createUploadSessionAction()
     {
-    	$config = $this->getServiceLocator()->get('Config');
-    	$dataDir = $config["data_dir"];
-    	$targetPath = $dataDir . $userId . $ds . "temp" . $ds . "api" . $ds;
- 		// TODO: Finish
+    	if($this->getCurrentUploadSessionId() != null) {
+    		$files = glob($this->getApiUploadDir());
+    		foreach($files as $file){
+    			if(is_file($file))
+    				unlink($file);
+    		}
+    	}
+    	
+    	$uploadDir = $this->getApiUploadDir();
+    	if(!is_dir($uploadDir)){
+    		mkdir($uploadDir, 0777, true);
+    	}
+    	
+    	$targetPath = $uploadDir . DIRECTORY_SEPARATOR . "session";
+    	$uploadSessionId = md5("api" . time() . $this->user->userId);
+    	file_put_contents($targetPath, $uploadSessionId);
     	
     	$jsonModel = new JsonModel();
+    	$jsonModel->uploadSessionId = $uploadSessionId;
     	return $jsonModel;
     }
     
@@ -95,6 +144,10 @@ class ApiController extends WebDrafterControllerBase
     	$this->getResponse()->setReasonPhrase("file ");
     	$this->getResponse()->setContent(var_export($_FILES, true));
     	return $this->getResponse();*/
+    	
+    	if(($reponse = $this->checkUploadSessionId()) !== null) {
+    		return response;
+    	}
     	
     	$userId = $this->user->userId;
     	
@@ -111,9 +164,6 @@ class ApiController extends WebDrafterControllerBase
     		$tempFile = $_FILES['file']['tmp_name'];
     			
     		$targetPath = $dataDir . $userId . $ds . "temp" . $ds . "api" . $ds;
-    		if(!is_dir($targetPath)){
-    			mkdir($targetPath, 0777, true);
-    		}
     			
     		$targetFile =  $targetPath. $_FILES['file']['name'];
     		move_uploaded_file($tempFile,$targetFile); //6
@@ -127,10 +177,9 @@ class ApiController extends WebDrafterControllerBase
     {
     	$sm = $this->getServiceLocator();
     	
-    	/*$this->getResponse()->setStatusCode(401);
-    	$this->getResponse()->setReasonPhrase("file ");
-    	$this->getResponse()->setContent(var_export($_FILES, true));
-    	return $this->getResponse();*/
+    	if(($reponse = $this->checkUploadSessionId()) !== null) {
+    		return response;
+    	}
     	
     	$userId = $this->user->userId;
     	
@@ -159,10 +208,14 @@ class ApiController extends WebDrafterControllerBase
     	return $jsonModel;
     }
     
-    public function finalizeSetUploadAction()
+    public function finalizeUploadSessionAction()
     {
     	$sm = $this->getServiceLocator();
 
+    	if(($reponse = $this->checkUploadSessionId()) !== null) {
+    		return/* response*/;
+    	}
+    	
     	$userId = $this->user->userId;
     	 
     	$config = $this->getServiceLocator()->get('Config');

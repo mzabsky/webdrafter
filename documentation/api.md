@@ -14,6 +14,13 @@ The client provides the API key using an `apiCode` POST parameter. If no (or an 
 
 Methods that don't require API key are considered public.
 
+## Upload session
+Upload session represents the act of uploading a single complete set. An upload session is initiated by calling `/api/create-upload-session` which returns an upload session ID. This ID is then provided by the client to the subsequent methods.
+
+One user can have only one upload session active at a time (creating an session cancels all existing ones). There is no explicit time limit imposed on duration of an upload session.
+
+If a method which requires upload session ID is not provided one, a 400 HTTP code is returned. If the upload session ID provided is not currently active (eg. because a new session started in the meantime), a 409 HTTP code is returned.
+
 ## Methods
 All methods are invoked using the POST HTTP method.
 
@@ -23,6 +30,7 @@ All requests are expected to be encoded in UTF8. All responses will be encoded i
 ### /api/get-user
 Returns information about the user owning the API key.
 - **Requires API key:** Yes
+- **Requires upload session ID:** No
 - **Request:** No additional parameters.
 - **Response:** 
 The response body contains following JSON object:
@@ -41,6 +49,7 @@ The response body contains following JSON object:
 ### /api/get-user-sets
 Returns sets owned by the user owning the API key.
 - **Requires API key:** Yes
+- **Requires upload session ID:** No
 - **Request:** No additional parameters.
 - **Response:** 
 The response body contains following JSON object:
@@ -59,15 +68,22 @@ Each set object looks like this:
 }
 ```
 
-### /api/reset-upload-session
-Resets the API upload session, deleting all files uploaded so far for the user owning the API key.
+### /api/create-upload-session
+Creates a new upload session. Cancels any existing upload sessions.
 - **Requires API key:** Yes
+- **Requires upload session ID:** No
 - **Request:** No additional parameters.
-- **Response:** An empty JSON object.
+- **Response:** The response body contains following JSON object:
+```
+{
+	'uploadSessionId': '74b87337454200d4d33f80c4663dc5e5'
+}
+```
 
 ### /api/upload-card-image
 Uploads a single card image to the current upload session for the user owning the API key.
 - **Requires API key:** Yes
+- **Requires upload session ID:** Yes
 - **Request:** A single POST file upload named `file` with any (reasonable) file name containing a JPG or PNG file, using `multipart/form-data` content disposition.
 - **Response:** An empty JSON object.
 - **Notes:** 
@@ -80,6 +96,7 @@ Feel free to initiate multiple card image uploads simultaneously (within reason,
 ### /api/upload-card-file
 Uploads a card file for the set to the current upload session for the user owning the API key.
 - **Requires API key:** Yes
+- **Requires upload session ID:** Yes
 - **Request:** A single POST file upload named `file` with any (reasonable) file name containing a text file, using `multipart/form-data` content disposition.
 - **Response:** An empty JSON object.
 - **Notes:** 
@@ -91,9 +108,10 @@ This method may be called before or after card image uploads, the order doesn't 
 
 Note that detailed validations of the individual cards are not that at the time of calling of this method, those are only done after `/api/finalize-set-upload` is called.
 
-### /api/finalize-set-upload
+### /api/finalize-upload-session
 Finalizes the set upload session for the user owning the API key, returning a redirect URL which is to be opened for the user to actually finish the set upload process directly on PlaneSculptors.
 - **Requires API key:** Yes
+- **Requires upload session ID:** Yes
 - **Request:** 
 `returnUrl` - specifies a URL, to which the user will be redirected to when the upload process is finished. If this argument is not provided, a standard PlaneSculptors confirmation page will be shown.
 `setId` - specifies an ID of a set to which this set upload belongs to. This ID can be obtained using the `/api/get-user-sets` method. If this argument is not provided, the user will be
