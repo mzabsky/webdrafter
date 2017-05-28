@@ -122,12 +122,12 @@ class MemberAreaController extends WebDrafterControllerBase
 		$form = new \Application\Form\RegistrationForm(false);
 		$form->setAttribute('action', $this->url()->fromRoute('member-area', array('action' => 'index'), array('fragment' => 'account_settings_tab')));
 		
+		$user = $auth->getUser();
 		if ($this->getRequest()->isPost())
 		{
 			$formData = $this->getRequest()->getPost()->toArray();
 			
 			$userTable = $sm->get('Application\Model\UserTable');
-			$user = $auth->getUser();
 			$inputFilter = $user->getInputFilter();
 			$inputFilter->remove('name');
 			$inputFilter->remove('url_name');
@@ -162,6 +162,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$viewModel->draftsPlayed = $draftTable->getPastDraftsByUser($_SESSION["user_id"]);
 		$viewModel->setsOwned = $setTable->getSetsByUser($_SESSION["user_id"], true);
 		$viewModel->form = $form;
+		$viewModel->user = $user;
 		
 		return $viewModel;
 	}

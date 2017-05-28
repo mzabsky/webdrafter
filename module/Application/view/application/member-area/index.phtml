@@ -171,6 +171,7 @@ if($this->accountUpdated)
 		</table>
 	</div>
 	<div id="account-settings">	
+		<p><strong>API key:</strong> <br/><?php echo $this->user->apiKey ?></p>
 		<?php echo $this->partial('/application/member-area/register', array('form' => $this->form, 'registrationMode' => false)); ?>
 	</div>
 </div>
