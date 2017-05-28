@@ -180,7 +180,7 @@ class ApiController extends WebDrafterControllerBase
     		return $this->getResponse();
     	}
     	
-    	$redirectUrl = $this->url()->fromRoute('member-area', array('action' => 'finish-set-import'), array('query' => array('return' => $clientReturnUrl, 'setId' => (int)@$_POST['setId']), 'force_canonical' => true));
+    	$redirectUrl = $this->url()->fromRoute('member-area', array('action' => 'finish-set-import'), array('query' => array('return' => $clientReturnUrl, 'setId' => isset($_POST['setId'])) ? (int)@$_POST['setId'] : null, 'force_canonical' => true));
     	
     	$loginUrl = $this->url()->fromRoute('member-area', array('action' => 'login'), array('query' => array('return' => $redirectUrl), 'force_canonical' => true));
     	

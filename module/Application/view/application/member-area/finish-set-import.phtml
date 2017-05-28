@@ -1,40 +1,37 @@
 <?php $this->headTitle()->append("Member area"); ?>
 <script>
 $(function(){
-	makeTabs($("#tabs"));
-	
 	$('#owned-sets-grid').DataTable({
 		"searching": false,
-		"lengthChange": false
+		"lengthChange": false,
+		"pageLength": 9999
 	});
+	
 });
 </script>
-<h2 id="contentTitle">Choose a set to upade</h2>
+<h2 id="contentTitle">Choose a set to update</h2>
 <p>All files were uploaded, please choose which set should be updated. If you want to cancel this upload, just close this page.</p>
 <div id="owned-sets">
-<table id="owned-sets-grid" class="display hover stripe clickableRows" >
-	<thead>
-		<tr>
-			<th>Set name</th>
-			<th>Current version</th>
-			<th>Number of cards</th>
-			<th>Number of events</th>
-			<th>&nbsp;</th>
-		</tr>
-	</thead>
-	<tbody>
-<?php
-foreach ($this->setsOwned as $set)
-{
-	echo "<tr><td class='nameCell'>";
-	echo $set["setName"];
-	echo "</td><td><a href='?setId=".$set["setId"]."' class='add-button'>Choose</button/></td><td>" . $set["cardCount"] . "</td><td></td><td>" . $set["draftCount"] . "</td></tr>";	
-}
-?>
-		</tr>
-	</tbody>
-</table>
-</div>
-<div id="account-settings">	
-	<?php echo $this->partial('/application/member-area/register', array('form' => $this->form, 'registrationMode' => false)); ?>
+<form action="#">
+	<table id="owned-sets-grid" class="display hover stripe" >
+		<thead>
+			<tr>
+				<th>Set name</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+	<?php
+	foreach ($this->setsOwned as $set)
+	{
+		$setId = $set["setId"];
+		echo "<tr><td class='nameCell'>";
+		echo $set["setName"];
+		echo "</td><td><button type='submit' name='setId' value='$setId' class='add-button'>Choose</button></td></tr>";	
+	}
+	?>
+			</tr>
+		</tbody>
+	</table>
+</form>
 </div>

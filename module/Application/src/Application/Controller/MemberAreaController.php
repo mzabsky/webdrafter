@@ -1329,7 +1329,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$sm = $this->getServiceLocator();
 		$config = $this->getServiceLocator()->get('Config');
 		$setTable = $sm->get('Application\Model\SetTable');
-		if(isset($_GET["setId"])) {
+		if(isset($_GET["setId"]) && (int)$_GET["setId"] > 0) {
 			$set = $setTable->getSet((int)$_GET["setId"]);
 			if($set === null) {
 				return $this->notFoundAction();
