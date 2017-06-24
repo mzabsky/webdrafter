@@ -178,6 +178,9 @@ class DraftController extends WebDrafterControllerBase
 			$adapter = $this->sm->get("Zend\Db\Adapter\Adapter");
 			$adapter->getDriver()->getConnection()->beginTransaction();
 		
+			$this->draftTable->lockDraft($this->draft->draftId);
+			$this->pickTable->lockPicks($this->draft->draftId);
+			
 			// Validate the pick
 			$pick = $this->pickTable->getPick((int)$_GET["pickId"]);
 			if($pick->packNumber != $this->draft->packNumber || $pick->currentPlayerId != $this->draftPlayer->draftPlayerId || $pick->isPicked)

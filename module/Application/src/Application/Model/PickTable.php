@@ -22,6 +22,12 @@ class PickTable
 		$resultSet = $this->tableGateway->select();
 		return $resultSet;
 	}
+
+	public function lockPicks($draftId)
+	{
+		$draftId = (int)$draftId;
+		$this->tableGateway->adapter->query("SELECT * FROM pick JOIN draft_player ON (draft_player_id = starting_player_id) WHERE draft_id=$draftId FOR UPDATE ", Adapter::QUERY_MODE_EXECUTE);
+	}
 	
 	public function fetchBoosterForPlayer($draftPlayerId)
 	{

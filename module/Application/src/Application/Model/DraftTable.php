@@ -147,6 +147,12 @@ class DraftTable
 		return $row;
 	}
 	
+	public function lockDraft($id)
+	{
+		$id = (int)$id;
+		$this->tableGateway->adapter->query("SELECT * FROM draft WHERE draft_id=$id FOR UPDATE ", Adapter::QUERY_MODE_EXECUTE);
+	}
+	
 	public function getDraftByLobbyKey($lobbyKey)
 	{
 		$rowset = $this->tableGateway->select(array('lobby_key' => $lobbyKey));
