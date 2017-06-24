@@ -37,7 +37,7 @@ class IsochronDrafterSetParser
 				case "shape":
 					if($data == "normal") $currentCard->shape = Card::SHAPE_NORMAL;
 					else if($data == "emblem") $currentCard->shape = Card::SHAPE_NORMAL;
-					else if($data == "split") $currentCard->shape = Card::SHAPE_SPLIT;
+					else if($data == "split" || $data == "fuse split") $currentCard->shape = Card::SHAPE_SPLIT;
 					else if($data == "flip") $currentCard->shape = Card::SHAPE_FLIP;
 					else if($data == "double") $currentCard->shape = Card::SHAPE_DOUBLE;
 					else if($data == "token") $currentCard->shape = Card::SHAPE_NORMAL;
