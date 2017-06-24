@@ -346,7 +346,7 @@ class DraftController extends WebDrafterControllerBase
 		$sideboardArray = array();
 		foreach($sideboard as $card)
 		{
-			$cardName = $fixApostrophes($cardName);
+			$cardName = $fixApostrophes($card->name);
 			if(isset($sideboardArray[$cardName]))
 			{
 				$sideboardArray[$cardName]++;
