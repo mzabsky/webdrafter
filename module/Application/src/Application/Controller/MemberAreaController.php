@@ -1293,7 +1293,7 @@ class MemberAreaController extends WebDrafterControllerBase
 	public function kickAction()
 	{
 		$draftId = $this->getEvent()->getRouteMatch()->getParam('draft_id');
-		$userId = $_GET['user_id'];
+		$draftPlayerId = $_GET['draft_player_id'];
 	
 		$sm = $this->getServiceLocator();
 		$draftTable = $sm->get('Application\Model\DraftTable');
@@ -1311,7 +1311,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			throw new Exception("Unauthorized");
 		}
 		
-		$draftPlayerTable->deleteDraftPlayerByUserId($draftId, $userId);
+		$draftPlayerTable->deleteDraftPlayerByDraftPlayerId($draftId, $draftPlayerId);
 		
 		return $this->redirect()->toRoute('member-area-with-draft-id', array('action' => 'draft-admin', 'draft_id' => $draft->draftId), array('query' => 'player-kicked'));
 	}

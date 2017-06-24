@@ -154,9 +154,9 @@ class DraftPlayerTable
 		return $row;
 	}
 	
-	public function deleteDraftPlayerByUserId($draftId, $userId)
+	public function deleteDraftPlayerByDraftPlayerId($draftId, $draftPlayerId)
 	{
-		$this->tableGateway->delete(array('draft_id' => $draftId, 'user_id' => $userId));
+		$this->tableGateway->delete(array('draft_id' => $draftId, 'draft_player_id' => $draftPlayerId));
 	}
 	
 	public function saveDraftPlayer(DraftPlayer $draftPlayer)

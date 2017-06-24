@@ -100,7 +100,7 @@ function refreshPage()
 				var url = "<input type='text' readonly value='" + draftLink + "' class='linkBox' onClick='selectAll(this)'/> " + (val["hasJoined"] ? (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + playerName + '</a>' : playerName) : "<i>&lt;PENDING&gt;</i>");
 
 				if(val["hasJoined"]){
-					url += " <a href='/member-area/draft/kick/<?php echo $this->draft->draftId ?>?user_id=" + val["userId"] + "' class='kick-link' title='Kick this player from the event'>X</a>";
+					url += " <a href='/member-area/draft/kick/<?php echo $this->draft->draftId ?>?draft_player_id=" + val["draftPlayerId"] + "' class='kick-link' title='Kick this player from the event'>X</a>";
 				}
 				
 				$("#draft_players").append("<div>" + url + "</div>");
