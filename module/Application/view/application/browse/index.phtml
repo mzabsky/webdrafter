@@ -6,7 +6,7 @@ $(function(){
 	$('#sets-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
-		"pageLength": 15
+		"pageLength": 9999
 	});
 	
 	/*$('#cards_grid').DataTable({
@@ -19,7 +19,8 @@ $(function(){
 		"searching": false,
 		"lengthChange": false,
 		"paging": false,
-		"info": false
+		"info": false,
+		"pageLength": 9999
 	});
 
 	$('.dataTable').on( 'click', 'tr', function () {
@@ -82,7 +83,7 @@ $(function(){
 			echo "<tr url='" . $this->url('browse-set', array('url_name' => $set["urlName"])) . "'><td class='nameCell'>";
 			echo $set["setName"];
 			echo "</td><td>";
-			echo "	<span class='set-status-label set-status-label-" . $set["setStatus"] ."'>" . \Application\Model\Set::getStatusNameStatic($set["setStatus"]) . "</span>";
+			echo "	<span class='sortingKey'>" . $set["setStatus"] . "</span><span class='set-status-label set-status-label-" . $set["setStatus"] ."'>" . \Application\Model\Set::getStatusNameStatic($set["setStatus"]) . "</span>";
 			echo "</td><td>";
 			echo $set["userName"];
 			echo "</td><td>";
