@@ -143,18 +143,26 @@ Spoiler.prototype.initializeSorting = function () {
 		this.order = "sequence";
 	}
 
+	var modifierFunction = function(x) {
+    	var modifier = 0;
+    	if(x.types.indexOf("Basic") !== -1 && x.types.indexOf("Land") !== -1) modifier = 50;
+    	if(x.types.indexOf("Token") !== -1 || x.types.indexOf("Emblem") !== -1) modifier = 100;
+    	return modifier;
+	}
+	
     this.sortFunctions = {
         "color": function(spoiler, a, b) {
             var rate = function(x) {
-            	if (x.colors.length == 0 && x.rarity == 'B') return 8;
-            	else if (x.colors.length == 0 && x.types.indexOf("Artifact") == -1) return 7;
-                else if (x.colors.length == 0 && x.types.indexOf("Artifact") != -1) return 6;
-                else if (x.colors.length > 1) return 5;
-                else if (x.colors[0] == 'G') return 4;
-                else if (x.colors[0] == 'R') return 3;
-                else if (x.colors[0] == 'B') return 2;
-                else if (x.colors[0] == 'U') return 1;
-                else if (x.colors[0] == 'W') return 0;
+            	var modifier = modifierFunction(x);
+            	if (x.colors.length == 0 && x.rarity == 'B') return 8 + modifier;
+            	else if (x.colors.length == 0 && x.types.indexOf("Artifact") == -1) return 7 + modifier;
+                else if (x.colors.length == 0 && x.types.indexOf("Artifact") != -1) return 6 + modifier;
+                else if (x.colors.length > 1) return 5 + modifier;
+                else if (x.colors[0] == 'G') return 4 + modifier;
+                else if (x.colors[0] == 'R') return 3 + modifier;
+                else if (x.colors[0] == 'B') return 2 + modifier;
+                else if (x.colors[0] == 'U') return 1 + modifier;
+                else if (x.colors[0] == 'W') return 0 + modifier;
                 else throw "Not reached " + x.colors[0];
             }
 
@@ -166,11 +174,12 @@ Spoiler.prototype.initializeSorting = function () {
         },
         "rarity": function (spoiler, a, b) {
             var rate = function (x) {
-                if (x.rarity == 'B') return 5;
-                else if (x.rarity == 'C') return 4;
-                else if (x.rarity == 'U') return 3;
-                else if (x.rarity == 'R') return 2;
-                else if (x.rarity == 'M') return 1;
+            	var modifier = modifierFunction(x);
+                if (x.rarity == 'B') return 5 + modifier;
+                else if (x.rarity == 'C') return 4 + modifier;
+                else if (x.rarity == 'U') return 3 + modifier;
+                else if (x.rarity == 'R') return 2 + modifier;
+                else if (x.rarity == 'M') return 1 + modifier;
                 else throw "Not reached \"" + x.rarity + "\"";
             }
 
