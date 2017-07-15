@@ -1,0 +1,38 @@
+<?php $this->headTitle()->append("Wiki list"); ?>
+<h2 id="contentTitle">Wiki list</h2>
+<?php
+$form = $this->form;
+
+$form->setAttribute('action', $this->url('wiki-list')); 
+$form->prepare();
+ 
+echo $this->form()->openTag($form);
+echo $this->fullFormInput($form->get('sets'));
+echo $this->fullFormInput($form->get('cards'));
+?>
+<div class="form_element">
+<?php
+echo $this->formSubmit($form->get('submit'));
+?>
+</div>
+<?php
+echo $this->form()->closeTag();
+
+if($this->maindeckLines != null) {?>
+<p>Output deck list:</p>
+<textarea>
+{|class="decklist"
+!colspan=2|<?php echo $this->deckName ?>
+|-
+!Maindeck
+!Sideboard
+|-
+<?php for($i = 0; $i < max(count($this->maindeckLines), count($this->sideboardLines)); $i++) {?>
+|<?php echo @$maindeckLines[$i] ."\n"?>
+|<?php echo @$sideboardLines[$i] ."\n"?>
+|-
+<?php } ?>
+|}
+</textarea>
+<?php
+}

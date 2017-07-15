@@ -215,6 +215,16 @@ return array(
      					'action'     => 'sealed-pool',
         			),
         		),
+        	), 
+        	'wiki-list' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/generator/wiki-list',
+       				'defaults' => array(
+      					'controller' => 'Application\Controller\Generator',
+     					'action'     => 'wiki-list',
+        			),
+        		),
         	),
         	'tutorial' => array(
         		'type' => 'Segment',

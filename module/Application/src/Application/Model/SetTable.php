@@ -85,6 +85,7 @@ class SetTable
 		$select->join(array('card_set_count' => new \Zend\Db\Sql\Expression('(SELECT COUNT(card_id) count, set_version_id FROM card GROUP BY set_version_id)')), 'set_version.set_version_id = card_set_count.set_version_id', array('card_count' => 'count'), 'left');
 		$select->join('user', 'set.user_id = user.user_id', array('user_name' => 'name'));
 		$select->where(array('set.is_private' => 0));
+		$select->where->notIn('set.status', array(Set::STATUS_DISCONTINUED));
 		//$select->order('draft.created_on DESC');
 		$selectString = $sql->getSqlStringForSqlObject($select);
 		//var_dump($selectString);
