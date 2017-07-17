@@ -16,7 +16,7 @@ class TutorialController extends WebDrafterControllerBase
 {
 	public function indexAction()
 	{		
-		return new ViewModel;
+		return $this->redirect()->toUrl('http://www.planesculptors.net/wiki/index.php?title=Category:Tutorials');
 	}
 }
 ?>

@@ -69,7 +69,7 @@ class RegistrationForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About me: ',
-				'description' => 'Arbitrary text displayed in your profile. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
+				'description' => 'Arbitrary text displayed in your profile. <a href="http://www.planesculptors.net/wiki/index.php?title=Formatting_text_content_on_PlaneSculptors" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
 			),
 		)));
 
