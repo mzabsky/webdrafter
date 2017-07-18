@@ -25,6 +25,7 @@ use Application\Form\CreateSetForm;
 use Application\GoogleAuthentication;
 use Application\ChallongeAPI;
 use Application\Form\UploadCardsForm;
+use Application\Model\SetVersion;
 
 function rmdir_recursive($dir) {
 	$result = true;
@@ -649,7 +650,7 @@ class MemberAreaController extends WebDrafterControllerBase
 				$draftSetVersionArray = array();				
 				
 				$convertedDraftSetVersions = \Application\resultSetToArray($draftSetVersions);
-				while(count($draftSetVersionArray) < count($draftSetVersions) * $numberOfPlayers)
+				while(count($draftSetVersionArray) < 3 * $numberOfPlayers)
 				{
 					foreach($convertedDraftSetVersions as $draftSetVersion)
 					{
@@ -670,7 +671,7 @@ class MemberAreaController extends WebDrafterControllerBase
 						$setVersion = $setVersionTable->getSetVersion($draftSetVersion->setVersionId);
 						
 						$cards = $cardTable->fetchBySetVersion($setVersionId);
-						$pack = $packGenerator->generatePacks($cards, 1, $setVersion->basicLandSlot, $setVersion->basicLandSlotNeedle)[0];
+						$pack = $packGenerator->generatePacks($cards, 1, SetVersion::BASIC_LAND_SLOT_BASIC_LAND, $setVersion->basicLandSlotNeedle)[0];
 						
 						foreach ($pack as $card)
 						{

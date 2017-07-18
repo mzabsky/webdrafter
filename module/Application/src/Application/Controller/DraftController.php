@@ -213,9 +213,12 @@ class DraftController extends WebDrafterControllerBase
 			//var_dump($picksMade, $picksRequired); die();
 			if($picksMade + 1 == $picksRequired)
 			{
-				$draftSets = \Application\resultSetToArray($this->draftSetVersionTable->fetchByDraft($this->draft->draftId));
-				$currentDraftSetVersion = $draftSets[$this->draft->packNumber - 1];
-				$currentSetVersion = $this->setVersionTable->getSetVersion($currentDraftSetVersion->setVersionId);
+				if($this->draft->gameMode != Draft::MODE_CHAOS_DRAFT) 
+				{
+					$draftSets = \Application\resultSetToArray($this->draftSetVersionTable->fetchByDraft($this->draft->draftId));
+					$currentDraftSetVersion = $draftSets[$this->draft->packNumber - 1];
+					$currentSetVersion = $this->setVersionTable->getSetVersion($currentDraftSetVersion->setVersionId);
+				}
 				
 				switch($this->draft->gameMode)
 				{
@@ -224,6 +227,8 @@ class DraftController extends WebDrafterControllerBase
 						$actualNumberOfPacks = count($draftSets);
 						break;
 					case Draft::MODE_CHAOS_DRAFT:
+						$actualNumberOfPacks = 3;
+						break;
 					case Draft::MODE_CUBE_DRAFT:
 						$actualNumberOfPacks = count($draftSets);
 						break;
@@ -232,7 +237,7 @@ class DraftController extends WebDrafterControllerBase
 				}
 				
 				$packSize = 14;
-				if($currentSetVersion->basicLandSlot != SetVersion::BASIC_LAND_SLOT_BASIC_LAND || $this->draft->gameMode == Draft::MODE_CUBE_DRAFT)
+				if($this->draft->gameMode != Draft::MODE_CHAOS_DRAFT && ($currentSetVersion->basicLandSlot != SetVersion::BASIC_LAND_SLOT_BASIC_LAND || $this->draft->gameMode == Draft::MODE_CUBE_DRAFT))
 				{
 					$packSize = 15;
 				}
