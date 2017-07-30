@@ -857,7 +857,7 @@ class CardTable
 			if($setVersionId !== null){
 				$select->where->equalTo('card.set_version_id', $setVersionId);
 				$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
-				$select->join('set', 'set_version.set_version_id = set.current_set_version_id', array('set_name' => 'name'));
+				$select->join('set', 'set_version.set_id = set.set_id', array('set_name' => 'name'));
 			}
 			else {
 				$select->join('set_version', 'card.set_version_id = set_version.set_version_id', array('set_version_name' => 'name'));
