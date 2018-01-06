@@ -303,7 +303,7 @@ if(count($this->setVersions) == 0)
 	</div>
 	<div id="upload">
 		<p>The first step is to upload the set file and all the card images. We will the process them and in the next step you will be able to specify additional information about this version of the set file.
-		<p>Do you have issues figuring out the card file import process? Check out <a href="http://www.planesculptors.net/wiki/index.php?title=Importing_sets_into_PlaneSculptors">the tutorial</a>.</p>
+		<p>Do you have issues figuring out the card file import process? Check out <a href="<?php echo $this->url('tutorial', array(), array('fragment' => 'set-import'))?>">the tutorial</a>.</p>
 		<?php
 		if($this->uploadErrorMessages !== null) {
 			?>

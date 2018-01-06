@@ -53,7 +53,7 @@ class CreateSetForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About the set: ',
-				'description' => 'Arbitrary text displayed on the set page. <a href="http://www.planesculptors.net/wiki/index.php?title=Formatting_text_content_on_PlaneSculptors" target="blank">Formatting help</a>. Up to 50000 characters.'
+				'description' => 'Arbitrary text displayed on the set page. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Up to 50000 characters.'
 			),
 		)));
 		

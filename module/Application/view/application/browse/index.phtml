@@ -99,7 +99,7 @@ $(function(){
 	</div>
 	<div id="cards">
 		<form action="#cards">
-			<p>Search query: <span class="query-help"><a href="http://www.planesculptors.net/wiki/index.php?title=PlaneSculptors_card_search_reference"/>(Query syntax reference)</a></span></p>
+			<p>Search query: <span class="query-help"><a href="<?php echo $this->url('tutorial') ?>#querying"/>(Query syntax reference)</a></span></p>
 			<input name="query" type="text" value="<?php echo htmlspecialchars($this->query)?>" id="query-input" /><br />
 			<input type="submit" value="Search" />
 		</form>

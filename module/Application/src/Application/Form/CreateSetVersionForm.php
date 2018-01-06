@@ -78,7 +78,7 @@ class CreateSetVersionForm extends Form
 			'type' => 'textarea',
 			'options' => array(
 				'label' => 'About the version: ',
-				'description' => 'Arbitrary description of this version. Can contain information such as change log. <a href="http://www.planesculptors.net/wiki/index.php?title=Formatting_text_content_on_PlaneSculptors" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
+				'description' => 'Arbitrary description of this version. Can contain information such as change log. <a href="/tutorial#formatting" target="blank">Formatting help</a>. Can be changed at any time. Up to 50000 characters.'
 			),
 		)));
 		
