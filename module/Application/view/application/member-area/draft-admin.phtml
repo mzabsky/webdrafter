@@ -142,7 +142,7 @@ function refreshPage()
 
 				if(val["userId"] == <?php echo $this->auth()->getUser()->userId ?>) hostInviteKey = val["inviteKey"];
 
-				var link = val["isAi"] == 1 ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
+				var link = val["isAi"] == 1 && data["draft"]["status"] == draftStatuses.running ? "N/A" : "<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"];
 				var pickList = val["isAi"] == 1 ? "" : "<small>(<a href='<?php echo $this->url('home', array(), array('force_canonical' => true));?>draft/" + val["inviteKey"] + "/pick-list' target='blank'>pick list</a>)</small>";
 				var url = "<input type='text' readonly value='" + link + "' class='linkBox' onClick='selectAll(this)'/> " + (val["urlName"] != null ? '<a href="/user/' + val["urlName"] + '" target="blank">' + val["name"] + '</a>' : val["name"]) + " " + pickList;
 				$("#draft_players").append("<div>" + url + "</div>");

@@ -501,7 +501,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$draftPlayer = new DraftPlayer();
 		$draftPlayer->draftId = $draftId;
 		$draftPlayer->hasJoined = $isAi ? 1 : 0;
-		$draftPlayer->inviteKey = $isAi ? null : $inviteKey;
+		$draftPlayer->inviteKey = $inviteKey;
 		$draftPlayer->name = $isAi ? "AI Player #" . ($aiPlayers + 1) : null;
 		$draftPlayer->isAi = $isAi;
 		$draftPlayerTable->saveDraftPlayer($draftPlayer);
