@@ -23,7 +23,7 @@ class CreateSetVersionForm extends Form
 			'name' => 'name',
 			'options' => array(
 				'label' => 'Name: ',
-				'description' => 'Representative name of this set version. Cannot be changed later.'
+				'description' => 'Representative name of this set version.'
 			)
 		)));
 		
@@ -43,7 +43,7 @@ class CreateSetVersionForm extends Form
 				'type' => 'url',
 				'options' => array(
 						'label' => 'Download URL:',
-						'description' => 'URL from which the players can download the files necessary to play this version of set (such as Cockatrice package). Cannot be changed later.'
+						'description' => 'URL from which the players can download the files necessary to play this version of set (such as Cockatrice package).'
 				),
 		)));
 		
