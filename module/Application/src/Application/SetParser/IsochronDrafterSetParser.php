@@ -187,7 +187,16 @@ class IsochronDrafterSetParser
 
 					if(strpos($currentCard->types, 'Basic') !== false)
 					{
-						$currentCard->rarity = "B";
+						$typeLineWords = preg_split('/\s+/', $currentCard->types);
+						if(
+							count($typeLineWords) == 4 
+							&& in_array("Basic", $typeLineWords) 
+							&& in_array("Land", $typeLineWords) 
+							&& (in_array("Plains", $typeLineWords) || in_array("Island", $typeLineWords) || in_array("Swamp", $typeLineWords) || in_array("Mountain", $typeLineWords) || in_array("Forest", $typeLineWords))
+						) 
+						{
+							$currentCard->rarity = "B";
+						}
 					}
 
 					/*if(strpos($currentCard->types, 'Token') === false)
