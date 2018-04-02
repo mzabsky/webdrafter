@@ -48,7 +48,8 @@ class BoosterDraftPackGenerator
 				else if($card->rarity == 'U') $card->weight = 3;
 				else if($card->rarity == 'R') $card->weight = 7.0/8.0;
 				else if($card->rarity == 'M') $card->weight = 1.0/8.0;
-				else if($card->rarity == 'S') $card->weight = 1;				
+				else if($card->rarity == 'S') $card->weight = 1;
+				$card->basicLandSlot = true;				
 				
 				if(isset($basicLandSlotCardCountByRarity[$card->rarity])){
 					$basicLandSlotCardCountByRarity[$card->rarity]++;
@@ -68,9 +69,9 @@ class BoosterDraftPackGenerator
 		$sum = 0;
 		foreach($basicLandSlotCardsArray as $card)
 		{
-			$card->weight = $card->weight / ($basicLandSlotCardCountByRarity[$card->rarity] * 1.0);
+			//$card->weight = $card->weight / ($basicLandSlotCardCountByRarity[$card->rarity] * 1.0);
 
-			$sum += $card->weight / 14.0 * 100;
+			$sum += $card->weight/* / 14.0 * 100*/;
 		}
 		
 		//echo $sum;*/
@@ -80,7 +81,7 @@ class BoosterDraftPackGenerator
 		$list = array();
 		for($i = 0; $i < $numberOfPacks; $i++)
 		{
-			$list[] = $this->GeneratePack($cardsArray, $basicLandSlotCardsArray, 10 + 3 + 1);
+			$list[] = $this->GeneratePack($cardsArray, $basicLandSlotCardsArray, $sum);
 		}
 
 		return $list;
@@ -88,7 +89,6 @@ class BoosterDraftPackGenerator
 	
 	private function GeneratePack($cards, $basicLandSlotCards, $basicLandSlotWeightSum)
 	{
-		//var_dump($basicLandSlotWeightSum);
 		$hasMythics = false;
 		$hasRares = false;
 		$hasUncommons = false;
@@ -183,7 +183,7 @@ class BoosterDraftPackGenerator
 		}*/
 		
 		//$pack = array();
-		
+
 		$exploredWeight = 0;
 		foreach($basicLandSlotCards as $card){
 			$exploredWeight += $card->weight;
@@ -198,7 +198,7 @@ class BoosterDraftPackGenerator
 			/*foreach($basicLandSlotCards as $card){
 				$pack[] = $card;
 			}*/
-			
+
 			$exploredWeight = 0;
 			foreach($basicLandSlotCards as $card){				
 				$exploredWeight += $card->weight;

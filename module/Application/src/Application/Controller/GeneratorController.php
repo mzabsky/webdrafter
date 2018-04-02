@@ -27,15 +27,15 @@ class GeneratorController extends WebDrafterControllerBase
     	$setVersion = $setVersionTable->getSetVersion($setVersionId);
     	
     	$cards = $cardTable->fetchBySetVersion($setVersionId);
-    	$generator = new \Application\PackGenerator\CubePackGenerator();
-    	$packs = $generator->GeneratePacks($cards, $numberOfPacks);    	
+    	$generator = new \Application\PackGenerator\BoosterDraftPackGenerator();
+    	$packs = $generator->GeneratePacks($cards, $numberOfPacks, $setVersion->basicLandSlot, $setVersion->basicLandSlotNeedle);    	
     	
     	$pool = array();
     	foreach ($packs as $pack)
     	{
     		foreach ($pack as $card)
     		{
-    			$name = $card->name . ' ' . $card->rarity;
+    			$name = ($card->basicLandSlot ? '*' : '') . $card->name . ' ' . $card->rarity;
     			if(isset($pool[$name]))
     			{
     				$pool[$name]++;

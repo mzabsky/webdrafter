@@ -1,4 +1,6 @@
 <?php
+echo "Count: ".count($this->pool)."<br />";
+sort($this->pool);
 foreach ($this->pool as $card => $count)
 {
 	echo $count . " " . $card . "<br />";
