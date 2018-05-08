@@ -1,6 +1,6 @@
 ﻿mse version: 0.3.8
 short name: PlaneSculptors
-full name: PlaneSculptors Export 1.1
+full name: PlaneSculptors Export 1.2
 position hint: 006
 version: 2015-02-14
 installer group: magic/Export/planesculptors
@@ -20,6 +20,7 @@ script:
 	symbol_font      := "magic-mana-small"
 	symbol_font_size := 12
 	escape_linebreaks := replace@(match: "\n", replace: "///br///")
+	remove_linebreaks := replace@(match: "\n", replace: "")
 	determine_shape := {
 		if (contains(card.shape, match:"normal") or contains(card.shape, match:"planeswalker") or card.loyalty_2 != "") and card.name_2 != "" then "double"
 		else if contains(card.shape, match:"leveler") then "normal"
@@ -112,7 +113,7 @@ script:
 		}
 	
 	write_rules := {
-		if contains(card.shape, match:"planeswalker") and card.power == "" then escape_linebreaks(to_html(write_walker()))
+		if card.loyalty != "" then escape_linebreaks(to_html(write_walker()))
 		else if contains(card.shape, match:"leveler") then escape_linebreaks(to_html(write_leveler()))
 		else escape_linebreaks(to_html(card.rule_text))
 	}
@@ -126,28 +127,28 @@ script:
 	write_card := {
 		"\n"+determine_shape()
 		+"\n"+card.card_number
-		+"\n"+cmc(card.casting_cost)
+		+"\n"+remove_linebreaks(cmc(card.casting_cost))
 		+"\n"+card.rarity
 		
-		+"\n"+card.name
+		+"\n"+remove_linebreaks(card.name)
 		+"\n"+card.card_color
 		+"\n"+symbols_to_html(card.casting_cost)
-		+"\n"+to_text(card.type)
-		+"\n"+to_text(card.power)
-		+"\n"+to_text(card.toughness)
+		+"\n"+remove_linebreaks(to_text(card.type))
+		+"\n"+remove_linebreaks(to_text(card.power))
+		+"\n"+remove_linebreaks(to_text(card.toughness))
 		+"\n"+write_rules()
 		+"\n"+escape_linebreaks(to_html(card.flavor_text))
-		+"\n"+to_html(card.illustrator)
+		+"\n"+to_html(remove_linebreaks(card.illustrator))
 		
-		+"\n"+card.name_2
+		+"\n"+remove_linebreaks(card.name_2)
 		+"\n"+card.card_color_2
 		+"\n"+symbols_to_html(card.casting_cost_2)
-		+"\n"+to_text(card.type_2)
-		+"\n"+to_text(card.power_2)
-		+"\n"+to_text(card.toughness_2)
+		+"\n"+remove_linebreaks(to_text(card.type_2))
+		+"\n"+remove_linebreaks(to_text(card.power_2))
+		+"\n"+remove_linebreaks(to_text(card.toughness_2))
 		+"\n"+write_rules_2()
 		+"\n"+escape_linebreaks(to_html(card.flavor_text_2))
-		+"\n"+to_html(card.illustrator_2)
+		+"\n"+to_html(remove_linebreaks(card.illustrator_2))
 		+"\n==========="
 		}
 	write_cards := for each card in sort_list(cards, order_by: {input.card_number}) do write_card()
