@@ -31,34 +31,55 @@ class PickTable
 	
 	public function fetchBoosterForPlayer($draftPlayerId)
 	{
-		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select) use($draftPlayerId){			
-			$select->join('draft_player', 'draft_player.draft_player_id = pick.current_player_id', array());
-			$select->join('draft', 'draft.draft_id = draft_player.draft_id AND draft.pack_number = pick.pack_number', array());
-			$select->where(array('draft_player.draft_player_id' => $draftPlayerId, 'is_picked' => 0));
-			$select->order(new \Zend\Db\Sql\Expression('card_id'));
-		});
-		return $resultSet;
+		$sql = new Sql($this->tableGateway->adapter);
+    $select = new Select('pick');
+    $select->columns(['pick_id', 'card_id', 'starting_player_id', 'current_player_id', 'is_picked', 'pack_number', 'pick_number', 'zone', 'zone_column']);
+		$select->join('draft_player', 'draft_player.draft_player_id = pick.current_player_id', array());
+		$select->join('draft', 'draft.draft_id = draft_player.draft_id AND draft.pack_number = pick.pack_number', array());
+		$select->join('card', 'card.card_id = pick.card_id', array('rarity' => 'rarity'));
+		$select->where(array('draft_player.draft_player_id' => $draftPlayerId, 'is_picked' => 0));
+		$select->order(new \Zend\Db\Sql\Expression('card_id'));
+
+    $selectString = $sql->getSqlStringForSqlObject($select);
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+		
+		$resultArray = array();
+		foreach($resultSet as $result) {
+			$resultArray[] = array(
+				'pickId' => $result->pick_id,
+				'cardId' => $result->card_id,
+				'startingPlayerId' => $result->starting_player_id,
+				'currentPlayerId' => $result->current_player_id,
+				'isPicked' => $result->is_picked,
+				'packNumber' => $result->pack_number,
+				'pickNumber' => $result->pick_number,
+				'zone' => $result->zone,
+				'zoneColumn' => $result->zone_column,
+				'rarity' => $result->rarity
+			);
+		}
+		return $resultArray;
 	}
 	
 	public function hasPickedFromCurrent($draftPlayerId)
 	{
 		$sql = new Sql($this->tableGateway->adapter);
-        $select = new Select('pick');
-        $select->columns(array('has_picked' => new \Zend\Db\Sql\Expression('COUNT(*)')));
+    $select = new Select('pick');
+    $select->columns(array('has_picked' => new \Zend\Db\Sql\Expression('COUNT(*)')));
 		$select->join('draft_player', 'draft_player.draft_player_id = pick.current_player_id', array());
 		$select->join('draft', 'draft.draft_id = draft_player.draft_id AND draft.pack_number = pick.pack_number AND draft.pick_number = pick.pick_number', array());
 		$select->where(array('draft_player.draft_player_id' => $draftPlayerId));
 
-        $selectString = $sql->getSqlStringForSqlObject($select);
-        //var_dump($selectString);
-        $resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+    $selectString = $sql->getSqlStringForSqlObject($select);
+    //var_dump($selectString);
+    $resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
 		
-        foreach ($resultSet as $result)
-        {
-			return $result->has_picked;        	
-        }
-        
-        return 0;
+		foreach ($resultSet as $result)
+		{
+				return $result->has_picked;            
+		}
+		
+		return 0;
 	}
 	
 	public function getNumberOfCurrentPicksMade($draftId)

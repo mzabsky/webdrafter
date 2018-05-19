@@ -98,7 +98,7 @@ class DraftController extends WebDrafterControllerBase
 				$jsonModel->draftPlayers = \Application\resultSetToArray($this->draftPlayerTable->fetchByDraft($this->draft->draftId));
 				break;
 			case Draft::STATUS_RUNNING:
-				$jsonModel->booster = \Application\resultSetToArray($this->pickTable->fetchBoosterForPlayer($this->draftPlayer->draftPlayerId));
+				$jsonModel->booster = $this->pickTable->fetchBoosterForPlayer($this->draftPlayer->draftPlayerId);
 				$jsonModel->picks = \Application\resultSetToArray($this->pickTable->fetchPicksForPlayer($this->draftPlayer->draftPlayerId, false));
 				$jsonModel->hasPicked = (int)$this->pickTable->hasPickedFromCurrent($this->draftPlayer->draftPlayerId);
 				$jsonModel->pickIndicators = $this->draftTable->fetchPickIndicators($this->draft->draftId);
@@ -321,7 +321,7 @@ class DraftController extends WebDrafterControllerBase
 	
 	public function exportAction()
 	{
-		$fixApostrophes = function($cardName) { return str_replace("\xE2\x80\x99", "'", $cardName); };//’
+		$fixApostrophes = function($cardName) { return str_replace("\xE2\x80\x99", "'", $cardName); };//ï¿½
 		
 		$this->init();
 		

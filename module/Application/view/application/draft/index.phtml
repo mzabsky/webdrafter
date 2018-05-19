@@ -298,7 +298,23 @@
 						lastPackPick = packPick;
 					}
 					
-					$.each( data["booster"], function( key, val ) {
+					var rarityToPriority = function(rarity) {
+						switch(rarity) {
+							case 'S': return '1';
+							case 'M': return '2';
+							case 'R': return '3';
+							case 'U': return '4';
+							case 'C': return '5';
+							default: return '6';
+						}
+					}
+
+					var booster = data["booster"];
+					booster.sort(function (a, b) {
+						return rarityToPriority(a.rarity) - rarityToPriority(b.rarity);
+					});
+					console.log(booster);
+					$.each(booster, function( key, val ) {
 						$(".draft-booster").append(getCardFromPool("img[cardId=" + val["cardId"] + "]").attr("pickId", val["pickId"]));
 					});
 										
