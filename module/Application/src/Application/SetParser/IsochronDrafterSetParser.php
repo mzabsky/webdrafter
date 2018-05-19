@@ -105,6 +105,9 @@ class IsochronDrafterSetParser
 					break;
 				case "manaCost":
 					$currentCard->manaCost = $this->replaceSymbols($data);
+					if(strpos($currentCard->manaCost, '<img') !== false) {
+						throw new \Exception("Card \"" . $currentCard->name . "\" contains one or more unsupported symbols in its mana cost.");
+					}
 					$state = "types";
 					break;
 				case "types":
@@ -300,6 +303,9 @@ class IsochronDrafterSetParser
 
 		$str = str_replace("<span class=\"symbol\">", "", $str);
 		$str = str_replace("</span>", "", $str);
+
+		$str = preg_replace("/<img.*?>/", '	&#9072;', $str);
+
 
 		return $str;
 	}
