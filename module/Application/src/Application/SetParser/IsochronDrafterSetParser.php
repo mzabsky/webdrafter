@@ -153,6 +153,9 @@ class IsochronDrafterSetParser
 					break;
 				case "manaCost2":
 					$currentCard->manaCost2 = $this->replaceSymbols($data);
+					if(strpos($currentCard->manaCost2, '<img') !== false) {
+						throw new \Exception("Card \"" . $currentCard->name . "\" contains one or more unsupported symbols in its mana cost.");
+					}
 					$state = "types2";
 					break;
 				case "types2":
