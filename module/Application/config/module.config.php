@@ -202,13 +202,26 @@ return array(
      					'action'     => 'user',
         			),
         		),
-        	),  
+			),
+			'generate-pool-by-set' => array(
+        		'type' => 'Segment',
+        		'options' => array(
+        			'route' => '/generator/sealed-pool/:set',
+                    'constraints' => array(
+                    	'set' => '[a-zA-Z0-9-]+'
+                    ),
+       				'defaults' => array(
+      					'controller' => 'Application\Controller\Generator',
+     					'action'     => 'sealed-pool',
+        			),
+        		),
+        	), 
         	'generate-pool' => array(
         		'type' => 'Segment',
         		'options' => array(
         			'route' => '/generator/sealed-pool/:set_version_id',
                     'constraints' => array(
-                    	'set_version_id' => '[0-9]+'
+                    	'set_version_id' => '[0-9-]+'
                     ),
        				'defaults' => array(
       					'controller' => 'Application\Controller\Generator',

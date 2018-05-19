@@ -17,14 +17,23 @@ class GeneratorController extends WebDrafterControllerBase
     public function sealedPoolAction()
     {
 
-    	$setVersionId = $this->getEvent()->getRouteMatch()->getParam('set_version_id');
+			$setVersionId = $this->getEvent()->getRouteMatch()->getParam('set_version_id');
+			$urlName = $this->getEvent()->getRouteMatch()->getParam('set');
     	$numberOfPacks = isset($_GET["n"]) ? (int)$_GET["n"] : 6;
     	
     	$sm = $this->getServiceLocator();
-    	$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+			$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+			$setTable = $sm->get('Application\Model\SetTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
+			
+			if($setVersionId) {
+				$setVersion = $setVersionTable->getSetVersion($setVersionId);
+			} else {
+				$set = $setTable->getSetByUrlName($urlName);
+				$setVersion = $setVersionTable->getSetVersion($set->currentSetVersionId);
+				$setVersionId = $setVersion->setVersionId;
+			}
     	
-    	$setVersion = $setVersionTable->getSetVersion($setVersionId);
     	
     	$cards = $cardTable->fetchBySetVersion($setVersionId);
     	$generator = new \Application\PackGenerator\BoosterDraftPackGenerator();
