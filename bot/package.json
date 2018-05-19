@@ -1,0 +1,30 @@
+{
+  "name": "planesculptor",
+  "version": "1.0.0",
+  "description": "PlaneSculptors.net Discord bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mzabsky/webdrafter.git"
+  },
+  "keywords": [
+    "mtg",
+    "magic",
+    "discord",
+    "bot"
+  ],
+  "author": "Matěj Zábský",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mzabsky/webdrafter/issues"
+  },
+  "homepage": "https://github.com/mzabsky/webdrafter#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "discord.js": "^11.3.2"
+  }
+}
