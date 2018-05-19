@@ -31,6 +31,7 @@ Spoiler.prototype.initializeStructure = function () {
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"R\")' filter='R' title='Rares only'>R</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"U\")' filter='U' title='Uncommons only'>U</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"C\")' filter='C' title='Commons only'>C</a>" +
+	        "      <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"S\")' filter='S' title='Special only'>S</a>" +
 	        "   </div>" +
 	        "   <div class='spoiler-filters spoiler-filters-color'>" +
 	        "      Color filter: <a href='javascript:void(0)' onclick='spoiler.filterByColor(\"W\")' filter='W' title='White cards only'><span class='icon-wrapper'><i class='mtg white'></i></span></a>" +
