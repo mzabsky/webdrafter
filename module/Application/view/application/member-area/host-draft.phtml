@@ -18,7 +18,8 @@ $(function(){
 	$('#sets-grid').DataTable({
 		"searching": false,
 		"lengthChange": false,
-		"pageLength": 15,
+		"paging": false,
+		"pageLength": 9999,
 		"order": [[1, 'asc']]
 	});
 
@@ -45,7 +46,7 @@ $(function(){
 		<input type="radio" name="rarity_mode" value="4" id="rarity4"> <label for="rarity4">Commons only</label>.<br />
 		<p>Selected packs (click to remove):</p>
 		<div id="selected-packs"></div>
-	
+		<p><input type="submit" value="Open the event" class="host-event-submit"/></p>
 		<p>Add more packs:</p>
 		<table id="sets-grid" class="display hover stripe clickableRows" >
 			<thead>
