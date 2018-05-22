@@ -313,7 +313,7 @@
 					booster.sort(function (a, b) {
 						return rarityToPriority(a.rarity) - rarityToPriority(b.rarity);
 					});
-					console.log(booster);
+					
 					$.each(booster, function( key, val ) {
 						$(".draft-booster").append(getCardFromPool("img[cardId=" + val["cardId"] + "]").attr("pickId", val["pickId"]));
 					});

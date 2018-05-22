@@ -45,18 +45,17 @@ class PickTable
 		
 		$resultArray = array();
 		foreach($resultSet as $result) {
-			$resultArray[] = array(
-				'pickId' => $result->pick_id,
-				'cardId' => $result->card_id,
-				'startingPlayerId' => $result->starting_player_id,
-				'currentPlayerId' => $result->current_player_id,
-				'isPicked' => $result->is_picked,
-				'packNumber' => $result->pack_number,
-				'pickNumber' => $result->pick_number,
-				'zone' => $result->zone,
-				'zoneColumn' => $result->zone_column,
-				'rarity' => $result->rarity
-			);
+			$pick = new Pick();
+			$pick->pickId = $result->pick_id;
+			$pick->cardId = $result->card_id;
+			$pick->startingPlayerId = $result->starting_player_id;
+			$pick->currentPlayerId = $result->current_player_id;
+			$pick->isPicked = $result->is_picked;
+			$pick->packNumber = $result->pack_number;
+			$pick->zone = $result->zone;
+			$pick->zoneColumn = $result->zone_column;
+			$pick->rarity = $result->rarity;
+			$resultArray[] = $pick;
 		}
 		return $resultArray;
 	}
