@@ -1,14 +1,56 @@
+function Alea(seed) {
+    if(seed === undefined) {seed = +new Date() + Math.random();}
+    function Mash() {
+        var n = 4022871197;
+        return function(r) {
+            for(var t, s, u = 0, e = 0.02519603282416938; u < r.length; u++)
+            s = r.charCodeAt(u), f = (e * (n += s) - (n*e|0)),
+            n = 4294967296 * ((t = f * (e*n|0)) - (t|0)) + (t|0);
+            return (n|0) * 2.3283064365386963e-10;
+        }
+    }
+    return function() {
+        var m = Mash(), a = m(" "), b = m(" "), c = m(" "), x = 1, y;
+        seed = seed.toString(), a -= m(seed), b -= m(seed), c -= m(seed);
+        a < 0 && a++, b < 0 && b++, c < 0 && c++;
+        return function() {
+            var y = x * 2.3283064365386963e-10 + a * 2091639; a = b, b = c;
+            return c = y - (x = y|0);
+        };
+    }();
+}
+
 var Spoiler = function (options){
     this.data = options.data;    
     this.mainElement = options.element;
     this.enableControl = options.enableControl != null ? options.enableControl : true;
     this.enableLinks = options.enableLinks != null ? options.enableLinks : true;
     this.showVersion = options.showVersion != null ? options.showVersion : false;
+    
+    this.resetSeed();
     this.initializeStructure();
     this.initializeCardElements();
     this.initializeSorting();
     this.redraw();   
 };
+
+Spoiler.prototype.resetSeed = function() {    
+    var seed = parseInt(this.getUrlVars().seed) || new Date().getTime();
+    console.log("seed", seed)
+    this.alea = Alea(seed);
+}
+
+Spoiler.prototype.getUrlVars = function () {
+    var vars = [];
+    var locationWithoutHash = window.location.href.split('#')[0];
+    var hashes = locationWithoutHash.slice(locationWithoutHash.indexOf('?') + 1).split('&');
+    for (let i = 0; i < hashes.length; i++) {
+      let hash = hashes[i].split('=');
+      vars.push(decodeURIComponent(hash[0]));
+      vars[hash[0]] = decodeURIComponent(hash[1]);
+    }
+    return vars;
+}
 
 Spoiler.prototype.initializeStructure = function () {
 	if(this.enableControl)
@@ -206,7 +248,7 @@ Spoiler.prototype.initializeSorting = function () {
             return a.id - b.id;
         },
         "random": function (spoiler, a, b) {
-            return Math.random() - Math.random();
+            return spoiler.alea() - spoiler.alea();
         },
     };
 
@@ -315,11 +357,16 @@ Spoiler.prototype.redraw = function () {
     this.cardsElement.empty();
 
     var spoiler = this;
+
+    this.resetSeed();
+
+    // Presort the data so that random sort has predicatable initial state
+    this.data.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
     this.data.sort(function (a, b) {
         return spoiler.sortFunctions[spoiler.order](spoiler, a, b);
     });
 
-    
     for (var i = 0; i < this.data.length; i++) {
         var card = this.data[i];
 
