@@ -1,8 +1,8 @@
 ﻿mse version: 0.3.8
 short name: PlaneSculptors
-full name: PlaneSculptors Export 1.3
+full name: PlaneSculptors Export 1.4
 position hint: 006
-version: 2015-02-14
+version: 2018-06-24
 installer group: magic/Export/planesculptors
 create directory: true
 
@@ -53,7 +53,7 @@ script:
 
 	write_walker := {
 		#Check for Mainframe special text first
-		(if card.special_text != "" then remove_brackets(card.special_text) else
+		(if card.special_text or else "" != "" then remove_brackets(card.special_text) else
 		# The First Ability
 		card.loyalty_cost_1
 			+(if card.loyalty_cost_1 !="" then ": ")
@@ -79,7 +79,7 @@ script:
 		
 	write_walker_2 := {
 		#Check for Mainframe special text first
-		(if card.special_text_2 != "" then remove_brackets(card.special_text_2) else
+		(if card.special_text_2 or else "" != "" then remove_brackets(card.special_text_2) else
 		# The First Ability
 		card.loyalty_cost_4
 			+(if card.loyalty_cost_4 !="" then ": ")
@@ -104,7 +104,7 @@ script:
 		
 	write_sparker := {
 		#Check for Mainframe special text first
-		(if card.special_text_2 != "" then remove_brackets(card.special_text_2) else
+		(if card.special_text_2 or else "" != "" then remove_brackets(card.special_text_2) else
 		# The First Ability
 		card.loyalty_cost_5
 			+(if card.loyalty_cost_5 !="" then ": ")
