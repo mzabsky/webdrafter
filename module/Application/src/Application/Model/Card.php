@@ -9,6 +9,7 @@ class Card
 	const SHAPE_SPLIT = 2;
 	const SHAPE_FLIP = 3;
 	const SHAPE_DOUBLE = 4;
+	const SHAPE_PLANE = 5;
 	
 	public $cardId;
 	public $setVersionId;
@@ -89,6 +90,7 @@ class Card
     		case self::SHAPE_SPLIT: return "split";
     		case self::SHAPE_FLIP: return "flip";
     		case self::SHAPE_DOUBLE: return "double";
+    		case self::SHAPE_PLANE: return "plane";
     	}
     }
     
@@ -100,6 +102,7 @@ class Card
     		case self::SHAPE_SPLIT: return "split";
     		case self::SHAPE_FLIP: return "flip";
     		case self::SHAPE_DOUBLE: return "double";
+    		case self::SHAPE_PLANE: return "plane";
     	}
     }
     

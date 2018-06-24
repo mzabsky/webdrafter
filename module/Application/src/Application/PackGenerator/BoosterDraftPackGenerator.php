@@ -60,7 +60,7 @@ class BoosterDraftPackGenerator
 				
 				$basicLandSlotCardsArray[] = $card;
 			}
-			else 
+			else if($card->shape != Card::SHAPE_PLANE)
 			{
 				$cardsArray[] = $card;
 			}

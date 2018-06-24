@@ -527,6 +527,12 @@ form input.code-input {
   background-repeat: no-repeat;
   background-position: -12px -12px;
   margin-right: 20px; }
+.card-detail.shape-plane .card-image-day div, .card-detail.shape-double .card-image-day div {
+  width: 774px;
+  height: 542px;
+  background-repeat: no-repeat;
+  background-position: -12px -12px;
+  margin-right: 20px; }
 .card-detail.shape-normal .card-image-night div, .card-detail.shape-double .card-image-night div {
   width: 351px;
   height: 499px;
@@ -877,6 +883,9 @@ form input.code-input {
 .query-results .card-image-double {
   height: 300px;
   width: 431px; }
+.query-results .card-image-plane {
+  height: 300px;
+  width: 400px; }
 
 .sortingKey {
   display: none; }

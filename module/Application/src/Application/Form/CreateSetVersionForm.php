@@ -53,7 +53,7 @@ class CreateSetVersionForm extends Form
 				'required' => true,
 				'options' => array(
 						'label' => 'Basic land slot:',
-						'description' => 'Determines which cards are put into the basic land slot in a booster pack. Has no effect in cube-type events.',
+						'description' => 'Determines which cards are put into the basic land slot in a booster pack. Has no effect in cube-type events. Note that the "Card with specific string in X" options look for the match naively, so if you enter "Plane", it will match both "Plane" and "Planeswalker". If you want to only match "Plane", you can enter "Plane " with a trailing space and make sure all the planes in your set have a subtype (or at least a trailing space). Planes will never appear in the first 14 booster slots, if you want to include them in your draft, use this option.',
 						'value_options' => [
 								SetVersion::BASIC_LAND_SLOT_BASIC_LAND => 'Basic land (doesn\'t appear in draft)',
 								SetVersion::BASIC_LAND_SLOT_NONBASIC_LAND => 'Nonbasic land (weighed by rarity)',

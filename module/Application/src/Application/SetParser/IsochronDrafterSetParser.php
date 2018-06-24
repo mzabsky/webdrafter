@@ -41,6 +41,7 @@ class IsochronDrafterSetParser
 					else if($data == "flip") $currentCard->shape = Card::SHAPE_FLIP;
 					else if($data == "double") $currentCard->shape = Card::SHAPE_DOUBLE;
 					else if($data == "token") $currentCard->shape = Card::SHAPE_NORMAL;
+					else if($data == "plane") $currentCard->shape = Card::SHAPE_PLANE;
 					else throw new \Exception("Invalid shape \"" . $data . "\" on line " . $line . ".");
 					$state = "cardNumber";
 					break;
