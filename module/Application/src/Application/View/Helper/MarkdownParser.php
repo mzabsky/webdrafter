@@ -121,6 +121,7 @@ function processSymbols($str, $contextSetUrlName = null, $contextSetVersionUrlNa
 	$str = str_replace($openBracket . "PG$closeBracket", '<span class="icon-wrapper"><i class="mtg phyrexian-g"></i></span>', $str);
 	$str = str_replace($openBracket . "P$closeBracket", '<span class="icon-wrapper"><i class="mtg phyrexian"></i></span>', $str);
 	$str = str_replace($openBracket . "S$closeBracket", '<span class="icon-wrapper"><i class="mtg snow"></i></span>', $str);
+	$str = str_replace($openBracket . "CHAOS$closeBracket", '<span class="icon-wrapper"><i class="mtg chaos"></i></span>', $str);
 
 	// https://fortawesome.github.io/Font-Awesome/cheatsheet/
 	$str = preg_replace("/\\${openBracket}fa-([a-z0-9-]+)\\{$closeBracket}/", '<i class="fa fa-$1"></i>', $str);

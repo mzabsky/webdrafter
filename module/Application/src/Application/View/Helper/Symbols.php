@@ -95,6 +95,7 @@ class Symbols extends \Zend\View\Helper\AbstractHelper
     	$str = str_replace('[PG]', '<span class="icon-wrapper"><i class="mtg phyrexian-g"></i></span>', $str);
     	$str = str_replace('[P]', '<span class="icon-wrapper"><i class="mtg phyrexian"></i></span>', $str);
     	$str = str_replace('[S]', '<span class="icon-wrapper"><i class="mtg snow"></i></span>', $str);
+    	$str = str_replace('[CHAOS]', '<span class="icon-wrapper"><i class="mtg chaos"></i></span>', $str);
     	return $str;
     }
 }
