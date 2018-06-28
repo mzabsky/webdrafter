@@ -12,10 +12,15 @@ use Zend\InputFilter\InputFilterInterface;
 
 class UploadCardsForm extends Form
 {
-	const NAME_DOT_PNG = 1;
-	const NAME_DOT_FULL_DOT_PNG = 2;
-	const NAME_DOT_JPG = 3;
-	const NAME_DOT_FULL_DOT_JPG = 4;
+	const AUTO = -1;
+	const NAME_DOT_PNG_ALNUM = 1;
+	const NAME_DOT_FULL_DOT_PNG_ALNUM = 2;
+	const NAME_DOT_JPG_ALNUM = 3;
+	const NAME_DOT_FULL_DOT_JPG_ALNUM = 4;
+	const NAME_DOT_PNG_SPECIAL = 5;
+	const NAME_DOT_FULL_DOT_PNG_SPECIAL = 6;
+	const NAME_DOT_JPG_SPECIAL = 7;
+	const NAME_DOT_FULL_DOT_JPG_SPECIAL = 8;
 	
 	private $inputFilter;
 	
@@ -59,12 +64,17 @@ class UploadCardsForm extends Form
 				'required' => true,
 				'options' => array(
 						'label' => 'Art file name format:',
-						'description' => 'Scheme used for names of individual card image files.',//URL from which the players can download the files necessary to play with the set (such as Cockatrice package).'
+						'description' => 'Scheme used for names of individual card image files. Use \'Automatic\' unless you encounter issues with the website not assigning card images to cards correctly. Special characters are any non-alphanumeric non-space characters.',
 						'value_options' => [
-								self::NAME_DOT_PNG => '<card name>.png',
-								self::NAME_DOT_FULL_DOT_PNG => '<card name>.full.png',
-								self::NAME_DOT_JPG => '<card name>.jpg',
-								self::NAME_DOT_FULL_DOT_JPG => '<card name>.full.jpg',
+								self::AUTO => 'Automatic',
+								self::NAME_DOT_PNG_ALNUM => '<card name>.png (without special characters)',
+								self::NAME_DOT_FULL_DOT_PNG_ALNUM => '<card name>.full.png (without special characters)',
+								self::NAME_DOT_JPG_ALNUM => '<card name>.jpg (without special characters)',
+								self::NAME_DOT_FULL_DOT_JPG_ALNUM => '<card name>.full.jpg (without special characters)',
+								self::NAME_DOT_PNG_SPECIAL => '<card name>.png (with special characters)',
+								self::NAME_DOT_FULL_DOT_PNG_SPECIAL => '<card name>.full.png (with special characters)',
+								self::NAME_DOT_JPG_SPECIAL => '<card name>.jpg (with special characters)',
+								self::NAME_DOT_FULL_DOT_JPG_SPECIAL => '<card name>.full.jpg (with special characters)',
 						],
 				),
 		)));

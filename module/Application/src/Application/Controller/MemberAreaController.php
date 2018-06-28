@@ -841,9 +841,55 @@ class MemberAreaController extends WebDrafterControllerBase
 						
 						foreach($cards as $card)
 						{
-							$cardArtName = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
+							$cardArtNameWithoutSpecialCharacters = preg_replace("/[^a-zA-Z0-9-. Æ]/iu", "", $card->name);
+							//die('/[\\\\\\/<>:\\|\\?\\*"]/iu');
+							$cardArtNameWithSpecialCharacters = preg_replace('/[\\\\\\/<>:\\|\\?\\*"]/iu', "", $card->name);
 
-							switch($formData["art_url_format"])
+							$namePossibilities = Array();
+							$namePossibilities[UploadCardsForm::NAME_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".png";
+							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".full.png";
+							$namePossibilities[UploadCardsForm::NAME_DOT_JPG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".jpg";
+							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_JPG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".full.jpg";
+							$namePossibilities[UploadCardsForm::NAME_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".png";
+							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".full.png";
+							$namePossibilities[UploadCardsForm::NAME_DOT_JPG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".jpg";
+							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_JPG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".full.jpg";
+
+							
+
+							if($formData["art_url_format"] == UploadCardsForm::AUTO) {
+								$card->artUrl = null;
+								foreach($namePossibilities as $namePossibility) {
+									if(file_exists($setDir . $namePossibility)){
+										$card->artUrl = $namePossibility;
+										break;
+									}
+								}
+
+								if($card->artUrl === null) {
+									$dedupedArray = array_unique ($namePossibilities);
+									foreach($dedupedArray as $key => $value) {
+										$dedupedArray[$key] = "\"$value\"";
+									}
+
+									throw new \Exception("Image for card \"" . $card->name . "\" is missing, one of following file names expected: " . implode($dedupedArray, ', ') . ".");
+								}
+							} 
+							else
+							{
+								$expectedName = $namePossibilities[$formData["art_url_format"]];
+								if(isset($namePossibilities[$formData["art_url_format"]])) {
+									if(!file_exists($setDir . $expectedName)){
+										throw new \Exception("Image for card \"" . $card->name . "\" is missing, file named \"" . $expectedName . "\" was expected.");
+									}
+
+									$card->artUrl = $expectedName;
+								} else {
+									throw new \Exception("Invalid art url format option.");
+								}
+							}
+
+							/*switch($formData["art_url_format"])
 							{
 								case UploadCardsForm::NAME_DOT_PNG:
 									$cardArtName = $cardArtName . ".png"; // rawurlencode(
@@ -865,7 +911,7 @@ class MemberAreaController extends WebDrafterControllerBase
 								throw new \Exception("Image for card \"" . $card->name . "\" is missing, file named \"" . $cardArtName . "\" was expected.");
 							}
 							
-							$card->artUrl = $cardArtName; // This is not a full URL yet
+							$card->artUrl = $cardArtName;*/ // This is not a full URL yet
 							
 							//var_dump($currentVersionCardArray[$card->name]->isNewVersionChanged($card));
 							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
