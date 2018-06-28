@@ -658,6 +658,8 @@ $shape-split-width: 523px;
 $shape-split-height: 375px;
 $shape-double-width: 752px;
 $shape-double-height: 523px;
+$shape-plane-width: 800px;
+$shape-plane-height: 559px;
 /*
 .shape-normal, .shape-flip {
 	background: red;
@@ -751,6 +753,18 @@ $shape-double-height: 523px;
 	    margin-right: 20px;
 	}
 }
+
+.card-detail.shape-plane
+{
+	.card-image-day div {
+	    width: 768px;
+	    height: 540px;
+	    background-repeat: no-repeat;
+	    background-position: -15px -15px;     
+	    margin-right: 20px;
+	}
+}
+
 
 .card-detail 
 {
@@ -1220,6 +1234,11 @@ $shape-double-height: 523px;
 	.card-image-double {
 		height: 300px;
 		width: 431px;
+	}
+	
+	.card-image-plane {
+		height: 300px;
+		width: 400px;
 	}
 }
 
