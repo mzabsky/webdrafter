@@ -56,6 +56,7 @@
 	var xhr = null;
 	var lastPackPick = null;
 	var lastDraftInfo = null;
+	var lastDraftInfoJson = null;
 	var lastStatus = null;
 	var existingBasics = {"W": 0, "U": 0, "B": 0, "R": 0, "G": 0, 
 		<?php
@@ -64,7 +65,7 @@
 			echo '"' . $basic->color . '": ' . $basic->count . ',';
 		}?>
 	};
-	/*var lastDraftInfos = {
+	/*var lastDraftInfoJsons = {
 		all: null,
 		draftPlayers: null,
 		booster: null,
@@ -176,17 +177,54 @@
 		$('.spinner').show();	
 			
 		xhr = $.getJSON( "<?php echo $this->url('draft', array('action' => 'get-draft-info', 'invite_key' => $this->draftPlayer->inviteKey)) ?>", function( data ) {		
+			function updateDraftPlayers() {
+				$('#players-list').show();
+				var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";
+				$("#players-list").empty();	
+				$("#players-list").append(directionArrow);
+				$.each( data["pickIndicators"], function( key, val ) {
+					var link;
+					if(val['userId'] == null)
+					{
+						link = (val["isAi"] == 1 ? '<i class="fa fa-microchip"></i> ' : "") + key;
+					}
+					else {
+						link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
+					}
+	
+					if(val['hasPicked'])
+					{
+						$("#players-list").append("<span class='player-picked'>" + link + "</span>" + directionArrow);
+					}
+					else 
+					{
+						$("#players-list").append(link + directionArrow);
+					}
+				});
+			}
+
 			xhr = null;
 			$('.spinner').hide();
 	
 			var str = JSON.stringify(data);
-			if(lastDraftInfo == str)
+			if(lastDraftInfoJson == str)
 			{
 				timer = setTimeout(function(){ refreshDraft(); }, 1000);
 				return;
 			}
+
+			/*if(
+				data["draftStatus"] == draftStatuses.open 
+				&& JSON.stringify(data.booster) === JSON.stringify(lastDraftInfo.booster)
+				&& JSON.stringify(data.pick) === JSON.stringify(lastDraftInfo.picks)
+			) {
+				updateDraftPlayers();
+				timer = setTimeout(function(){ refreshDraft(); }, 1000);
+				return;
+			}*/
 	
-			lastDraftInfo = str;
+			lastDraftInfo = data;
+			lastDraftInfoJson = str;
 			
 			if(data["draftStatus"] == draftStatuses.open)
 			{
@@ -260,29 +298,7 @@
 				$(".draft-booster").empty().append('<div class="draft-area-label">DRAFT PACK</div>');
 				$(".draft-picks").empty().append('<div class="draft-area-label">YOUR PICKS</div>');
 
-				$('#players-list').show();
-				var directionArrow = data["packNumber"] % 2 == 1 ? " &#8592; " : " &#8594; ";
-				$("#players-list").empty();	
-				$("#players-list").append(directionArrow);
-				$.each( data["pickIndicators"], function( key, val ) {
-					var link;
-					if(val['userId'] == null)
-					{
-						link = (val["isAi"] == 1 ? '<i class="fa fa-microchip"></i> ' : "") + key;
-					}
-					else {
-						link = '<a href="/user/' + val['userId'] + '" target="_blank">' + key + '</a>';
-					}
-	
-					if(val['hasPicked'])
-					{
-						$("#players-list").append("<span class='player-picked'>" + link + "</span>" + directionArrow);
-					}
-					else 
-					{
-						$("#players-list").append(link + directionArrow);
-					}
-				});
+				updateDraftPlayers();
 				
 				if(data['hasPicked']){
 					$(".draft-booster").append("<div class='centered-box already-picked'><p>You have already picked a card.</p><p>Please wait until other players make a pick as well.</p></div>");
