@@ -66,7 +66,7 @@ $(function(){
 		foreach ($this->sets as $set)
 		{
 			echo "<tr url='" . $this->url('browse-set', array('url_name' => $set["urlName"])) . "' setVersionId='".$set["currentSetVersionId"]."' setLabel='" . htmlspecialchars($set["setCode"] . ' - ' . $set["setName"] . ' - ' .$set["currentSetVersionName"]) . "'>";
-			echo "<td><button class='add-button' onclick='return addSet(this)'>Add</button/></td>";
+			echo "<td><button class='add-button' onclick='return addSet(this)'>Add</button/> <button class='add-button' onclick='addSet(this);addSet(this); return addSet(this);'>Add 3&times;</button/></td>";
 			echo "<td class='nameCell'>";
 			echo $set["setName"];
 			echo "</td>";
