@@ -20,6 +20,8 @@ function Alea(seed) {
     }();
 }
 
+function isMobileView() { return window.innerWidth <= 800 }
+
 var Spoiler = function (options){
     this.data = options.data;    
     this.mainElement = options.element;
@@ -32,6 +34,11 @@ var Spoiler = function (options){
     this.initializeCardElements();
     this.initializeSorting();
     this.redraw();   
+
+    var spoiler = this;
+    $(window).resize(function() {
+        spoiler.redraw();
+    });
 };
 
 Spoiler.prototype.resetSeed = function() {    
@@ -57,11 +64,11 @@ Spoiler.prototype.initializeStructure = function () {
 	{
 		this.mainElement.html(
 	        //"<div class='spoler-cards-no'>Number of cards: " + this.data.length + "</div>" +
-	        "<div class='spoiler-filters-and-sorts'>" +
-	        "   <div class='spoiler-mode'>" +
+            "<div class='spoiler-filters-and-sorts'>" +
+                (!isMobileView() ? "<div class='spoiler-mode'>" +
 	        "      Display: <a href='javascript:void(0)' onclick='spoiler.setMode(\"spoiler\")' mode='spoiler' class='activeSort' title='Display all card information'>Spoiler</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.setMode(\"images\")' mode='images' title='Display card images only'>Images</a>" +
-	        "   </div>" +
+            "   </div>" : "" ) +
 	        "   <div class='spoiler-sort'>" +
 	        "      Sort by: <a href='javascript:void(0)' onclick='spoiler.sort(\"color\")' sort='color' class='activeSort' title='Sort by color, then name'>Color</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"rarity\")' sort='rarity' title='Sort by rarity, then color and name'>Rarity</a>" +
@@ -117,7 +124,7 @@ Spoiler.prototype.initializeCardElements = function () {
         var card = this.data[i];
 
         this.imageCardElements[card.cardId] = $("" +
-        	"<a href='" + card.url + "'><img class='lazyload' data-original='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' /></a>");
+        	"<a href='" + card.url + "'><img src='" + card.artUrl + "' alt='" + card.name + "' class='card-image card-image-" + card.shape + "' /></a>");
         
         this.spoilerCardElements[card.cardId] = $("" +
             "<table class='card-detail shape-" + card.shape + "'>" +
@@ -354,6 +361,8 @@ Spoiler.prototype.copyAsBBLink = function (cardName) {
 }
 
 Spoiler.prototype.redraw = function () {
+    console.log("redraw mobile: ", isMobileView());
+
     this.cardsElement.empty();
 
     var spoiler = this;
@@ -398,7 +407,7 @@ Spoiler.prototype.redraw = function () {
         }
         
         if (include) {
-        	if(this.mode == "spoiler"){
+        	if(this.mode == "spoiler" && !isMobileView()){
         		this.cardsElement.append(this.spoilerCardElements[card.cardId]);
         	}            
         	else {

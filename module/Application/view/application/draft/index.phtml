@@ -247,17 +247,17 @@
 					$.each( data["draftPlayers"], function( key, val ) {
 						if(val["userId"] == null)
 						{
-							html += (val["isAi" == 1] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"] + "<br/>";
+							html += '<div class="anonymous-player">' + ((val["isAi" == 1] ? '<i class="fa fa-microchip"></i> ' : "") + val["name"] + "") + "</div>";
 						}
 						else 
 						{
-							html += "<a href='/user/" + val["urlName"] +"' target='_blank'>" + val["name"] + "</a><br/>";
+							html += "<a href='/user/" + val["urlName"] +"' target='_blank'>" + val["name"] + "</a>";
 						}
 					});
 
 					if(isDraftHost)
 					{
-						html += "<br/><br/><input type='submit' onclick='startDraft()' value='Start event' /> <input type='submit' onclick='addAi()' value='Add AI Player' />";
+						html += "<div class='host-buttons'><input type='submit' onclick='startDraft()' value='Start event' /> <input type='submit' onclick='addAi()' value='Add AI Player' /></div>";
 					}
 					
 					html += "</div>";
@@ -279,7 +279,7 @@
 							}
 			else if(data["draftStatus"] == draftStatuses.running)
 			{
-				$('.draft-pick-display').show();
+				$('.draft-pick-display').css('display', 'inline');
 				$('.draft-pack-number').html(data["packNumber"]);
 				$('.draft-pick-number').html(data["pickNumber"]);
 
@@ -332,9 +332,15 @@
 					
 					$.each(booster, function( key, val ) {
 						$(".draft-booster").append(getCardFromPool("img[cardId=" + val["cardId"] + "]").attr("pickId", val["pickId"]));
+
+						$(".draft-booster img").draggable({
+							helper: "clone",
+							//containment: $("#deckbuilder"),
+							revert: "invalid"
+						});
 					});
 										
-					$(".draft-booster img").dblclick(function() {
+					var pickCard = function(pickId) {
 						if(xhr != null)
 						{
 							xhr.abort();
@@ -346,9 +352,18 @@
 						}
 						$('.spinner').show();
 						$('.draft-booster .card').css('visibility', 'hidden');
-						$.getJSON( "<?php echo $this->url('draft', array('action' => 'pick', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pickId=" + $(this).attr("pickId"), function( data ) {
+						$.getJSON( "<?php echo $this->url('draft', array('action' => 'pick', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?pickId=" + pickId, function( data ) {
 							refreshDraft();
 						});
+					};
+
+					$(".draft-booster img").on('dblclick', function() { pickCard($(this).attr("pickId")) });
+
+					$(".draft-picks").droppable({
+						drop: function(e, droppedCard)
+						{
+							pickCard(droppedCard.draggable.attr("pickId"));
+						}
 					});
 				}
 	
@@ -379,7 +394,7 @@
 				/*$("#deckbuilder-screen").append("<p>The draft has concluded. You can now build your deck.</p>");*/
 				//$("#draft").append("<p><a href='<?php echo $this->url('draft', array('action' => 'export', 'invite_key' => $this->draftPlayer->inviteKey)) ?>?type=cockatrice'>Export deck for Cockatrice</a>.</p>");
 				//$("#deckbuilder-screen").append("<p></p>");
-				$("#draft").append("<table id='deckbuilder'><thead><tr id='buttons-row'></tr><tr id='labels-row'></tr></thead><tbody><tr></tr></tbody></table>");
+				$("#draft").append("<div id='deckbuilder-container'><table id='deckbuilder'><thead><tr id='buttons-row'></tr><tr id='labels-row'></tr></thead><tbody><tr></tr></tbody></table></div>");
 	
 				/*$("#deckbuilder").after("<p>Basic lands:</p><table id='basics'><tr class='basics_up_row'></tr><tr class='basics_mid_row'></tr><tr class='basics_down_row'></tr></table>");
 	

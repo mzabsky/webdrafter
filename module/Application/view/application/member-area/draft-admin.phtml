@@ -68,13 +68,15 @@ function refreshPage()
 
 	}
 	
-	$('.spinner').show();
+	$('.spinner').css('visibility', 'visible');
 	xhr = $.getJSON( "<?php echo $this->url('member-area-with-draft-id', array('action' => 'get-draft-players', 'draft_id' => $this->draft->draftId));?>", function( data ) {
-		$('.spinner').hide();
-		if(lastData == data){
+		var dataJson = JSON.stringify(data);
+		$('.spinner').css('visibility', 'hidden');
+		if(lastData == dataJson){
 			timer = setTimeout(function(){ refreshPage(); }, 1000);
 			return;
 		}
+		lastData = dataJson;
 
 		var hostInviteKey = null;
 		$("#draft_players").empty();
@@ -105,7 +107,7 @@ function refreshPage()
 				
 				$("#draft_players").append("<div>" + url + "</div>");
 				
-				$("#start-event").show();
+				$("#start-event").css('visibility', 'visible');
 				//alert();
 
 				if(val["isAi"] == 0) {

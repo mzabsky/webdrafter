@@ -15,11 +15,11 @@
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.png'))
        					->prependStylesheet($this->basePath('css/jquery.dataTables.min.css'))
                         ->prependStylesheet($this->basePath('css/simplemde.min.css'))
-                        ->prependStylesheet($this->basePath('css/style.css'))
+                        ->prependStylesheet($this->basePath('css/style.css?v=1'))
                         ->prependStylesheet($this->basePath('css/mtgicons.css'))
                         ->prependStylesheet($this->basePath('css/themes/tooltipster-light.css'))
                         ->prependStylesheet($this->basePath('css/tooltipster.css'))
-                        ->prependStylesheet($this->basePath('css/autocard.css'))
+                        ->prependStylesheet($this->basePath('css/autocard.css?v=1'))
                         ->prependStylesheet('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
         				->prependStylesheet($this->basePath('css/jquery-ui.css'))
         				->prependStylesheet($this->basePath('css/dropzone.css')) ?>
@@ -29,10 +29,12 @@
         	var isLoggedIn = <?php echo $this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN ? 'true' : 'false' ?>;
         </script>
         <?php echo $this->headScript()
+            ->prependFile('https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js')
+            /*->prependFile('http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js')*/
             ->prependFile($this->basePath('js/jquery.layout_and_plugins.js'))
-            ->prependFile($this->basePath('js/autocard.js'))
-            ->prependFile($this->basePath('js/spoiler.js'))
-            ->prependFile($this->basePath('js/webdrafter.js'))
+            ->prependFile($this->basePath('js/autocard.js?v=1'))
+            ->prependFile($this->basePath('js/spoiler.js?v=1'))
+            ->prependFile($this->basePath('js/webdrafter.js?v=1'))
             ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/dropzone.js'))
             ->prependFile($this->basePath('js/jquery.dataTables.min.js'))
@@ -67,20 +69,24 @@
 	        		<?php } ?>
 		        	<a href="<?php echo $this->url('home')?>" id="mainHeader"><h1>PLANE<strong>SCULPTORS</strong><small>.NET</small></h1></a>
 		        	<div id="menuBar">
-			        	<a href="<?php echo $this->url('browse') ?>">Explore content</a>
-			        	<a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+                        <div id="menuBarItems">
+                            <a href="<?php echo $this->url('browse') ?>">Explore content</a>
+                            <a href="<?php echo $this->url('tutorial') ?>">Tutorials</a>
+                        </div>
 		        	</div>
 		        	<div id="userPanel">
 			        	<?php if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_LOGGED_IN){?>
-			        		Logged in as <?=$this->auth()->getUser()->name ?> <br />
-			        		<a href="<?php echo $this->url('member-area')?>">Member area</a> 
-			        		<a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
-			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+			        		<div id="userPanelItems">
+                                <a href="<?php echo $this->url('member-area')?>">Member area</a> 
+			        		    <a href="<?php echo $this->url('member-area', array('action' => 'select-game-mode'))?>">Host event</a> 
+			        		    <a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
+                            </div>
+			        		<div id="userPanelUserName">Logged in as <?=$this->auth()->getUser()->name ?></div>
 			        	<?php } else if($this->auth()->getStatus() == \Application\GoogleAuthentication::STATUS_NOT_REGISTERED)  {?>
 			        		Logged in as <?=$this->auth()->getUser()->email ?> <br />
 			        		<a href="<?php echo $this->url('member-area', array('action' => 'logout'));?>">Logout</a>
 			        	<?php } else  {?>
-			        		<br/><a href="<?php echo $this->url('member-area', array("action" => "login")) ?>?return=<?php echo urlencode($this->serverUrl(true) == $this->serverUrl($this->url('home')) ? $this->url('member-area') : $this->serverUrl(true)); ?>">Login</a>
+			        		<a href="<?php echo $this->url('member-area', array("action" => "login")) ?>?return=<?php echo urlencode($this->serverUrl(true) == $this->serverUrl($this->url('home')) ? $this->url('member-area') : $this->serverUrl(true)); ?>">Login</a>
 			        	<?php } ?>
 		        	</div>
 	        		<div class="clear"></div>

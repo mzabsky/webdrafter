@@ -1,5 +1,11 @@
+function isMobile() 
+{
+	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
 function selectAll(box)
 {
+	if(isMobile()) return;
 	box.focus();
 	box.select();
 };
