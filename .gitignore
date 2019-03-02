@@ -13,3 +13,5 @@ config/client_secret.json
 database/webdrafter.mwb.bak
 database/webdrafter.mwb.bak
 webdrafter/upload
+
+node_modules

@@ -1,0 +1,25 @@
+{
+  "name": "webdrafter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.php",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "sass --watch webdrafter/css/style.scss webdrafter/css/style.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mzabsky/webdrafter.git"
+  },
+  "author": "Matej Zabsky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mzabsky/webdrafter/issues"
+  },
+  "homepage": "https://github.com/mzabsky/webdrafter#readme",
+  "devDependencies": {
+    "sass": "^1.13.0"
+  }
+}
