@@ -835,8 +835,8 @@ class MemberAreaController extends WebDrafterControllerBase
 						$parser = new \Application\SetParser\IsochronDrafterSetParser();
 						$cards = $parser->Parse($fileContents);
 						
-						if(count($cards) > 720){
-							throw new \Exception("Maximum allowed number of cards in a set is 720.");
+						if(count($cards) > 2000){
+							throw new \Exception("Maximum allowed number of cards in a set is 2000.");
 						}
 						
 						foreach($cards as $card)
