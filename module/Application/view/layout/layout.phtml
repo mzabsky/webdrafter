@@ -15,7 +15,7 @@
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.png'))
        					->prependStylesheet($this->basePath('css/jquery.dataTables.min.css'))
                         ->prependStylesheet($this->basePath('css/simplemde.min.css'))
-                        ->prependStylesheet($this->basePath('css/style.css?v=1'))
+                        ->prependStylesheet($this->basePath('css/style.css?v=2'))
                         ->prependStylesheet($this->basePath('css/mtgicons.css'))
                         ->prependStylesheet($this->basePath('css/themes/tooltipster-light.css'))
                         ->prependStylesheet($this->basePath('css/tooltipster.css'))
@@ -33,7 +33,7 @@
             /*->prependFile('http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js')*/
             ->prependFile($this->basePath('js/jquery.layout_and_plugins.js'))
             ->prependFile($this->basePath('js/autocard.js?v=1'))
-            ->prependFile($this->basePath('js/spoiler.js?v=1'))
+            ->prependFile($this->basePath('js/spoiler.js?v=2'))
             ->prependFile($this->basePath('js/webdrafter.js?v=1'))
             ->prependFile($this->basePath('js/simplemde.min.js'))
             ->prependFile($this->basePath('js/dropzone.js'))
@@ -97,7 +97,7 @@
             </div>
             <?php if(!$this->wideMode()){ ?>
 	            <footer>
-	                <p>&copy; <?php echo date('Y') ?> by <a href="http://www.zabsky.net">Matej Zabsky</a>. All dates and times are in CEST.</p> 
+	                <p>&copy; <?php echo date('Y') ?> by <a href="http://www.zabsky.net">Matej Zabsky</a>. Wizards of the Coast, Magic: The Gathering, and their logos are trademarks of Wizards of the Coast LLC. © 1995-<?php echo date('Y') ?> Wizards. All rights reserved. PlaneSculptors.net is not affiliated with Wizards of the Coast LLC.</p> 
 	                <p>PlaneSculptors.net is <a href="https://github.com/mzabsky/webdrafter" title="WebDrafter at GitHub"/>open source</a>.</p>
 	            </footer>
             <?php } ?>
