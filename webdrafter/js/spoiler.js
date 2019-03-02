@@ -226,7 +226,9 @@ Spoiler.prototype.initializeSorting = function () {
         "rarity": function (spoiler, a, b) {
             var rate = function (x) {
             	var modifier = modifierFunction(x);
-                if (x.rarity == 'B') return 5 + modifier;
+                if (x.rarity == 'T') return 7 + modifier;
+                else if (x.rarity == 'B') return 6 + modifier;
+                else if (x.rarity == 'S') return 5 + modifier;
                 else if (x.rarity == 'C') return 4 + modifier;
                 else if (x.rarity == 'U') return 3 + modifier;
                 else if (x.rarity == 'R') return 2 + modifier;
