@@ -552,7 +552,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			}
 			$numberOfPlayers = count($draftPlayerArray);
 			
-			$allowedRarities = array();
+			$allowedRarities = ['S'];
 			switch($draft->rarityMode)
 			{
 				case Draft::RARITY_MODE_MRUC:
