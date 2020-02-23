@@ -56,14 +56,23 @@ const symbolMapping = {
 }
 client.on('message', msg => {
   var text = msg.content
+  
+  if(msg.channel.guild && msg.channel.guild.name == "Custom Standard") {
+    if(!msg.isMentioned(client.user)) {
+      return;
+    }      
+    text = "[[" + text.replace(/<@[0-9]+>/g, '').trim() + "]]";
+  }
+
   var match = regex.exec(text)
-  if (!match) return
+  if (!match) return  
 
   var set = match[2]
   var setVersion = match[4]
   var card = match[5].replace(/'/g, '_').replace(/’/g, '_').replace(/\*/g, '%')
 
   var url = `http://www.planesculptors.net/autocard?context=${msg.channel.name}contextVersion=&set=${set || ''}&setVersion=${setVersion || ''}&card=${card}&bot`
+
   axios.get(url)
   .then(response => {
     var responseText = response.data
