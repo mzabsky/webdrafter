@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/mzabsky/webdrafter#readme",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "discord.js": "^11.3.2"
   }
 }
