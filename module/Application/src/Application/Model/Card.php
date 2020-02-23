@@ -10,6 +10,7 @@ class Card
 	const SHAPE_FLIP = 3;
 	const SHAPE_DOUBLE = 4;
 	const SHAPE_PLANE = 5;
+	const SHAPE_VSPLIT = 6; // Vertical split cards, such as Aftermath or Adventure
 	
 	public $cardId;
 	public $setVersionId;
@@ -91,6 +92,7 @@ class Card
     		case self::SHAPE_FLIP: return "flip";
     		case self::SHAPE_DOUBLE: return "double";
     		case self::SHAPE_PLANE: return "plane";
+    		case self::SHAPE_VSPLIT: return "vsplit";
     	}
     }
     
@@ -103,6 +105,7 @@ class Card
     		case self::SHAPE_FLIP: return "flip";
     		case self::SHAPE_DOUBLE: return "double";
     		case self::SHAPE_PLANE: return "plane";
+    		case self::SHAPE_VSPLIT: return "vsplit";
     	}
     }
     

@@ -683,14 +683,14 @@ form input.code-input {
 	height: $shape-double-height;
 }
 */
-.card-detail.shape-normal .card-image-day div, .card-detail.shape-double .card-image-day div {
+.card-detail.shape-normal .card-image-day div, .card-detail.shape-double .card-image-day div, .card-detail.shape-vsplit .card-image-day div {
   width: 351px;
   height: 499px;
   background-repeat: no-repeat;
   background-position: -12px -12px;
   margin-right: 20px;
 }
-.card-detail.shape-normal .card-image-night div, .card-detail.shape-double .card-image-night div {
+.card-detail.shape-normal .card-image-night div, .card-detail.shape-double .card-image-night div, .card-detail.shape-vsplit .card-image-night div {
   width: 351px;
   height: 499px;
   background-repeat: no-repeat;

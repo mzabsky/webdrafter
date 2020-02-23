@@ -729,6 +729,8 @@ $shape-double-width: 752px;
 $shape-double-height: 523px;
 $shape-plane-width: 800px;
 $shape-plane-height: 559px;
+$shape-vsplit-width: 375px;
+$shape-vsplit-height: 523px;
 /*
 .shape-normal, .shape-flip {
 	background: red;
@@ -766,7 +768,7 @@ $shape-plane-height: 559px;
 	height: $shape-double-height;
 }
 */
-.card-detail.shape-normal, .card-detail.shape-double
+.card-detail.shape-normal, .card-detail.shape-double, .card-detail.shape-vsplit
 {
 	.card-image-day div {
 	    width: 351px;
