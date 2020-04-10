@@ -56,12 +56,17 @@ const symbolMapping = {
 }
 client.on('message', msg => {
   var text = msg.content
-  
+
+  // Custom Standard channel exception
   if(msg.channel.guild && msg.channel.guild.id == "481200347189084170") {
     if(!msg.isMentioned(client.user)) {
       return;
     }      
     text = "[[" + text.replace(/<@[0-9]+>/g, '').trim() + "]]";
+  }
+
+  if (text.includes('$msem') || text.includes('$myriad')) {
+    return;
   }
 
   var match = regex.exec(text)
@@ -85,4 +90,4 @@ client.on('message', msg => {
 })
 .on('error', e => console.log(e))
 
-client.login('TOKEN')
+client.login('MjIzNDAwNzcyMjI0Njc5OTM3.DcJlqg.g4Fvoq93fFZSlB1fGKx39itj5cg')
