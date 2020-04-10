@@ -57,7 +57,7 @@ const symbolMapping = {
 client.on('message', msg => {
   var text = msg.content
   
-  if(msg.channel.guild && msg.channel.guild.name == "Custom Standard") {
+  if(msg.channel.guild && msg.channel.guild.id == "481200347189084170") {
     if(!msg.isMentioned(client.user)) {
       return;
     }      
