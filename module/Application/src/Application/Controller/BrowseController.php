@@ -171,8 +171,11 @@ class BrowseController extends WebDrafterControllerBase
     	$userTable = $sm->get('Application\Model\UserTable');
     	$cardTable = $sm->get('Application\Model\CardTable');
     	
-    	$isBot = isset($_GET["bot"]);
-    	$viewModel = new ViewModel();
+			$isJson = isset($_GET["json"]);
+			$isBot = isset($_GET["bot"]) || $isJson;
+			$viewModel = new ViewModel();
+			$viewModel->isBot = $isBot;
+			$viewModel->isJson = $isJson;
     	$viewModel->setTerminal(true);
     	
     	if(is_numeric($cardIdentifier))
@@ -215,7 +218,6 @@ class BrowseController extends WebDrafterControllerBase
     			}
     			else if(!$isBot) 
     			{
-    				die("a");
     				return $this->notFoundAction();
     			}
     		}
@@ -249,7 +251,6 @@ class BrowseController extends WebDrafterControllerBase
     			}
     			else if(!$isBot)
     			{
-    				die("c");
     				return $this->notFoundAction();
     			}
     		}
@@ -275,7 +276,7 @@ class BrowseController extends WebDrafterControllerBase
     		$card = $cards[0];
     		return $this->redirect()->toUrl($card->artUrl);//->toRoute('browse-card', array('set_url_name' => $set->urlName, 'version_url_name' => $setVersion->urlName, 'card_url_name' => $card->urlName));
     	}
-    	else if(isset($_GET["bot"]))
+    	else if($isBot)
     	{
     		$response = $this->getResponse();
     		

@@ -9,6 +9,32 @@ if(isset($this->message)){
 	return;
 }
 
+if($this->isJson) {
+	$jsonObject = array();
+	foreach($cards as $i => $card){
+		if($i == 3) {
+			break;
+		}
+
+		$cardObject = (array)$card;
+		foreach ($cardObject as $key => $value) {
+			if(substr($key, -2, 2) == "Id") {
+				unset($cardObject[$key]);
+			}
+
+			if($key == 'shape') {
+				$cardObject['shape'] = \Application\Model\Card::getShapeNameStatic($cardObject['shape']);
+			}
+		}
+
+		array_push($jsonObject, $cardObject);
+	}
+
+	echo json_encode($jsonObject);
+	return;
+}
+
+
 foreach($cards as $i => $card){
 	if($i == 3){
 		echo "**More than three matching cards were found. Please narrow down your search.**";
