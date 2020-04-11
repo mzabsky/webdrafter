@@ -852,7 +852,7 @@ class CardTable
 	{
 		$setVersionId  = $setVersionId !== null ? (int) $setVersionId : null;
 		
-		$sql = new Sql($this->tableGateway->adapter);
+		/*$sql = new Sql($this->tableGateway->adapter);
 		$select = new Select('card');
 			if($setVersionId !== null){
 				$select->where->equalTo('card.set_version_id', $setVersionId);
@@ -866,13 +866,49 @@ class CardTable
 			}
 			$select->where->like('card.name', '%' . $name . '%');
 			$select->order('name ASC')->limit($limit);
-		//});
-		$selectString = $sql->getSqlStringForSqlObject($select);
-		//var_dump($selectString);
-		
-		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-		
+		//});*/
 
+
+		//$selectString = $sql->getSqlStringForSqlObject($select);
+
+		$parameters = array();
+		$parameters[] = $name;
+
+		if($setVersionId !== null) {
+			$parameters[] = $setVersionId;
+			$selectString = "
+				SELECT * FROM (
+					SELECT 
+					`card`.*, `set_version`.`name` AS `set_version_name`, `set`.`name` AS `set_name`
+					FROM `card` 
+						INNER JOIN `set_version` ON `card`.`set_version_id` = `set_version`.`set_version_id`
+						INNER JOIN `set` ON `set_version`.`set_id` = `set`.`set_id`
+					WHERE
+						`card`.`name` LIKE concat('%', ?, '%')
+						AND `set_version`.set_version_id = ?
+					LIMIT 4
+				) `x`
+				ORDER BY `name` ASC
+			";
+		} else {
+			$selectString = "
+				SELECT * FROM (
+					SELECT 
+					`card`.*, `set_version`.`name` AS `set_version_name`, `set`.`name` AS `set_name`
+					FROM `card` 
+						INNER JOIN `set_version` ON `card`.`set_version_id` = `set_version`.`set_version_id`
+						INNER JOIN `set` ON `set_version`.`set_version_id` = `set`.`current_set_version_id`
+					WHERE
+					 `set`.`is_private` = '0' 
+						AND `card`.`name` LIKE concat('%', ?, '%')
+					LIMIT 4
+				) `x`
+				ORDER BY `name` ASC
+			";
+		}
+		
+		$resultSet = $this->tableGateway->adapter->query($selectString, $parameters);
+		
 		$resultArray = array();
 		foreach ($resultSet as $result)
 		{
