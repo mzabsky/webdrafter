@@ -942,7 +942,7 @@ class CardTable
 			$o->power2 = $result->power_2;
 			$o->toughness2 = $result->toughness_2;
 			$o->ptString2 = $result->pt_string_2;
-			$o->llustrator2 = $result->illustrator_2;
+			$o->illustrator2 = $result->illustrator_2;
 					
 			$o->setVersionName = $result->set_version_name;
 			$o->setName = $result->set_name;
@@ -1010,7 +1010,7 @@ class CardTable
 			$o->power2 = $result->power_2;
 			$o->toughness2 = $result->toughness_2;
 			$o->ptString2 = $result->pt_string_2;
-			$o->llustrator2 = $result->illustrator_2;
+			$o->illustrator2 = $result->illustrator_2;
 					
 			$o->setVersionName = $result->set_version_name;
 			$o->setVersionUrlName = $result->set_version_url_name;
