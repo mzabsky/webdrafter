@@ -1,6 +1,6 @@
 ﻿mse version: 0.3.8
 short name: PlaneSculptors
-full name: PlaneSculptors Export 1.4
+full name: PlaneSculptors Export 1.5
 position hint: 006
 version: 2018-06-24
 installer group: magic/Export/planesculptors
@@ -15,7 +15,7 @@ file type: *.txt|*.txt|*.*|*.*
 
 # By caeonosphere
 # Written by modifying thequinn's IsochronDrafter exporter ()
-
+# Namecheck by cajun
 script:
 	symbol_font      := "magic-mana-small"
 	symbol_font_size := 12
@@ -23,12 +23,18 @@ script:
 	remove_linebreaks := replace@(match: "\n", replace: "")
 	remove_brackets := replace@(match: "]", replace: "", in_context: "\\[(\\+|-)?[0-9]+<match>: ")+
 		replace@(match: "\\[", replace: "", in_context: "<match>(\\+|-)?[0-9]+: ")
+	exporter_name_filter := filter_text@(match:"!exporte?r?name [^\n]+")
+	exporter_name_grabber := replace@(match:"!exporte?r?name ", replace:"")
+	card_name := { if exporter_name_grabber(exporter_name_filter(card.notes)) != "" then exporter_name_grabber(exporter_name_filter(card.notes)) else card.name }
+	compare_card_name := { if exporter_name_grabber(exporter_name_filter(input.notes)) != "" then exporter_name_grabber(exporter_name_filter(input.notes)) else input.name }
 	determine_shape := {
 		if (contains(card.shape, match:"normal") or contains(card.shape, match:"planeswalker") or card.loyalty_2 != "") and card.name_2 != "" then "double"
 		else if contains(card.shape, match:"double") then "double"
 		else if contains(card.shape, match:"plane card") then "plane"
 		else if contains(card.shape, match:"leveler") then "normal"
 		else if contains(card.shape, match:"saga") then "normal"
+		else if contains(card.shape, match:"adventure") then "vsplit"
+		else if contains(card.shape, match:"aftermath") then "vsplit"
 		else if contains(card.shape, match:"planeswalker") then "normal"
 		else if contains(card.shape, match:"shifted") then "normal"
 		else card.shape
@@ -38,13 +44,15 @@ script:
 		filter_text@(match:"�")
 	
 	write_leveler := {
+	#Check for Mainframe special text first
+	(if card.special_text or else "" != "" then remove_brackets(card.special_text) else
 		card.rule_text
 		+"\nLEVEL "+card.level_1+" | "
 			+(if card.pt_2 !="" then card.pt_2+" | ")
 			+card.rule_text_2
 		+"\n"+(if card.level_2 !="" then "LEVEL "+card.level_2+" | ")
 			+(if card.pt_3 !="" then card.pt_3+" | ")
-			+card.rule_text_3
+			+card.rule_text_3)
 		}
 	write_plane := {
 		card.rule_text
@@ -132,12 +140,14 @@ script:
 		else if contains(card.shape, match:"leveler") then escape_linebreaks(to_html(write_leveler()))
 		else if contains(card.shape, match:"saga") then escape_linebreaks(to_html(card.special_text))
 		else if contains(card.shape, match:"plane card") then escape_linebreaks(to_html(write_plane()))
+		else if card.special_text != "" then escape_linebreaks(to_html(card.special_text))
 		else escape_linebreaks(to_html(card.rule_text))
 	}
 	
 	write_rules_2 := {
 		if contains(card.shape, match:"planeswalker") and card.power != "" then escape_linebreaks(to_html(write_sparker()))
 		else if card.loyalty != "" or card.loyalty_2 != "" then escape_linebreaks(to_html(write_walker_2()))
+		else if card.special_text_2 != "" then escape_linebreaks(to_html(card.special_text_2))
 		else escape_linebreaks(to_html(card.rule_text_2))
 	}
 	
@@ -147,7 +157,7 @@ script:
 		+"\n"+remove_linebreaks(cmc(card.casting_cost))
 		+"\n"+(if card.rarity == "masterpiece" then "special" else card.rarity)
 		
-		+"\n"+remove_linebreaks(card.name)
+		+"\n"+remove_linebreaks(card_name())
 		+"\n"+card.card_color
 		+"\n"+symbols_to_html(card.casting_cost)
 		+"\n"+remove_linebreaks(to_text(card.type))
@@ -168,6 +178,12 @@ script:
 		+"\n"+to_html(remove_linebreaks(card.illustrator_2))
 		+"\n==========="
 		}
+	##run the name check
+	check_unique := { count := 0
+		for x from 0 to length(input)-1 do if compare_card_name(input[x]) == name then count := count + 1
+		count
+	}
+	for each card in cards do if check_unique(cards, name:card_name()) > 1 then trace("Warning: Repeated name: " + card.name)
 	write_cards := for each card in sort_list(cards, order_by: {input.card_number}) do write_card()
 	to_string(
 		 set.title+"\n"
