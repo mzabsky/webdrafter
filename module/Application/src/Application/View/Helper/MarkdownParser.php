@@ -10,7 +10,31 @@ function processMarkdown($text, $contextSetUrlName = null, $contextSetVersionUrl
 	$str = \Michelf\MarkdownExtra::defaultTransform($text);
 	 
 	$str = processSymbols($str, $contextSetUrlName, $contextSetVersionUrlName);
+
+	$config = HTMLPurifier_Config::createDefault();
+	$def = $config->getHTMLDefinition(true);
+	//var_dump($def);die();
+	$def->addElement(
+		'style',
+		false,
+		'Optional:', // Not `Empty` to not allow to autoclose the <script /> tag @see https://www.w3.org/TR/html4/interact/scripts.html
+		'Common',
+		array(
+				// While technically not required by the spec, we're forcing
+				// it to this value.
+				'type' => 'Enum#text/css',
+		)
+	);
 	
+	/*$config->set('HTML.Doctype', 'HTML 4.01 Transitional');
+	$config->set('CSS.Trusted', true);
+	$config->set('HTML.Allowed', 'b,style');*/
+	$config->set('Core.HiddenElements', array('script'));
+	$purifier = new HTMLPurifier($config);
+	$str = $purifier->purify($str);
+
+
+
 	$str .= "<div class='clear'></div>";
 	return $str;
 }

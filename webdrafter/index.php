@@ -22,5 +22,7 @@ require 'vendor/Google/autoload.php';
 require_once 'vendor/Raven/Autoloader.php';
 Raven_Autoloader::register();
 
+require_once 'vendor/HTMLPurifier/HTMLPurifier.auto.php';
+
 // Run the application!
 Zend\Mvc\Application::init(require 'config/application.config.php')->run();
