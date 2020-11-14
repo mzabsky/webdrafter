@@ -73,8 +73,8 @@ Spoiler.prototype.initializeStructure = function () {
 	        "      Sort by: <a href='javascript:void(0)' onclick='spoiler.sort(\"color\")' sort='color' title='Sort by color, then name'>Color</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"rarity\")' sort='rarity' title='Sort by rarity, then color and name'>Rarity</a>" +
 	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"cmc\")' sort='cmc' title='Sort by converted mana cost, then color and name'>CMC</a>" +
-	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"name\")' sort='name' title='Sort by name'>Name</a>" +
-	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"random\")' class='activeSort' sort='random' title='Sort randomly'>Randomly</a>" +
+	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"name\")' class='activeSort' sort='name' title='Sort by name'>Name</a>" +
+	        "      <a href='javascript:void(0)' onclick='spoiler.sort(\"random\")' sort='random' title='Sort randomly'>Randomly</a>" +
 	        "   </div>" +
 	        "   <div class='spoiler-filters spoiler-filters-rarity'>" +
 	        "      Rarity filter: <a href='javascript:void(0)' onclick='spoiler.filterByRarity(\"M\")' filter='M' title='Mythic rares only'>M</a>" +
