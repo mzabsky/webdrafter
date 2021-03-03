@@ -230,6 +230,7 @@ class DraftController extends WebDrafterControllerBase
 						$actualNumberOfPacks = 3;
 						break;
 					case Draft::MODE_CUBE_DRAFT:
+					case Draft::MODE_CUBE_SEALED:
 						$actualNumberOfPacks = count($draftSets);
 						break;
 					default:

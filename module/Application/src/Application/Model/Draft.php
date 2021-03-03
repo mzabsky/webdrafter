@@ -13,6 +13,7 @@ class Draft
 	const MODE_CUBE_DRAFT = 2;
 	const MODE_CHAOS_DRAFT = 3;
 	const MODE_SEALED_DECK = 4;
+	const MODE_CUBE_SEALED = 5;
 	
 	const RARITY_MODE_MRUC = 1;
 	const RARITY_MODE_RUC = 2;
@@ -54,6 +55,7 @@ class Draft
     		case Draft::MODE_CUBE_DRAFT: return "Cube draft";
     		case Draft::MODE_CHAOS_DRAFT: return "Chaos draft";
     		case Draft::MODE_SEALED_DECK: return "Sealed deck";
+    		case Draft::MODE_CUBE_SEALED: return "Cube sealed deck";
     	}
     }
 }

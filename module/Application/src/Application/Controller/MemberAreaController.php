@@ -365,6 +365,9 @@ class MemberAreaController extends WebDrafterControllerBase
 					case \Application\Model\Draft::MODE_CHAOS_DRAFT:
 						$modeName = 'chaos draft';
 						break;
+					case \Application\Model\Draft::MODE_CUBE_SEALED:
+						$modeName = 'cube sealed deck';
+						break;
 					default:
 						throw new \Exception("Invalid game mode " . $mode);
 				
@@ -541,7 +544,9 @@ class MemberAreaController extends WebDrafterControllerBase
 				throw new Exception("Unauthorized");				
 			}
 			
-			$draft->status = $draft->gameMode == Draft::MODE_SEALED_DECK ? Draft::STATUS_FINISHED : Draft::STATUS_RUNNING;
+			$draft->status = $draft->gameMode == Draft::MODE_SEALED_DECK || $draft->gameMode == Draft::MODE_CUBE_SEALED
+				? Draft::STATUS_FINISHED 
+				: Draft::STATUS_RUNNING;
 			$draftTable->saveDraft($draft); 
 
 			$draftPlayers = $draftPlayerTable->fetchJoinedByDraft($draftId);
@@ -605,7 +610,7 @@ class MemberAreaController extends WebDrafterControllerBase
 					}
 				}
 			}
-			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT)
+			else if($draft->gameMode == Draft::MODE_CUBE_DRAFT || $draft->gameMode == Draft::MODE_CUBE_SEALED)
 			{
 				$packGenerator = new CubePackGenerator();				
 				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
@@ -633,7 +638,7 @@ class MemberAreaController extends WebDrafterControllerBase
 							$pick->cardId = $card->cardId;
 							$pick->startingPlayerId = $player->draftPlayerId;
 							$pick->currentPlayerId = $player->draftPlayerId;
-							$pick->isPicked = $draft->gameMode == Draft::MODE_SEALED_DECK ? 1 : 0;
+							$pick->isPicked = $draft->gameMode == Draft::MODE_CUBE_SEALED ? 1 : 0;
 							$pick->packNumber = $i + 1;
 							$pick->pickNumber = null;
 							$pick->zone = Pick::ZONE_MAINDECK;
