@@ -21,10 +21,45 @@ class Module
 	
     public function onBootstrap(MvcEvent $e)
     {
+        $instanceId = mt_rand();
+
+        $eventLogger = new \Zend\Log\Logger;
+        $eventLoggerWriter = new \Zend\Log\Writer\Stream('./logs/events-'.date('Y-m-d').'.log');
+        $eventLogger->addWriter($eventLoggerWriter);
+
+        $errorLogger = new \Zend\Log\Logger;
+        $errorLoggerWriter = new \Zend\Log\Writer\Stream('./logs/errors-'.date('Y-m-d').'.log');
+        $errorLogger->addWriter($errorLoggerWriter);
+        
+        \Zend\Log\Logger::registerErrorHandler($errorLogger);
+        \Zend\Log\Logger::registerExceptionHandler($errorLogger);
+
     	$sm = $e->getApplication()->getServiceManager();
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $eventManager->attach(
+            '*',
+            function ($e) use($eventLogger, $instanceId)
+            {
+                $event = $e->getName();
+                $target = get_class($e->getTarget());
+                $params = $e->getParams();
+                $output = sprintf(
+                        '%s %s %s %s %s %s %s',
+                        str_pad($instanceId, 10),
+                        str_pad($_SERVER['REQUEST_URI'], 50),
+                        str_pad($_SESSION["user_id"],5),
+                        $_SERVER['REMOTE_ADDR'],
+                        str_pad($event, 15),
+                        str_pad($target, 50),
+                        json_encode($params));
+                
+                $eventLogger->log(\Zend\Log\Logger::INFO, $output);
+
+                return true;
+            });
     }
 
     public function getConfig()
@@ -174,6 +209,17 @@ class Module
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\DraftPlayerBasic());
                     return new TableGateway('draft_player_basic', $dbAdapter, null, $resultSetPrototype);
+                },
+                'Application\Model\CollationTable' =>  function($sm) {
+                    $tableGateway = $sm->get('CollationTableGateway');
+                    $table = new \Application\Model\CollationTable($tableGateway);
+                    return $table;
+                },
+                'CollationTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \Application\Model\Collation());
+                    return new TableGateway('collation', $dbAdapter, null, $resultSetPrototype);
                 },
             )
         );

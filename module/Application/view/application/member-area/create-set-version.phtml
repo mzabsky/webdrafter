@@ -28,8 +28,13 @@ $(document).ready(function(){
 <h2 id="contentTitle">New card file for <?php echo $this->set->name ?></h2>
 <p>The card file was uploaded and parsed successfully. Please fill in a few more details which will be used to represent this version of the set on PlaneSculptors. During this step, PlaneSculptors will also test whether all card image links work correctly.</p>
 <p>Once you submit this form, this version will become the current (and default) version users will see.</p>
-
 <?php
+if(count($this->packs) > 0) {
+?>
+	<p><strong>Custom collation file with <?php echo count($this->packs) ?> packs loaded.</strong></p>
+<?php
+} 
+
 $form = $this->form;
 
 $form->setAttribute('action', $this->url('member-area-manage-set', array('action' => 'create-set-version', 'set_id' => $this->set->setId), array('query' => array('upload_id' => $this->uploadId)))); 

@@ -2,9 +2,9 @@
 /**
  * Zend Framework (http://framework.zend.com/)
 *
-* @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
+* @link			 http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
 * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
-* @license   http://framework.zend.com/license/new-bsd New BSD License
+* @license	 http://framework.zend.com/license/new-bsd New BSD License
 */
 
 namespace Application\Controller;
@@ -21,6 +21,7 @@ use Application\Model\DraftPlayer;
 use Application\Model\User;
 use Application\PackGenerator\BoosterDraftPackGenerator;
 use Application\PackGenerator\CubePackGenerator;
+use Application\PackGenerator\PrecollatedPackGenerator;
 use Application\Form\CreateSetForm;
 use Application\GoogleAuthentication;
 use Application\ChallongeAPI;
@@ -262,9 +263,9 @@ class MemberAreaController extends WebDrafterControllerBase
 		if ($this->getRequest()->isPost()) 
 		{
 			$formData = array_merge_recursive(
-            	$this->getRequest()->getPost()->toArray(),
-            	$this->getRequest()->getFiles()->toArray()
-        	);
+							$this->getRequest()->getPost()->toArray(),
+							$this->getRequest()->getFiles()->toArray()
+					);
 				
 			$set = $sm->get('Application\Model\Set');
 			$form->setInputFilter($set->getInputFilter());
@@ -530,6 +531,7 @@ class MemberAreaController extends WebDrafterControllerBase
 			$cardTable = $sm->get('Application\Model\CardTable');
 			$pickTable = $sm->get('Application\Model\PickTable');
 			$setVersionTable = $sm->get('Application\Model\SetVersionTable');
+			$collationTable = $sm->get('Application\Model\CollationTable');
 			$auth = $this->auth();
 			
 			// Start the draft
@@ -575,18 +577,22 @@ class MemberAreaController extends WebDrafterControllerBase
 			// Create packs
 			if($draft->gameMode == Draft::MODE_BOOSTER_DRAFT || $draft->gameMode == Draft::MODE_SEALED_DECK)
 			{
-				$packGenerator = new BoosterDraftPackGenerator();
+
 				$draftSetVersions = $draftSetVersionTable->fetchByDraft($draftId);
 				$picks = array();
 				foreach($draftSetVersions as $setIndex => $draftSetVersion)
-				{		
+				{	
+					$collations = $collationTable->fetchBySetVersion($draftSetVersion->setVersionId);
+
+					$packGenerator = count($collations) > 0 ? new PrecollatedPackGenerator($collations) : new BoosterDraftPackGenerator();
+
 					$setVersion = $setVersionTable->getSetVersion($draftSetVersion->setVersionId);
 					
 					$cards = $cardTable->fetchBySetVersion($draftSetVersion->setVersionId);
 					$cardArray = array();
 					foreach($cards as $card)
 					{
-						if(in_array($card->rarity, $allowedRarities)){
+						if(count($collations) > 0 || in_array($card->rarity, $allowedRarities)){
 							$cardArray[] = $card;
 						}
 					}
@@ -770,9 +776,9 @@ class MemberAreaController extends WebDrafterControllerBase
 		if ($this->getRequest()->isPost())
 		{
 			$formData = array_merge_recursive(
-            	$this->getRequest()->getPost()->toArray(),
-            	$this->getRequest()->getFiles()->toArray()
-        	);
+							$this->getRequest()->getPost()->toArray(),
+							$this->getRequest()->getFiles()->toArray()
+					);
 			
 			if(isset($formData["submit"]))
 			{
@@ -819,6 +825,7 @@ class MemberAreaController extends WebDrafterControllerBase
 						$setFile = $setDir . 'set';
 						
 						if(!file_exists($setFile)){
+							die($setFile);
 							throw new \Exception("Set file not uploaded. Add a single *.txt file.");
 						}
 						
@@ -843,6 +850,8 @@ class MemberAreaController extends WebDrafterControllerBase
 						if(count($cards) > 2000){
 							throw new \Exception("Maximum allowed number of cards in a set is 2000.");
 						}
+
+						$cardNames = array();
 						
 						foreach($cards as $card)
 						{
@@ -922,10 +931,77 @@ class MemberAreaController extends WebDrafterControllerBase
 							$card->isChanged = isset($currentVersionCardArray[$card->name]) ? $currentVersionCardArray[$card->name]->isNewVersionChanged($card) : true;
 							$card->firstVersionCardId = isset($currentVersionCardArray[$card->name]) ? ($currentVersionCardArray[$card->name]->firstVersionCardId != NULL ? $currentVersionCardArray[$card->name]->firstVersionCardId : $currentVersionCardArray[$card->name]->cardId) : NULL;
 							$card->changedOn = $card->isChanged ? date("Y-m-d H:i:s") : $currentVersionCardArray[$card->name]->changedOn;
+
+							$cardNames[$card->name] = true;
+						}
+
+						$packsFile = $setDir . 'packs';
+						$packs = null;
+						if(file_exists($packsFile))
+						{
+							$packsFileString = file_get_contents($packsFile);
+							$rows = explode("\n", $packsFileString);
+
+							$packsFile = array();
+							$currentPack = array();
+							$packSize = null;
+							echo "";
+							foreach($rows as $row => $data) {
+								echo $data;
+								$line = $row + 1;
+								if(trim($data) == "===========") {
+									$currentPackSize = count($currentPack);
+									if($packSize == null)
+									{
+										if($currentPackSize == 0)
+										{
+											var_dump($currentPack, $currentPackSize);
+											die("Packs file error - packs file must not start with pack divider.");
+											throw new \Exception("Packs file error - packs file must not start with pack divider.");
+										}
+
+										$packSize = $currentPackSize;
+									}
+									else if($packSize != $currentPackSize)
+									{
+										die("Packs file error - inconsistent pack size - pack has size " . $currentPackSize . ", different from previously determined " . $packSize . " on line " . $line . ".");
+										throw new \Exception("Packs file error - inconsistent pack size - pack has size " . $currentPackSize . ", different from previously determined " . $packSize . " on line " . $line . ".");
+									}
+
+									$packs[] = $currentPack;
+
+									$packCountLimit = 1000;
+									if(count($packs) > $packCountLimit)
+									{
+										throw new \Exception("Packs file error - too many packs (only $packCountLimit allowed) on line " . $line . ".");
+									}
+
+									$currentPack = array();
+								}
+								else
+								{
+									$packCardName = trim(str_replace('(F)', '', $data));
+
+									if(!array_key_exists($packCardName, $cardNames))
+									{ 
+										throw new \Exception("Packs file error - unknown card name " . $packCardName . " on line " . $line . ".");
+									}
+
+									$packSizeLimit = 15;
+									if(count($currentPack) > $packSizeLimit)
+									{
+										throw new \Exception("Packs file error - pack was too large (packs are only allowed to contain up to" . $packSizeLimit . " cards) on line " . $line . ".");
+									}
+
+									// Discard foil info
+									$currentPack[] = $packCardName;
+								}
+							}
 						}
 						
 						//die();
-						
+
+						$_SESSION["packs_file_packs"] = serialize($packs);
 						$_SESSION["card_file_cards"] = serialize($cards);
 						$_SESSION["upload_id"] = $uploadId;
 				
@@ -1020,7 +1096,9 @@ class MemberAreaController extends WebDrafterControllerBase
 		}
 	
 		$cards = unserialize($_SESSION["card_file_cards"]);
-		
+
+		$packs = unserialize($_SESSION["packs_file_packs"]);
+
 		$sm = $this->getServiceLocator();
 		$setVersionTable = $sm->get('Application\Model\SetVersionTable');
 		$adapter = $sm->get("Zend\Db\Adapter\Adapter");
@@ -1085,8 +1163,15 @@ class MemberAreaController extends WebDrafterControllerBase
 					
 					if(!rename($tempSetDir . 'set', $finalSetDir . 'set')){
 						throw new \Exception("Could not move set file to the final location.");
-					}	
+					}
+
+					if(file_exists($tempSetDir . 'packs')) {
+							if(!rename($tempSetDir . 'packs', $finalSetDir . 'packs')){
+								throw new \Exception("Could not move packs file to the final location.");
+							}
+					}
 					
+					$cardIdMap = array();
 					foreach($cards as $card)
 					{
 						if(!rename($tempSetDir . $card->artUrl, $finalSetDir . $card->artUrl)){
@@ -1096,6 +1181,14 @@ class MemberAreaController extends WebDrafterControllerBase
 						$card->setVersionId = $setVersion->setVersionId;
 
 						$cardTable->saveCard($card);
+
+						$cardIdMap[$card->name] = $card->cardId;
+					}
+
+					if(count($packs) > 0)
+					{
+						$collationTable = $sm->get('Application\Model\CollationTable');
+						$collationTable->saveCollations($packs, $setVersion->setVersionId, $cardIdMap);
 					}
 		
 					if(!rmdir_recursive($dataDir . $userId . $ds . "temp" . $ds)){
@@ -1112,6 +1205,7 @@ class MemberAreaController extends WebDrafterControllerBase
 
 				unset($_SESSION["upload_id"]);
 				unset($_SESSION["card_file_cards"]);
+				unset($_SESSION["packs_file_packs"]);
 		
 				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
 			}
@@ -1198,6 +1292,7 @@ class MemberAreaController extends WebDrafterControllerBase
 		$viewModel->cards = $cards;
 		$viewModel->form = $form;	
 		$viewModel->uploadId = $_GET["upload_id"];
+		$viewModel->packs = $packs != null ? $packs : array();
 		return $viewModel;
 	}
 	
@@ -1394,8 +1489,8 @@ class MemberAreaController extends WebDrafterControllerBase
 				mkdir($targetPath, 0777, true);
 			}
 			
-			$targetFile =  $targetPath. $_FILES['file']['name'];
-			move_uploaded_file($tempFile,$targetFile); //6  
+			$targetFile =	$targetPath. $_FILES['file']['name'];
+			move_uploaded_file($tempFile,$targetFile); //6	
 		}
 
 		return $response;
