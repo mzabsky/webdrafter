@@ -23,4 +23,4 @@ Example - two packs of three cards each:
     Divination
     ===========
 
-When packs of a set using custom collation are requested, they will be randomly drawn from the packs specified in the file. Sets using regular built-in collation and those using pre-collated packs can be used together in a single event (chaos draft doesn't work though, the default collation algorithm will be used there).
+When packs of a set using custom collation are requested, they will be randomly drawn from the packs specified in the file. Sets using regular built-in collation and those using pre-collated packs can be used together in a single event (chaos draft doesn't work though, the default collation algorithm will be used there). It is fine if the packs file contains fewer packs than are require to run the event (the event will contain repeated packs in such case).
