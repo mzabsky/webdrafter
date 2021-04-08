@@ -13,6 +13,7 @@ A custom file containing pre-collated packs called packs.txt can be uploaded alo
 - The packs may contain repeated cards.
 
 Example - two packs of three cards each:
+
     Lightning Bolt
     Goblin Guide
     Chain Lightning
