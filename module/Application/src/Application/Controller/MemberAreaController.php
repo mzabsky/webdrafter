@@ -945,9 +945,9 @@ class MemberAreaController extends WebDrafterControllerBase
 							$packsFile = array();
 							$currentPack = array();
 							$packSize = null;
-							echo "";
+							//echo "";
 							foreach($rows as $row => $data) {
-								echo $data;
+								//echo $data;
 								$line = $row + 1;
 								if(trim($data) == "===========") {
 									$currentPackSize = count($currentPack);
@@ -955,8 +955,8 @@ class MemberAreaController extends WebDrafterControllerBase
 									{
 										if($currentPackSize == 0)
 										{
-											var_dump($currentPack, $currentPackSize);
-											die("Packs file error - packs file must not start with pack divider.");
+											//var_dump($currentPack, $currentPackSize);
+											//die("Packs file error - packs file must not start with pack divider.");
 											throw new \Exception("Packs file error - packs file must not start with pack divider.");
 										}
 
@@ -964,7 +964,7 @@ class MemberAreaController extends WebDrafterControllerBase
 									}
 									else if($packSize != $currentPackSize)
 									{
-										die("Packs file error - inconsistent pack size - pack has size " . $currentPackSize . ", different from previously determined " . $packSize . " on line " . $line . ".");
+										//die("Packs file error - inconsistent pack size - pack has size " . $currentPackSize . ", different from previously determined " . $packSize . " on line " . $line . ".");
 										throw new \Exception("Packs file error - inconsistent pack size - pack has size " . $currentPackSize . ", different from previously determined " . $packSize . " on line " . $line . ".");
 									}
 
