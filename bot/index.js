@@ -76,7 +76,7 @@ client.on('message', msg => {
   var setVersion = match[4]
   var card = match[5].replace(/'/g, '_').replace(/’/g, '_').replace(/\*/g, '%')
 
-  var url = `http://www.planesculptors.net/autocard?context=${msg.channel.name}contextVersion=&set=${set || ''}&setVersion=${setVersion || ''}&card=${card}&bot`
+  var url = `https://www.planesculptors.net/autocard?context=${msg.channel.name}contextVersion=&set=${set || ''}&setVersion=${setVersion || ''}&card=${card}&bot`
 
   axios.get(url)
   .then(response => {
@@ -90,4 +90,4 @@ client.on('message', msg => {
 })
 .on('error', e => console.log(e))
 
-client.login('MjIzNDAwNzcyMjI0Njc5OTM3.DcJlqg.g4Fvoq93fFZSlB1fGKx39itj5cg')
+client.login('MjIzNDAwNzcyMjI0Njc5OTM3.XpBg2Q.CplFKn2D6ODFiMtjXR3T3AeINP0')

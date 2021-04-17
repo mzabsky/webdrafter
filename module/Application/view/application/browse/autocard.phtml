@@ -113,7 +113,7 @@ foreach($cards as $i => $card){
 		($rulesText2 != null ? $rulesText2 . "\n" : "") .
 		($flavorText2 != null ? $flavorText2 . "\n" : "") .
 		($card->ptString2 != null ? $card->ptString2 . "\n" : "")
-	)) . (@substr($card->artUrl, 0, 1) == '/' ? 'http://www.planesculptors.net' : '') . $card->artUrl;
+	)) . (@substr($card->artUrl, 0, 1) == '/' ? 'https://www.planesculptors.net' : '') . $card->artUrl;
 	
 	$cardCode = str_replace("\\n", '\n', $cardCode);
 	$cardCode = str_replace("\n\n", '\n', $cardCode);
