@@ -43,6 +43,7 @@ class DraftController extends WebDrafterControllerBase
 		$this->setTable = $this->sm->get('Application\Model\SetTable');
 		$this->userTable = $this->sm->get('Application\Model\UserTable');
 		$this->cardTable = $this->sm->get('Application\Model\CardTable');
+		$this->collationTable = $this->sm->get('Application\Model\CollationTable');
 		$this->draftPlayer = $this->draftPlayerTable->getDraftPlayerByInviteKey($this->inviteKey);		
 		$this->draft = $this->draftTable->getDraft($this->draftPlayer->draftId);
 	}
@@ -191,6 +192,9 @@ class DraftController extends WebDrafterControllerBase
 			// If all players have picked, advance the entire draft to next pick
 			$picksMade = $this->pickTable->getNumberOfCurrentPicksMade($this->draft->draftId);
 			
+			// The booster from which the player was picking
+			$booster = $this->pickTable->fetchBoosterForPlayer($this->draftPlayer->draftPlayerId);
+
 			// Save the pick
 			$pick->isPicked = true;
 			$pick->pickNumber = $this->draft->pickNumber;
@@ -209,8 +213,7 @@ class DraftController extends WebDrafterControllerBase
 				$isAiByPlayerId[$draftPlayer->draftPlayerId] = $draftPlayer->isAi; 
 			}
 			
-			$picksRequired = $humanCount; 
-			//var_dump($picksMade, $picksRequired); die();
+			$picksRequired = $humanCount;
 			if($picksMade + 1 == $picksRequired)
 			{
 				if($this->draft->gameMode != Draft::MODE_CHAOS_DRAFT) 
@@ -236,16 +239,10 @@ class DraftController extends WebDrafterControllerBase
 					default:
 						throw new \Exception("Invalid game mode " . $this->gameMode);
 				}
-				
-				$packSize = 14;
-				if($this->draft->gameMode != Draft::MODE_CHAOS_DRAFT && ($currentSetVersion->basicLandSlot != SetVersion::BASIC_LAND_SLOT_BASIC_LAND || $this->draft->gameMode == Draft::MODE_CUBE_DRAFT))
+
+				// Are there still cards in the pack after the current pick?
+				if(count($booster) > 1)
 				{
-					$packSize = 15;
-				}
-				
-				if($this->draft->pickNumber < $packSize)
-				{
-					//DIE("shift");
 					// Advance to next card in pack				
 					$this->draft->pickNumber++;
 					$this->draftTable->saveDraft($this->draft);
@@ -292,7 +289,7 @@ class DraftController extends WebDrafterControllerBase
 				}
 				else if($this->draft->packNumber < $actualNumberOfPacks)
 				{
-					//DIE("pack");
+					// All cards in the pack have been picked -> shift the packs in appropriate direction
 					
 					// Pass the cards to the next player
 					$this->draft->pickNumber = 1;
@@ -301,8 +298,6 @@ class DraftController extends WebDrafterControllerBase
 				}
 				else 
 				{
-					//DIE("finish");
-					
 					// Finish draft
 					$this->draft->status = Draft::STATUS_FINISHED;
 					$this->draftTable->saveDraft($this->draft);					
