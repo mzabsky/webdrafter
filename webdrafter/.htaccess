@@ -1,10 +1,10 @@
 RewriteEngine On
 
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://www.planesculptors\.net/$1 [L,R=301]
+#RewriteCond %{HTTPS} off
+#RewriteRule ^(.*)$ https://www.planesculptors\.net/$1 [L,R=301]
 
-RewriteCond %{HTTP_HOST} ^planesculptors\.net$ [NC]
-RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
+#RewriteCond %{HTTP_HOST} ^planesculptors\.net$ [NC]
+#RewriteRule ^(.*)$ https://www.%{HTTP_HOST}/$1 [R=301,L]
 
 
 # The following rule tells Apache that if the requested filename
