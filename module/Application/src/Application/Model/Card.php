@@ -80,6 +80,7 @@ class Card
         $this->toughness2 = (!empty($data['toughness_2'])) ? $data['toughness_2'] : null;
         $this->ptString2 = (!empty($data['pt_string_2'])) ? $data['pt_string_2'] : null;
         $this->illustrator2 = (!empty($data['illustrator_2'])) ? $data['illustrator_2'] : null;
+        $this->artHash = (!empty($data['art_hash'])) ? $data['art_hash'] : null;
         
     }
     

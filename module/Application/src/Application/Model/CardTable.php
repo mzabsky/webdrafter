@@ -848,6 +848,47 @@ class CardTable
 		return $row;
 	}
 	
+	public function getCardByArtHash($artHash)
+	{
+		$rowset = $this->tableGateway->select(array('art_hash' => $artHash));
+		$row = $rowset->current();
+		if (!$row) {
+			return null;
+		}
+		return $row;
+	}
+	
+	
+	public function getCardsWithoutArtHash()
+	{
+		$resultSet = $this->tableGateway->select(function(\Zend\Db\Sql\Select $select){
+			$where = new \Zend\Db\Sql\Where();
+			$where->isNull('art_hash');
+			$where->like('art_url', '/upload/%');
+			$select->where($where);
+			$select->limit(1000);
+		});
+
+		
+
+		/*$sql = new Sql($this->tableGateway->adapter);
+		$select = new Select('card');
+		//$select->forUpdate();
+		$select->columns(array('*'));
+
+		$where = new \Zend\Db\Sql\Where();
+		$where->isNull('art_hash');
+		$select->where($where);
+		$select->limit(10000);
+		$selectString = $sql->getSqlStringForSqlObject($select);
+		//var_dump($selectString);
+		
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+		return $resultSet;*/
+
+		return $resultSet;
+	}
+
 	public function getCardsForBot($setVersionId, $name, $limit)
 	{
 		$setVersionId  = $setVersionId !== null ? (int) $setVersionId : null;
@@ -1057,7 +1098,8 @@ class CardTable
 			'power_2'  => $card->power2,
 			'toughness_2'  => $card->toughness2,
 			'pt_string_2'  => $card->ptString2,
-			'illustrator_2'  => $card->illustrator2
+			'illustrator_2'  => $card->illustrator2,
+			'art_hash'  => $card->artHash
 		);
 	
 		$id = (int) $card->cardId;
