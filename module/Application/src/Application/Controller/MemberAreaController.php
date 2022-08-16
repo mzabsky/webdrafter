@@ -825,7 +825,6 @@ class MemberAreaController extends WebDrafterControllerBase
 						$setFile = $setDir . 'set';
 						
 						if(!file_exists($setFile)){
-							die($setFile);
 							throw new \Exception("Set file not uploaded. Add a single *.txt file.");
 						}
 						
