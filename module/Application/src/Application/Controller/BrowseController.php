@@ -11,6 +11,7 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 
 class BrowseController extends WebDrafterControllerBase
 {
@@ -58,14 +59,29 @@ class BrowseController extends WebDrafterControllerBase
     		return $this->notFoundAction();
     	}
     	
-    	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
-    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
-    	$viewModel->cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
-    	
+			$cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
+
     	if(isset($_GET["source"])){
     		echo nl2br (htmlspecialchars($viewModel->set->about));
     		die();
-    	}
+    	} else if(isset($_GET["json"])) {
+				$viewModel = new JsonModel();
+
+				$jsonCards = [];
+				foreach ($cards as $card) {
+					$jsonCard = [];
+					$jsonCard["artUrl"] = $card->artUrl;
+					$jsonCards[$card->name] = $jsonCard;
+				}
+
+				$viewModel->cards = $jsonCards;
+
+				return $viewModel;
+			}
+    	
+    	$viewModel->currentSetVersion = $setVersionTable->getSetVersion($viewModel->set->currentSetVersionId);
+    	$viewModel->setVersions = $setVersionTable->getSetVersionsBySet($viewModel->set->setId);
+    	$viewModel->cards = $cards;
     	
     	return $viewModel;
     }
