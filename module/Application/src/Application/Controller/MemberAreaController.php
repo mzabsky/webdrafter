@@ -1206,6 +1206,40 @@ class MemberAreaController extends WebDrafterControllerBase
 				unset($_SESSION["card_file_cards"]);
 				unset($_SESSION["packs_file_packs"]);
 		
+
+				// Clean up previous version card images
+
+				// This is for case when set versions are referenced from even older set versions
+				foreach($previousVersionCards as $previousSetVersionCard) 
+				{
+					if($previousSetVersionCard->artUrl != null)
+					{
+						$previousCardPath = "/web/htdocs3/planesculptorsnet/home/" + $previousSetVersionCard->artUrl;
+						//echo "FILE $previousCardPath<br>";
+						try {
+							{
+								unlink($previousCardPath);
+							}
+						}
+						catch(Exception $e)
+						{
+							// Do not let this crash the process	
+						}
+					}
+				}
+
+				// Remove previous set version's directory as well
+				try {
+					$previousSetVersionPath = $dataDir . $userId . $ds . $previousSetVersion->setVersionId . $ds;
+					rmdir_recursive($previousSetVersionPath);
+					//echo "DIR $previousSetVersionPath<br>";
+					//die();
+				}
+				catch(Exception $e)
+				{
+					// Do not let this crash the process	
+				}
+
 				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
 			}
 			else
