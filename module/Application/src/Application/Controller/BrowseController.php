@@ -12,6 +12,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
+use Application\Model\Card;
 
 class BrowseController extends WebDrafterControllerBase
 {
@@ -48,8 +49,10 @@ class BrowseController extends WebDrafterControllerBase
     	$cardTable = $sm->get('Application\Model\CardTable');
     	$userTable = $sm->get('Application\Model\UserTable');
     	
+			$set = $setTable->getSetByUrlName($setUrlName);;
+
     	$viewModel = new ViewModel();
-    	$viewModel->set = $setTable->getSetByUrlName($setUrlName);
+    	$viewModel->set = $set;
     	if($viewModel->set === null){
     		return $this->notFoundAction();
     	}
@@ -59,10 +62,10 @@ class BrowseController extends WebDrafterControllerBase
     		return $this->notFoundAction();
     	}
     	
-			$cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($viewModel->set->currentSetVersionId));
+			$cards = \Application\resultSetToArray($cardTable->fetchBySetVersion($set->currentSetVersionId));
 
     	if(isset($_GET["source"])){
-    		echo nl2br (htmlspecialchars($viewModel->set->about));
+    		echo nl2br (htmlspecialchars($set->about));
     		die();
     	} else if(isset($_GET["json"])) {
 				$viewModel = new JsonModel();
@@ -70,10 +73,31 @@ class BrowseController extends WebDrafterControllerBase
 				$jsonCards = [];
 				foreach ($cards as $card) {
 					$jsonCard = [];
+					$jsonCard["name"] = $card->name;
+					$jsonCard["shape"] = Card::getShapeNameStatic($card->shape);
+					$jsonCard["cardNumber"] = $card->cardNumber;
+					$jsonCard["cmc"] = $card->cmc;
+					$jsonCard["rarity"] = $card->rarity;
 					$jsonCard["artUrl"] = $card->artUrl;
+					$jsonCard["colors"] = $card->colors;
+					$jsonCard["manaCost"] = $card->manaCost;
+					$jsonCard["types"] = $card->types;
+					$jsonCard["rulesText"] = $card->rulesText;
+					$jsonCard["power"] = $card->power;
+					$jsonCard["toughness"] = $card->toughness;
+					$jsonCard["ptString"] = $card->ptString;
+					$jsonCard["name2"] = $card->name2;
+					$jsonCard["colors2"] = $card->colors2;
+					$jsonCard["manaCost2"] = $card->manaCost2;
+					$jsonCard["types2"] = $card->types2;
+					$jsonCard["rulesText2"] = $card->rulesText2;
+					$jsonCard["power2"] = $card->power2;
+					$jsonCard["toughness2"] = $card->toughness2;
+					$jsonCard["ptString2"] = $card->ptString2;
 					$jsonCards[$card->name] = $jsonCard;
 				}
 
+				$viewModel->name = $set->name;
 				$viewModel->cards = $jsonCards;
 
 				return $viewModel;
