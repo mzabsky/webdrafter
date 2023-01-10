@@ -67,12 +67,12 @@ class UploadCardsForm extends Form
 						'description' => 'Scheme used for names of individual card image files. Use \'Automatic\' unless you encounter issues with the website not assigning card images to cards correctly. Special characters are any non-alphanumeric non-space characters.',
 						'value_options' => [
 								self::AUTO => 'Automatic',
-								self::NAME_DOT_PNG_ALNUM => '<card name>.png (without special characters)',
-								self::NAME_DOT_FULL_DOT_PNG_ALNUM => '<card name>.full.png (without special characters)',
+								/*elf::NAME_DOT_PNG_ALNUM => '<card name>.png (without special characters)',
+								self::NAME_DOT_FULL_DOT_PNG_ALNUM => '<card name>.full.png (without special characters)',*/
 								self::NAME_DOT_JPG_ALNUM => '<card name>.jpg (without special characters)',
 								self::NAME_DOT_FULL_DOT_JPG_ALNUM => '<card name>.full.jpg (without special characters)',
-								self::NAME_DOT_PNG_SPECIAL => '<card name>.png (with special characters)',
-								self::NAME_DOT_FULL_DOT_PNG_SPECIAL => '<card name>.full.png (with special characters)',
+								/*self::NAME_DOT_PNG_SPECIAL => '<card name>.png (with special characters)',
+								self::NAME_DOT_FULL_DOT_PNG_SPECIAL => '<card name>.full.png (with special characters)',*/
 								self::NAME_DOT_JPG_SPECIAL => '<card name>.jpg (with special characters)',
 								self::NAME_DOT_FULL_DOT_JPG_SPECIAL => '<card name>.full.jpg (with special characters)',
 						],

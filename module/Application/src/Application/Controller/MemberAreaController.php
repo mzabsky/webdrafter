@@ -859,12 +859,12 @@ class MemberAreaController extends WebDrafterControllerBase
 							$cardArtNameWithSpecialCharacters = preg_replace('/[\\\\\\/<>:\\|\\?\\*"]/iu', "", $card->name);
 
 							$namePossibilities = Array();
-							$namePossibilities[UploadCardsForm::NAME_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".png";
-							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".full.png";
+							//$namePossibilities[UploadCardsForm::NAME_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".png";
+							//$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".full.png";
 							$namePossibilities[UploadCardsForm::NAME_DOT_JPG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".jpg";
 							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_JPG_ALNUM] = $cardArtNameWithoutSpecialCharacters . ".full.jpg";
-							$namePossibilities[UploadCardsForm::NAME_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".png";
-							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".full.png";
+							//$namePossibilities[UploadCardsForm::NAME_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".png";
+							//$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_PNG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".full.png";
 							$namePossibilities[UploadCardsForm::NAME_DOT_JPG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".jpg";
 							$namePossibilities[UploadCardsForm::NAME_DOT_FULL_DOT_JPG_SPECIAL] = $cardArtNameWithSpecialCharacters . ".full.jpg";
 
