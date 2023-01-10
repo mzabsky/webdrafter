@@ -885,7 +885,7 @@ class HTMLPurifier_Config
     {
         // determine previous stack frame
         $extra = '';
-        if ($this->chatty) {
+        if (true || $this->chatty) {
             $trace = debug_backtrace();
             // zip(tail(trace), trace) -- but PHP is not Haskell har har
             for ($i = 0, $c = count($trace); $i < $c - 1; $i++) {
@@ -898,7 +898,8 @@ class HTMLPurifier_Config
                 break;
             }
         }
-        trigger_error($msg . $extra, $no);
+        //die($msg . $extra)
+        //trigger_error($msg . $extra, $no);
     }
 
     /**
