@@ -888,6 +888,41 @@ class CardTable
 
 		return $resultSet;
 	}
+	
+	public function getCardsForArtDeletion($page)
+	{
+		$selectString = "
+		select
+			c.card_id,
+			c.art_url
+		from 
+			`set` s
+			join set_version csv on (s.current_set_version_id = csv.set_version_id)
+			join set_version sv on (s.current_set_version_id != sv.set_version_id && s.set_id = sv.set_id)
+			join card c on (sv.set_version_id = c.set_version_id)
+		where
+			c.art_url not like \"http://goog%\"
+			and c.art_url not like \"%card-back.jpg\"
+			and c.art_url not in(
+				select
+					c.art_url
+				from 
+					`set` s
+					join set_version csv on (s.current_set_version_id = csv.set_version_id)
+					join card c on (csv.set_version_id = c.set_version_id)
+				where c.art_url not like \"http://goog%\"
+			)
+		order by art_url
+		"; // limit " . ($page * 1000) . ", " . (($page + 1) * 1000) . "
+		$resultSet = $this->tableGateway->adapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+
+		return $resultSet;
+	}
+
+	public function updateCardToNoArt($id)
+	{
+		$this->tableGateway->update(array('art_url' => '/images/card-back.jpg'), array('card_id' => $id));
+	}
 
 	public function getCardsForBot($setVersionId, $name, $limit)
 	{

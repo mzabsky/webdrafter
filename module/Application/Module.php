@@ -34,6 +34,7 @@ class Module
         \Zend\Log\Logger::registerErrorHandler($errorLogger);
         \Zend\Log\Logger::registerExceptionHandler($errorLogger);
 
+        /*
     	$sm = $e->getApplication()->getServiceManager();
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
@@ -59,7 +60,7 @@ class Module
                 $eventLogger->log(\Zend\Log\Logger::INFO, $output);
 
                 return true;
-            });
+            });*/
     }
 
     public function getConfig()
