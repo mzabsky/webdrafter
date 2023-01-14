@@ -1229,15 +1229,19 @@ class MemberAreaController extends WebDrafterControllerBase
 				}
 
 				// Remove previous set version's directory as well
-				try {
-					$previousSetVersionPath = $dataDir . $userId . $ds . $previousSetVersion->setVersionId . $ds;
-					rmdir_recursive($previousSetVersionPath);
-					//echo "DIR $previousSetVersionPath<br>";
-					//die();
-				}
-				catch(Exception $e)
+				// Unless this is the first version of this set
+				if($previousSetVersion != null)
 				{
-					// Do not let this crash the process	
+					try {
+						$previousSetVersionPath = $dataDir . $userId . $ds . $previousSetVersion->setVersionId . $ds;
+						rmdir_recursive($previousSetVersionPath);
+						//echo "DIR $previousSetVersionPath<br>";
+						//die();
+					}
+					catch(Exception $e)
+					{
+						// Do not let this crash the process	
+					}
 				}
 
 				return $this->redirect()->toRoute('member-area-manage-set', array('set_id' => $set->setId), array('query' => 'set-version-created'));
