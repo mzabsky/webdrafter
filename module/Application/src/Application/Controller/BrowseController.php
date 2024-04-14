@@ -345,6 +345,8 @@ class BrowseController extends WebDrafterControllerBase
     
     public function cardAction()
     {
+			// Card action overtaxed the database
+			return $this->redirect()->toRoute('browse-set', array('url_name' => $this->getEvent()->getRouteMatch()->getParam('set_url_name')));
 
     	$sm = $this->getServiceLocator();
     	$setTable = $sm->get('Application\Model\SetTable');
